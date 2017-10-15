@@ -8,7 +8,13 @@ The manuscript for MARATHON is currently under review. Pre-print is available [h
 
 ## Developers & Maintainers
 
+Yuchao Jiang (yuchaoj at email dot unc dot edu), Department of Biostatistics & Department of Genetics, UNC-Chapel Hill
 
+Hao Chen (hxchen at ucdavis dot edu), Department of Statistics, UC Davis
+
+Zilu Zhou (zhouzilu at pennmedicine dot upenn dot edu), Genomics and Computational Biology Graduate Group, UPenn
+
+Nancy R. Zhang (nzh at wharton dot upenn dot edu), Department of Statistics, UPenn
 
 ## Depends
 
