@@ -86,7 +86,7 @@ install_github("yuchaojiang/Canopy/package")
 
 <p align="center">
 Figure 1.
-  <img src='https://github.com/yuchaojiang/MARATHON/blob/master/figure/Figure1.jpg' width='600' height='400'>
+  <img src='https://github.com/yuchaojiang/MARATHON/blob/master/figure/Figure1.jpg' width='600' height='300'>
 </p>
 
 
