@@ -4,7 +4,7 @@ Copy number variation is an important and abundant source of variation in the hu
 
 ## Manuscript
 
-
+The manuscript for MARATHON is currently under review. Pre-print is available [here via bioRixv](https://www.biorxiv.org/content/early/2017/09/28/195230).
 
 ## Developers & Maintainers
 
