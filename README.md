@@ -32,7 +32,7 @@ If you have any questions or problems when using MARATHON, please feel free to o
 
 ## Depends & Installation
 
-CODEX, CODEX2, FALCON, FALCON-X, iCNV, and Canopy are publicly available R-packages in CRAN, Bioconductor, and GitHub.
+MARATHON depends on CODEX, CODEX2, FALCON, FALCON-X, iCNV, and Canopy, which are all publicly available R-packages in CRAN, Bioconductor, and/or GitHub.
 
 * **CODEX**: A Normalization and Copy Number Variation Detection Method for Whole Exome Sequencing
   ([Bioconductor](http://bioconductor.org/packages/CODEX/), [GitHub](https://github.com/yuchaojiang/CODEX))
