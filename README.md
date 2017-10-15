@@ -101,7 +101,9 @@ The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline
 
 ## Running MARATHON
 
-* Total copy number analysis of normal: CODEX --> iCNV
+* Total copy number analysis of normal
+  * Experimental design: 
+  * Code: CODEX --> iCNV
 
 * Total copy number analysis of tumor by WES/WGS/targeted sequencing: CODEX2
 
