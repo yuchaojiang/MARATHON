@@ -8,27 +8,23 @@ The manuscript for MARATHON is currently under review. Pre-print is available [h
 
 ## Developers & Maintainers
 
-[Yuchao Jiang](http://sph.unc.edu/adv_profile/yuchao-jiang-phd/) (yuchaoj at email dot unc dot edu)
+* [Yuchao Jiang](http://sph.unc.edu/adv_profile/yuchao-jiang-phd/) (yuchaoj at email dot unc dot edu)
 
-Department of Biostatistics & Department of Genetics, UNC-Chapel Hill
-
-<br>
-
-[Hao Chen](https://anson.ucdavis.edu/~haochen/) (hxchen at ucdavis dot edu)
-
-Department of Statistics, UC Davis
+  Department of Biostatistics & Department of Genetics, UNC-Chapel Hill
 
 <br>
 
-[Zilu Zhou](https://statistics.wharton.upenn.edu/profile/zhouzilu/) (zhouzilu at pennmedicine dot upenn dot edu)
+* [Hao Chen](https://anson.ucdavis.edu/~haochen/) (hxchen at ucdavis dot edu)
 
-Genomics and Computational Biology Graduate Group, UPenn
+  Department of Statistics, UC Davis
 
-<br>
+* [Zilu Zhou](https://statistics.wharton.upenn.edu/profile/zhouzilu/) (zhouzilu at pennmedicine dot upenn dot edu)
 
-[Nancy R. Zhang](https://statistics.wharton.upenn.edu/profile/nzh/) (nzh at wharton dot upenn dot edu)
+  Genomics and Computational Biology Graduate Group, UPenn
 
-Department of Statistics, UPenn
+* [Nancy R. Zhang](https://statistics.wharton.upenn.edu/profile/nzh/) (nzh at wharton dot upenn dot edu)
+
+  Department of Statistics, UPenn
 
 ## Depends
 
