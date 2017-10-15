@@ -53,7 +53,7 @@ The manuscript for MARATHON is currently under review. Pre-print is available [h
 
 ## Questions & Problems
 
-
+If you have any questions or problems when using MARATHON, please feel free to open a new issue [here](https://github.com/yuchaojiang/MARATHON/issues). You can also email the maintainers of the corresponding packages -- the contact information is shown under Developers & Maintainers.
 
 ## Citation
 
