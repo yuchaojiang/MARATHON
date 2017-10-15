@@ -26,6 +26,17 @@ The manuscript for MARATHON is currently under review. Pre-print is available [h
 
 ## Depends
 
+* CODEX: [Bioconductor](http://bioconductor.org/packages/CODEX/) [GitHub](https://github.com/yuchaojiang/CODEX)
+
+* CODEX2: [GitHub](https://github.com/yuchaojiang/CODEX2)
+
+* iCNV: [GitHub](https://github.com/zhouzilu/iCNV)
+
+* FALCON: [CRAN](https://CRAN.R-project.org/package=falcon)
+
+* FALCON-X: [CRAN](https://CRAN.R-project.org/package=falconx)
+
+* Canopy: [CRAN](https://CRAN.R-project.org/package=Canopy) [GitHub](https://github.com/yuchaojiang/Canopy)
 
 
 ## Questions & Problems
