@@ -52,9 +52,8 @@ CODEX, CODEX2, FALCON, FALCON-X, iCNV, and Canopy are publicly available R-packa
 * **Canopy**: Accessing Intra-Tumor Heterogeneity and Tracking Longitudinal and Spatial Clonal Evolutionary History by Next-Generation Sequencing
   ([CRAN](https://CRAN.R-project.org/package=Canopy), [GitHub](https://github.com/yuchaojiang/Canopy))
 
-
+Install all packages in the latest version of [R](https://www.r-project.org/).
 ```r
-# Install all packages in R
 install.packages("devtools")
 library(devtools)
 # try http:// if https:// URLs are not supported
@@ -80,8 +79,6 @@ install.packages("ape")
 install.packages("pheatmap")
 install.packages("scatterplot3d")
 install_github("yuchaojiang/Canopy/package")
-
-
 ```
 
 
