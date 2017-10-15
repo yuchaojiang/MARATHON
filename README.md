@@ -24,7 +24,15 @@ The manuscript for MARATHON is currently under review. Pre-print is available [h
 
   Department of Statistics, UPenn
 
-## Depends
+
+## Questions & Problems
+
+If you have any questions or problems when using MARATHON, please feel free to open a new issue [here](https://github.com/yuchaojiang/MARATHON/issues). You can also email the maintainers of the corresponding packages -- the contact information is shown under Developers & Maintainers.
+
+
+## Depends & Installation
+
+CODEX, CODEX2, FALCON, FALCON-X, iCNV, and Canopy are pub- licly available R-packages in CRAN, Bioconductor, and GitHub.
 
 * **CODEX**: A Normalization and Copy Number Variation Detection Method for Whole Exome Sequencing
   
@@ -51,24 +59,15 @@ The manuscript for MARATHON is currently under review. Pre-print is available [h
   [CRAN](https://CRAN.R-project.org/package=Canopy), [GitHub](https://github.com/yuchaojiang/Canopy)
 
 
-## Questions & Problems
-
-If you have any questions or problems when using MARATHON, please feel free to open a new issue [here](https://github.com/yuchaojiang/MARATHON/issues). You can also email the maintainers of the corresponding packages -- the contact information is shown under Developers & Maintainers.
-
-## Citation
-
-Please cite MARATHON as well as all the dependent packages that you utilize.
-
-* MARATHON: [Jiang et al. 2017 bioRixv](https://www.biorxiv.org/content/early/2017/09/28/195230)
-* CODEX: [Jiang et al. 2015 Nucleic Acids Research](https://academic.oup.com/nar/article/43/6/e39/2453417/CODEX-a-normalization-and-copy-number-variation)
-* CODEX2: available soon.
-* iCNV: [Zhou et al. 2017 bioRixv](https://www.biorxiv.org/content/early/2017/09/01/172700)
-* FALCON: [Chen et al. 2015 Nucleic Acids Research](https://academic.oup.com/nar/article/43/4/e23/2410993/Allele-specific-copy-number-profiling-by-next)
-* FALCON-X: [Chen et al. 2017 Annals of Applied Statistics](https://projecteuclid.org/euclid.aoas/1500537739)
-* Canopy: [Jiang et al. 2016 PNAS](http://www.pnas.org/content/113/37/E5528.full)
-
-## Installation
-
+```r
+install.packages("ape")
+install.packages("fields")
+install.packages("pheatmap")
+install.packages("scatterplot3d")
+install.packages("devtools")
+library(devtools)
+install_github("yuchaojiang/Canopy/package")
+```
 
 
 ## Pipeline overview
@@ -77,4 +76,19 @@ Please cite MARATHON as well as all the dependent packages that you utilize.
 
 ## Running MARATHON
 
+
+
+
+
+## Citation
+
+Please cite MARATHON as well as all the dependent packages that you use.
+
+* MARATHON: [Jiang et al. 2017 bioRixv](https://www.biorxiv.org/content/early/2017/09/28/195230)
+* CODEX: [Jiang et al. 2015 Nucleic Acids Research](https://academic.oup.com/nar/article/43/6/e39/2453417/CODEX-a-normalization-and-copy-number-variation)
+* CODEX2: available soon.
+* iCNV: [Zhou et al. 2017 bioRixv](https://www.biorxiv.org/content/early/2017/09/01/172700)
+* FALCON: [Chen et al. 2015 Nucleic Acids Research](https://academic.oup.com/nar/article/43/4/e23/2410993/Allele-specific-copy-number-profiling-by-next)
+* FALCON-X: [Chen et al. 2017 Annals of Applied Statistics](https://projecteuclid.org/euclid.aoas/1500537739)
+* Canopy: [Jiang et al. 2016 PNAS](http://www.pnas.org/content/113/37/E5528.full)
 
