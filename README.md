@@ -57,6 +57,8 @@ If you have any questions or problems when using MARATHON, please feel free to o
 
 ## Citation
 
+Please cite MARATHON as well as all the dependent packages that you utilize.
+
 * MARATHON: [Jiang et al. 2017 bioRixv](https://www.biorxiv.org/content/early/2017/09/28/195230)
 * CODEX: [Jiang et al. 2015 Nucleic Acids Research](https://academic.oup.com/nar/article/43/6/e39/2453417/CODEX-a-normalization-and-copy-number-variation)
 * CODEX2: available soon.
