@@ -101,7 +101,17 @@ The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline
 
 ## Running MARATHON
 
+* Total copy number analysis of normal: CODEX --> iCNV
 
+* Total copy number analysis of tumor by WES/WGS/targeted sequencing: CODEX2
+
+* Tumor allele-specific copy number by WGS: FALCON
+
+* Tumor allele-specific copy number by WES with matched normal: CODEX2 --> FALCON-X
+
+* Tumor phylogeny analysis: FALCON --> Canopy
+
+* Tumor phylogeny analysis: CODEX2 --> FALCON-X --> Canopy
 
 
 
