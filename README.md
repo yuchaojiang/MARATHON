@@ -55,13 +55,33 @@ CODEX, CODEX2, FALCON, FALCON-X, iCNV, and Canopy are publicly available R-packa
 
 ```r
 # Install all packages in R
-install.packages("ape")
-install.packages("fields")
-install.packages("pheatmap")
-install.packages("scatterplot3d")
 install.packages("devtools")
 library(devtools)
+# try http:// if https:// URLs are not supported
+source("https://bioconductor.org/biocLite.R")
+
+biocLite("GenomeInfoDb")
+biocLite("BSgenome.Hsapiens.UCSC.hg19")
+biocLite("WES.1KG.WUGSC")
+install_github("yuchaojiang/CODEX/package")
+
+install_github("yuchaojiang/CODEX2/package")
+
+install.packages("fields")
+install.packages("truncnorm")
+install.packages("ggplot2")
+install_github("zhouzilu/iCNV")
+
+install.packages("falcon")
+
+install.packages("falconx")
+
+install.packages("ape")
+install.packages("pheatmap")
+install.packages("scatterplot3d")
 install_github("yuchaojiang/Canopy/package")
+
+
 ```
 
 
