@@ -11,9 +11,7 @@ The manuscript for MARATHON is currently under review. Pre-print is available [h
 * [Yuchao Jiang](http://sph.unc.edu/adv_profile/yuchao-jiang-phd/) (yuchaoj at email dot unc dot edu)
 
   Department of Biostatistics & Department of Genetics, UNC-Chapel Hill
-
-<br>
-
+  
 * [Hao Chen](https://anson.ucdavis.edu/~haochen/) (hxchen at ucdavis dot edu)
 
   Department of Statistics, UC Davis
