@@ -57,7 +57,13 @@ If you have any questions or problems when using MARATHON, please feel free to o
 
 ## Citation
 
-
+* MARATHON: [Jiang et al. 2017 bioRixv](https://www.biorxiv.org/content/early/2017/09/28/195230)
+* CODEX: [Jiang et al. 2015 Nucleic Acids Research](https://academic.oup.com/nar/article/43/6/e39/2453417/CODEX-a-normalization-and-copy-number-variation)
+* CODEX2: available soon.
+* iCNV: [Zhou et al. 2017 bioRixv](https://www.biorxiv.org/content/early/2017/09/01/172700)
+* FALCON: [Chen et al. 2015 Nucleic Acids Research](https://academic.oup.com/nar/article/43/4/e23/2410993/Allele-specific-copy-number-profiling-by-next)
+* FALCON-X: [Chen et al. 2017 Annals of Applied Statistics](https://projecteuclid.org/euclid.aoas/1500537739)
+* Canopy: [Jiang et al. 2016 PNAS](http://www.pnas.org/content/113/37/E5528.full)
 
 ## Installation
 
