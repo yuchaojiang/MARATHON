@@ -35,22 +35,22 @@ If you have any questions or problems when using MARATHON, please feel free to o
 CODEX, CODEX2, FALCON, FALCON-X, iCNV, and Canopy are publicly available R-packages in CRAN, Bioconductor, and GitHub.
 
 * **CODEX**: A Normalization and Copy Number Variation Detection Method for Whole Exome Sequencing
-  [Bioconductor](http://bioconductor.org/packages/CODEX/), [GitHub](https://github.com/yuchaojiang/CODEX)
+  ([Bioconductor](http://bioconductor.org/packages/CODEX/), [GitHub](https://github.com/yuchaojiang/CODEX))
 
 * **CODEX2**: Full-spectrum copy number variation detection by high-throughput DNA sequencing
-  [GitHub](https://github.com/yuchaojiang/CODEX2)
+  ([GitHub](https://github.com/yuchaojiang/CODEX2))
 
 * **iCNV**: Integrated copy number variation detection toolset
-  [GitHub](https://github.com/zhouzilu/iCNV)
+  ([GitHub](https://github.com/zhouzilu/iCNV))
 
 * **FALCON**: Finding Allele-Specific Copy Number in Next-Generation Sequencing Data
-  [CRAN](https://CRAN.R-project.org/package=falcon)
+  ([CRAN](https://CRAN.R-project.org/package=falcon))
 
 * **FALCON-X**: Finding Allele-Specific Copy Number in Whole-Exome Sequencing Data
-  [CRAN](https://CRAN.R-project.org/package=falconx)
+  ([CRAN](https://CRAN.R-project.org/package=falconx))
 
 * **Canopy**: Accessing Intra-Tumor Heterogeneity and Tracking Longitudinal and Spatial Clonal Evolutionary History by Next-Generation Sequencing
-  [CRAN](https://CRAN.R-project.org/package=Canopy), [GitHub](https://github.com/yuchaojiang/Canopy)
+  ([CRAN](https://CRAN.R-project.org/package=Canopy), [GitHub](https://github.com/yuchaojiang/Canopy))
 
 
 ```r
