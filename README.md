@@ -84,6 +84,10 @@ install_github("yuchaojiang/Canopy/package")
 
 ## Pipeline overview
 
+<p align="center">
+Figure 1.
+  <img src='https://github.com/yuchaojiang/MARATHON/blob/master/figure/Figure1.jpg' width='600' height='66'>
+</p>
 
 
 ## Running MARATHON
