@@ -84,6 +84,8 @@ install_github("yuchaojiang/Canopy/package")
 
 ## Pipeline overview
 
+The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline for the relationship between the software: CODEX and CODEX2 perform read depth normalization for total copy number profiling; read depth normalized by CODEX/CODEX2 is received by iCNV, which combines it with allele-specific read counts and microarray data to detect CNVs; FALCON and FALCON-X perform ASCN analysis; and Canopy receives input from FALCON/FALCON-X to perform tumor phylogeny reconstruction.
+
 **Figure 1.** A flowchart outlining the procedures for profiling CNV, ASCN, and reconstructing tumor phylogeny. CNVs with common and rare population frequencies can be profiled by CODEX and CODEX2, with and without negative control samples. iCNV integrates sequencing and microarray data for CNV detection. ASCNs can be profiled by FALCON and FALCON-X using allelic read counts at germline heterozygous loci. Canopy infers tumor phylogeny using somatic SNVs and ASCNs.
 
 <p align="center">
@@ -93,7 +95,7 @@ install_github("yuchaojiang/Canopy/package")
 **Table 1.** Analysis scenarios and pipeline design. The last column shows the sequencing of software that should be used for each analysis scenario. *By “normal” we mean samples that are not derived from tumor tissue. Broad copy number changes are not expected to cover the genome in the normal controls.
 
 <p align="center">
-  <img src='https://github.com/yuchaojiang/MARATHON/blob/master/figure/Table1.png' width='600' height='320'>
+  <img src='https://github.com/yuchaojiang/MARATHON/blob/master/figure/Table1.png' width='600' height='310'>
 </p>
 
 
