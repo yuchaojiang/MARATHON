@@ -84,9 +84,16 @@ install_github("yuchaojiang/Canopy/package")
 
 ## Pipeline overview
 
+**Figure 1.** A flowchart outlining the procedures for profiling CNV, ASCN, and reconstructing tumor phylogeny. CNVs with common and rare population frequencies can be profiled by CODEX and CODEX2, with and without negative control samples. iCNV integrates sequencing and microarray data for CNV detection. ASCNs can be profiled by FALCON and FALCON-X using allelic read counts at germline heterozygous loci. Canopy infers tumor phylogeny using somatic SNVs and ASCNs.
+
 <p align="center">
-Figure 1.
   <img src='https://github.com/yuchaojiang/MARATHON/blob/master/figure/Figure1.jpg' width='600' height='300'>
+</p>
+
+**Table 1.** Analysis scenarios and pipeline design. The last column shows the sequencing of software that should be used for each analysis scenario. *By “normal” we mean samples that are not derived from tumor tissue. Broad copy number changes are not expected to cover the genome in the normal controls.
+
+<p align="center">
+  <img src='https://github.com/yuchaojiang/MARATHON/blob/master/figure/Table1.png' width='600' height='300'>
 </p>
 
 
