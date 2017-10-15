@@ -5,10 +5,16 @@ Copy number variation is an important and abundant source of variation in the hu
 ## Manuscript
 
 
+
 ## Developers & Maintainers
 
 
+
 ## Depends
+
+
+
+## Questions & Problems
 
 
 
@@ -16,6 +22,14 @@ Copy number variation is an important and abundant source of variation in the hu
 
 
 
-## Questions & Problems
+## Installation
+
+
+
+## Pipeline overview
+
+
+
+## Running MARATHON
 
 
