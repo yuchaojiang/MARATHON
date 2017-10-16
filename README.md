@@ -113,22 +113,22 @@ The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline
 
 * **Tumor allele-specific copy number by WGS**
   * *Experimental design*: WGS of matched tumor normal pair
-  * *Script*: [Profiling germline heterozygous loci](), [FALCON for ASCN detection]()
+  * *Script*: [Profiling germline heterozygous loci](https://github.com/yuchaojiang/MARATHON/blob/master/script/germline_het_loci.sh), [FALCON for ASCN detection]()
   * *More details*: [FALCON](https://CRAN.R-project.org/package=falcon)
 
 * **Tumor allele-specific copy number by WES**
   * *Experimental design*: WES/WGS of tumor with matched normal, one or more tumor samples, greater than 20 normal controls (no need to be matched)
-  * *Script*: [Profiling germline heterozygous loci](), [CODEX2 --> FALCON-X]()
+  * *Script*: [Profiling germline heterozygous loci](https://github.com/yuchaojiang/MARATHON/blob/master/script/germline_het_loci.sh), [CODEX2 --> FALCON-X]()
   * *More details*: [CODEX2](https://github.com/yuchaojiang/CODEX2), [FALCON-X](https://CRAN.R-project.org/package=falconx)
 
 * **Tumor phylogeny analysis by WGS**
   * *Experimental design*: WGS of multiple spatially or temporally separated tumor samples with matched normal
-  * *Script*: [Profiling somatic point mutations](), [FALCON -- > Canopy]()
+  * *Script*: [Profiling somatic point mutations](https://github.com/yuchaojiang/MARATHON/blob/master/script/somatic_SNV.sh), [FALCON -- > Canopy]()
   * *More details*: [FALCON](https://CRAN.R-project.org/package=falcon), [Canopy](https://github.com/yuchaojiang/Canopy)
 
 * **Tumor phylogeny analysis by WES**
   * *Experimental design*: WES/WGS of multiple spatially or temporally separated tumor samples with matched normal, greater than 20 normal controls (no need to be matched)
-  * *Script*: [Profiling somatic point mutations](), [CODEX2 --> FALCON-X -- > Canopy]()
+  * *Script*: [Profiling somatic point mutations](https://github.com/yuchaojiang/MARATHON/blob/master/script/somatic_SNV.sh), [CODEX2 --> FALCON-X -- > Canopy]()
   * *More details*: [CODEX2](https://github.com/yuchaojiang/CODEX2), [FALCON-X](https://CRAN.R-project.org/package=falconx), [Canopy](https://github.com/yuchaojiang/Canopy)
 
 
