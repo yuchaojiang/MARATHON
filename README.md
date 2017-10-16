@@ -95,7 +95,7 @@ The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline
 **Table 1.** Analysis scenarios and pipeline design. The last column shows the sequencing of software that should be used for each analysis scenario. *By “normal” we mean samples that are not derived from tumor tissue. Broad copy number changes are not expected to cover the genome in the normal controls.
 
 <p align="center">
-  <img src='https://github.com/yuchaojiang/MARATHON/blob/master/figure/Table1.png' width='600' height='310'>
+  <img src='https://github.com/yuchaojiang/MARATHON/blob/master/figure/Table1.png' width='600' height='320'>
 </p>
 
 
@@ -113,7 +113,7 @@ The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline
 
 * **Tumor allele-specific copy number by WGS**
   * *Experimental design*: WGS of matched tumor normal pair
-  * *Script*: [Profiling germline heterozygous loci](https://github.com/yuchaojiang/MARATHON/blob/master/script/germline_het_loci.sh), [FALCON for ASCN detection]()
+  * *Script*: [Profiling germline heterozygous loci](https://github.com/yuchaojiang/MARATHON/blob/master/script/germline_het_loci.sh), [FALCON for ASCN detection](https://github.com/yuchaojiang/MARATHON/blob/master/script/FALCON.R)
   * *More details*: [FALCON](https://CRAN.R-project.org/package=falcon)
 
 * **Tumor allele-specific copy number by WES**
