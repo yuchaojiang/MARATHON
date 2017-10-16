@@ -140,3 +140,6 @@ if(length(tauhat)>0){
 }
 
 view(cn,pos=ascn.input$pos)
+
+# Refer to bottom part of https://github.com/yuchaojiang/MARATHON/blob/master/script/FALCON.R
+# on how to generate CNA input for Canopy based on FALCON-X's result.
