@@ -101,30 +101,34 @@ The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline
 
 ## Running MARATHON
 
-* Total copy number analysis of normal
+* **Total copy number analysis of normal**
   * Experimental design: WES/WGS with or without matched microarray, greater than 20 samples
   * Script: [CODEX normalization](https://github.com/yuchaojiang/MARATHON/blob/master/script/CODEX.R), [CODEX --> iCNV](https://github.com/yuchaojiang/MARATHON/blob/master/script/CODEX_iCNV.R)
   * More details: [CODEX](https://github.com/yuchaojiang/CODEX), [iCNV](https://github.com/zhouzilu/iCNV)
 
-* Total copy number analysis of tumor
+* **Total copy number analysis of tumor**
   * Experimental design: WES/WGS/targeted sequencing of tumor with greater than 20 normal controls (no need to be matched)
   * Script: [CODEX2 normalization and segmentation](https://github.com/yuchaojiang/MARATHON/blob/master/script/CODEX2.R)
   * More details: [CODEX2](https://github.com/yuchaojiang/CODEX2)
 
-* Tumor allele-specific copy number by WGS
+* **Tumor allele-specific copy number by WGS**
   * Experimental design: WGS of matched tumor normal pair
   * Script: [Profiling germline heterozygous loci](), [FALCON for ASCN detection]()
   * More details: [FALCON](https://CRAN.R-project.org/package=falcon)
 
-* Tumor allele-specific copy number by WES
-  * Experimental design: WES/WGS of tumor with matched normal, 1 or more tumor samples, greater than 20 normal controls (no need to be matched)
+* **Tumor allele-specific copy number by WES**
+  * Experimental design: WES/WGS of tumor with matched normal, one or more tumor samples, greater than 20 normal controls (no need to be matched)
   * Script: [Profiling germline heterozygous loci](), [CODEX2 --> FALCON-X]()
   * More details: [CODEX2](https://github.com/yuchaojiang/CODEX2), [FALCON-X](https://CRAN.R-project.org/package=falconx)
 
-* Tumor phylogeny analysis by WGS
+* **Tumor phylogeny analysis by WGS**
+  * Experimental design: WGS of multiple spatially or temporally separated tumor samples with matched normal
+  * Script: [Profiling somatic point mutations](), [FALCON -- > Canopy]()
   * More details: [FALCON](https://CRAN.R-project.org/package=falcon), [Canopy](https://github.com/yuchaojiang/Canopy)
 
-* Tumor phylogeny analysis by WES
+* **Tumor phylogeny analysis by WES**
+  * Experimental design: WES/WGS of multiple spatially or temporally separated tumor samples with matched normal, greater than 20 normal controls (no need to be matched)
+  * Script: [Profiling somatic point mutations](), [CODEX2 --> FALCON-X -- > Canopy]()
   * More details: [CODEX2](https://github.com/yuchaojiang/CODEX2), [FALCON-X](https://CRAN.R-project.org/package=falconx), [Canopy](https://github.com/yuchaojiang/Canopy)
 
 
