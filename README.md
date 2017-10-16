@@ -107,7 +107,7 @@ The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline
   * More details: [CODEX](https://github.com/yuchaojiang/CODEX), [iCNV](https://github.com/zhouzilu/iCNV)
 
 * Total copy number analysis of tumor
-  * Experimental design: WES/WGS/targeted sequencing of tumor with greater than 20 controls (don't have to be matched)
+  * Experimental design: WES/WGS/targeted sequencing of tumor with greater than 20 normal controls (don't have to be matched)
   * Code: [CODEX2 normalization and segmentation](https://github.com/yuchaojiang/MARATHON/blob/master/script/CODEX2.R)
   * More details: [CODEX2](https://github.com/yuchaojiang/CODEX2)
 
