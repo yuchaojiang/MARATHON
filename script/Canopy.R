@@ -1,3 +1,10 @@
+# How to profile and select SNVs and CNAs can be found below:
+# https://github.com/yuchaojiang/Canopy/blob/master/instruction/SNA_CNA_input.md
+# https://github.com/yuchaojiang/Canopy/blob/master/instruction/SNA_CNA_choice.md
+
+# Refer to https://github.com/yuchaojiang/Canopy for details on Canopy
+# More demo code for Canopy can be found at: https://github.com/yuchaojiang/Canopy/tree/master/demo_code
+
 #######################################################
 #######################################################
 #######                                         #######
