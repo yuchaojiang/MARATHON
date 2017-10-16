@@ -122,9 +122,9 @@ The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline
   * More details: [CODEX2](https://github.com/yuchaojiang/CODEX2), [FALCON-X](https://CRAN.R-project.org/package=falconx)
 
 * **Tumor phylogeny analysis by WGS**
-  * Experimental design: WGS of multiple spatially or temporally separated tumor samples with matched normal
-  * Script: [Profiling somatic point mutations](), [FALCON -- > Canopy]()
-  * More details: [FALCON](https://CRAN.R-project.org/package=falcon), [Canopy](https://github.com/yuchaojiang/Canopy)
+  * *Experimental design*: WGS of multiple spatially or temporally separated tumor samples with matched normal
+  * *Script*: [Profiling somatic point mutations](), [FALCON -- > Canopy]()
+  * *More details*: [FALCON](https://CRAN.R-project.org/package=falcon), [Canopy](https://github.com/yuchaojiang/Canopy)
 
 * **Tumor phylogeny analysis by WES**
   * Experimental design: WES/WGS of multiple spatially or temporally separated tumor samples with matched normal, greater than 20 normal controls (no need to be matched)
