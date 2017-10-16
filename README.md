@@ -103,7 +103,8 @@ The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline
 
 * Total copy number analysis of normal
   * Experimental design: WES/WGS with or without matched microarray, greater than 20 samples
-  * Code: [CODEX normalization](), [CODEX --> iCNV]()
+  * Code: [CODEX normalization](https://github.com/yuchaojiang/MARATHON/blob/master/script/CODEX.R), [CODEX --> iCNV](https://github.com/yuchaojiang/MARATHON/blob/master/script/CODEX_iCNV.R)
+  * More details: [CODEX](https://github.com/yuchaojiang/CODEX), [iCNV](https://github.com/zhouzilu/iCNV)
 
 * Total copy number analysis of tumor by WES/WGS/targeted sequencing: CODEX2
 
