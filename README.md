@@ -106,7 +106,10 @@ The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline
   * Code: [CODEX normalization](https://github.com/yuchaojiang/MARATHON/blob/master/script/CODEX.R), [CODEX --> iCNV](https://github.com/yuchaojiang/MARATHON/blob/master/script/CODEX_iCNV.R)
   * More details: [CODEX](https://github.com/yuchaojiang/CODEX), [iCNV](https://github.com/zhouzilu/iCNV)
 
-* Total copy number analysis of tumor by WES/WGS/targeted sequencing: CODEX2
+* Total copy number analysis of tumor
+  * Experimental design: WES/WGS/targeted sequencing of tumor with greater than 20 controls (don't have to be matched)
+  * Code: [CODEX2 normalization and segmentation](https://github.com/yuchaojiang/MARATHON/blob/master/script/CODEX2.R)
+  * More details: [CODEX2](https://github.com/yuchaojiang/CODEX2)
 
 * Tumor allele-specific copy number by WGS: FALCON
 
