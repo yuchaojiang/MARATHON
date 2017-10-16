@@ -103,21 +103,30 @@ The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline
 
 * Total copy number analysis of normal
   * Experimental design: WES/WGS with or without matched microarray, greater than 20 samples
-  * Code: [CODEX normalization](https://github.com/yuchaojiang/MARATHON/blob/master/script/CODEX.R), [CODEX --> iCNV](https://github.com/yuchaojiang/MARATHON/blob/master/script/CODEX_iCNV.R)
+  * Script: [CODEX normalization](https://github.com/yuchaojiang/MARATHON/blob/master/script/CODEX.R), [CODEX --> iCNV](https://github.com/yuchaojiang/MARATHON/blob/master/script/CODEX_iCNV.R)
   * More details: [CODEX](https://github.com/yuchaojiang/CODEX), [iCNV](https://github.com/zhouzilu/iCNV)
 
 * Total copy number analysis of tumor
   * Experimental design: WES/WGS/targeted sequencing of tumor with greater than 20 normal controls (don't have to be matched)
-  * Code: [CODEX2 normalization and segmentation](https://github.com/yuchaojiang/MARATHON/blob/master/script/CODEX2.R)
+  * Script: [CODEX2 normalization and segmentation](https://github.com/yuchaojiang/MARATHON/blob/master/script/CODEX2.R)
   * More details: [CODEX2](https://github.com/yuchaojiang/CODEX2)
 
-* Tumor allele-specific copy number by WGS: FALCON
+* Tumor allele-specific copy number
+  * Experimental design: WGS of matched tumor normal pair
+  * Script: [Profiling germline heterozygous loci](), [FALCON for ASCN detection]()
+  * More details: [FALCON](https://CRAN.R-project.org/package=falcon)
 
 * Tumor allele-specific copy number by WES with matched normal: CODEX2 --> FALCON-X
 
+  * More details: [CODEX2](https://github.com/yuchaojiang/CODEX2), [FALCON-X](https://CRAN.R-project.org/package=falconx)
+
 * Tumor phylogeny analysis: FALCON --> Canopy
 
+  * More details: [FALCON](https://CRAN.R-project.org/package=falcon), [Canopy](https://github.com/yuchaojiang/Canopy)
+
 * Tumor phylogeny analysis: CODEX2 --> FALCON-X --> Canopy
+
+  * More details: [CODEX2](https://github.com/yuchaojiang/CODEX2), [FALCON-X](https://CRAN.R-project.org/package=falconx), [Canopy](https://github.com/yuchaojiang/Canopy)
 
 
 
