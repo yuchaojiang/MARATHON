@@ -139,7 +139,7 @@ Please cite MARATHON as well as all the dependent packages that you use.
 
 * MARATHON: [Jiang et al. 2017 bioRixv](https://www.biorxiv.org/content/early/2017/09/28/195230)
 * CODEX: [Jiang et al. 2015 Nucleic Acids Research](https://academic.oup.com/nar/article/43/6/e39/2453417/CODEX-a-normalization-and-copy-number-variation)
-* CODEX2: available soon.
+* CODEX2: [Jiang et al. 2017 bioRixv](https://www.biorxiv.org/content/early/2017/10/30/211698)
 * iCNV: [Zhou et al. 2017 bioRixv](https://www.biorxiv.org/content/early/2017/09/01/172700)
 * FALCON: [Chen et al. 2015 Nucleic Acids Research](https://academic.oup.com/nar/article/43/4/e23/2410993/Allele-specific-copy-number-profiling-by-next)
 * FALCON-X: [Chen et al. 2017 Annals of Applied Statistics](https://projecteuclid.org/euclid.aoas/1500537739)
