@@ -56,8 +56,7 @@ MARATHON depends on CODEX, CODEX2, FALCON, FALCON-X, iCNV, and Canopy, which are
 ## Installation Option 1: Docker Image
 A docker image is available [here](https://hub.docker.com/r/lzeppelini/marathon/).
 This image is an Rstudio GUI built on rocker/tidyverse with all of the above packages pre-installed.  Also pre-installed is USSC HG19 human genome and "WES.1KG.WUGSC" toy data set. <br /> <br />
-Instructions for using Docker can be found [here](https://docs.docker.com/get-started/). <br /> <br />
-Coming soon: marathon-base built on rocker/r-base
+Instructions for using Docker can be found [here](https://docs.docker.com/get-started/).
 
 ## Installation Option 2: Install to R
 Install all packages in the latest version of [R](https://www.r-project.org/).
