@@ -109,7 +109,7 @@ The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline
 ## Running MARATHON
 
 * **Codex**
-  * *Notebook*: [CODEX normalization](https://github.com/yuchaojiang/MARATHON/blob/master/notebook/Rnotebook.html)
+  * *Notebook*: [CODEX normalization](https://github.com/yuchaojiang/MARATHON/blob/master/notebook/Rnotebook.md)
 
 
 * **Total copy number analysis of normal**
