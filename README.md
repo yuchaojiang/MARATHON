@@ -108,11 +108,9 @@ The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline
 
 ## Running MARATHON
 
-* **Codex**
-  * *Notebook*: [CODEX normalization](https://github.com/yuchaojiang/MARATHON/blob/master/notebook/rNotebook.md); Rmd code [here](https://github.com/yuchaojiang/MARATHON/blob/master/notebook/rNotebook.Rmd)
-
 * **Total copy number analysis of normal**
   * *Experimental design*: WES/WGS with or without matched microarray, greater than 20 samples
+  * *Notebook*: [CODEX normalization](https://github.com/yuchaojiang/MARATHON/blob/master/notebook/codexNormalization/rNotebook.md);  [Rmd script](https://github.com/yuchaojiang/MARATHON/blob/master/notebook/codexNormalization/rNotebook.Rmd)
   * *Script*: [CODEX normalization](https://github.com/yuchaojiang/MARATHON/blob/master/script/CODEX.R), [CODEX --> iCNV](https://github.com/yuchaojiang/MARATHON/blob/master/script/CODEX_iCNV.R)
   * *More details*: [CODEX](https://github.com/yuchaojiang/CODEX), [iCNV](https://github.com/zhouzilu/iCNV)
 
