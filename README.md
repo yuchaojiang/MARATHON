@@ -116,7 +116,7 @@ The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline
 
 * **Total copy number analysis of tumor**
   * *Experimental design*: WES/WGS/targeted sequencing of tumor with greater than 20 normal controls (no need to be matched)
-  * *Notebook*: [CODEX2 normalization](https://github.com/yuchaojiang/MARATHON/notebook/CODEX2/CODEX2.md);  [Rmd script](https://github.com/yuchaojiang/MARATHON/notebook/CODEX2/CODEX2.Rmd)
+  * *Notebook*: [CODEX2 normalization](https://github.com/yuchaojiang/MARATHON/blob/master/notebook/CODEX2/CODEX2.md);  [Rmd script](https://github.com/yuchaojiang/MARATHON/blob/master/notebook/CODEX2/CODEX2.Rmd)
   * *Script*: [CODEX2 normalization and segmentation](https://github.com/yuchaojiang/MARATHON/blob/master/script/CODEX2.R)
   * *More details*: [CODEX2](https://github.com/yuchaojiang/CODEX2)
 
