@@ -16,8 +16,15 @@
 #Load Falcon package
 ```{r}
 library(falcon)
+requireNamespace("falcon")
 library(repmis)  
 library(RCurl)
+```
+#Load falcon specific source files
+```{r}
+faclonURL = "https://github.com/yuchaojiang/Canopy/blob/master/instruction"
+source(paste0(faclonURL, "/falcon.qc.R?raw=True"))
+source(paste0(faclonURL, "/falcon.output.R?raw=True"))
 ```
 
 # download the primary and relapse germline heterozygous variants data
@@ -52,9 +59,9 @@ rdep.relapse=sum(relapse$Tumor_ReadCount_Total)/sum(relapse$Normal_ReadCount_Tot
 ```
   
   ###########################################
-  ###########################################
+  #
   #        Relapse genome
-  ###########################################
+  #
   ###########################################
  
   # Focus on germline heterozygous variants.
@@ -116,8 +123,8 @@ readMatrix.relapse=as.data.frame(relapse.chr[,c('Tumor_ReadCount_Ref',
   ###############################
   
 ```{r}
-tauhat.relapse=falcon::getChangepoints(readMatrix.relapse)
-  cn.relapse = falcon::getASCN(readMatrix.relapse, tauhat=tauhat.relapse, rdep = rdep.relapse, threshold = 0.3)
+tauhat.relapse=getChangepoints(readMatrix.relapse)
+  cn.relapse = getASCN(readMatrix.relapse, tauhat=tauhat.relapse, rdep = rdep.relapse, threshold = 0.3)
 ```
 
   # Chromosomal view of segmentation results. (save image file.)
@@ -128,8 +135,6 @@ tauhat.relapse=falcon::getChangepoints(readMatrix.relapse)
  #save.image(file=paste('falcon_relapse_',chr,'.rda',sep=''))
 ```
 
-
-  
   
   ########################################
   # Further curate FALCON's segmentation.
@@ -143,9 +148,7 @@ tauhat.relapse=falcon::getChangepoints(readMatrix.relapse)
   if(length(tauhat.relapse)>0){
     length.thres=10^6  # Threshold for length of segments, in base pair.
     delta.cn.thres=0.3  # Threshold of absolute copy number difference between consecutive segments.
-    srcUrl = "https://github.com/yuchaojiang/MARATHON/blob/master/notebook/falcon/falconQC.R?raw=True"
-    source(srcUrl)
-    falcon.qc.list = falcon.qc(readMatrix = readMatrix.relapse,
+falcon.qc.list = falcon.qc(readMatrix = readMatrix.relapse,
                                tauhat = tauhat.relapse,
                                cn = cn.relapse,
                                st_bp = relapse.chr[,"Start_position"],
@@ -160,10 +163,11 @@ tauhat.relapse=falcon::getChangepoints(readMatrix.relapse)
 
 
   # Chromosomal view of QC'ed segmentation results.
-  pdf(file=paste('falcon.relapse.qc.',chr,'.pdf',sep=''),width=5,height=8)
+```{r}
+#pdf(file=paste('falcon.relapse.qc.',chr,'.pdf',sep=''),width=5,height=8)
   view(cn.relapse,pos=relapse.chr[,'Start_position'], rdep = rdep.relapse)
-  dev.off()
-  
+#  dev.off()
+```
   
   #################################################
   # Generate Canopy's input with s.d. measurement.
@@ -173,9 +177,7 @@ tauhat.relapse=falcon::getChangepoints(readMatrix.relapse)
   # segment boudaries.
   # For Canopy's input, we use Bootstrap-based method to estimate the
   # standard deviations for the allele-specific copy numbers.
-  
-  source('falcon_demo/falcon.output.R') # Can be downloaded from
-  # https://github.com/yuchaojiang/Canopy/blob/master/instruction/falcon.output.R
+```{r}  
   falcon.output=falcon.output(readMatrix = readMatrix.relapse,
                               tauhat = tauhat.relapse,
                               cn = cn.relapse,
@@ -183,8 +185,9 @@ tauhat.relapse=falcon::getChangepoints(readMatrix.relapse)
                               end_bp = relapse.chr[,"End_position"],
                               nboot = 5000)
   falcon.output = cbind(chr=rep(chr,nrow(falcon.output)), falcon.output)
-  write.table(falcon.output, file=paste('faclon.relapse.output.',chr,'.txt',sep=''), col.names =T, row.names = F, sep='\t', quote = F)
-  
+  falcon.output
+  #write.table(falcon.output, file=paste('faclon.relapse.output.',chr,'.txt',sep=''), col.names =T, row.names = F, sep='\t', quote = F)
+```  
   
   
   ###########################################
@@ -201,15 +204,18 @@ tauhat.relapse=falcon::getChangepoints(readMatrix.relapse)
   ###########################################
   
   # remove variants with missing genotype
+```{r}  
   primary.chr=primary.chr[primary.chr[,'Match_Norm_Seq_Allele1']!=' ',]
   primary.chr=primary.chr[primary.chr[,'Match_Norm_Seq_Allele2']!=' ',]
   primary.chr=primary.chr[primary.chr[,'Reference_Allele']!=' ',]
   primary.chr=primary.chr[primary.chr[,'TumorSeq_Allele1']!=' ',]
   primary.chr=primary.chr[primary.chr[,'TumorSeq_Allele2']!=' ',]
-  
+```  
+
   # get germline heterozygous loci (normal allele1 != normal allele2)
-  primary.chr=primary.chr[(as.matrix(primary.chr[,'Match_Norm_Seq_Allele1'])!=as.matrix(primary.chr[,'Match_Norm_Seq_Allele2'])),]
-  
+```{r}
+primary.chr=primary.chr[(as.matrix(primary.chr[,'Match_Norm_Seq_Allele1'])!=as.matrix(primary.chr[,'Match_Norm_Seq_Allele2'])),]
+```  
   
   ############################################################
   # QC procedures to remove false neg and false pos variants.
@@ -217,47 +223,52 @@ tauhat.relapse=falcon::getChangepoints(readMatrix.relapse)
   ############################################################
   
   # remove indels (this can be relaxed but we think indels are harder to call than SNPs)
+```{r}
   indel.filter1=nchar(as.matrix(primary.chr[,'Reference_Allele']))<=1
   indel.filter2=nchar(as.matrix(primary.chr[,'Match_Norm_Seq_Allele1']))<=1
   indel.filter3=nchar(as.matrix(primary.chr[,'Match_Norm_Seq_Allele2']))<=1
   indel.filter4=nchar(as.matrix(primary.chr[,'TumorSeq_Allele1']))<=1
   indel.filter5=nchar(as.matrix(primary.chr[,'TumorSeq_Allele2']))<=1
   primary.chr=primary.chr[indel.filter1 & indel.filter2 & indel.filter3 & indel.filter4 & indel.filter5,]
-  
+```
+
   # total number of reads greater than 30 in both tumor and normal
+```{r}
   depth.filter1=(primary.chr[,"Normal_ReadCount_Ref"]+primary.chr[,"Normal_ReadCount_Alt"])>=30
   depth.filter2=(primary.chr[,"Tumor_ReadCount_Ref"]+primary.chr[,"Tumor_ReadCount_Alt"])>=30
   primary.chr=primary.chr[depth.filter1 & depth.filter2,]
-  
+```  
   
   #########################
   # Generate FALCON input.
   #########################
   
   # Data frame with four columns: tumor ref, tumor alt, normal ref, normal alt.
+```{r}
   readMatrix.primary=as.data.frame(primary.chr[,c('Tumor_ReadCount_Ref',
                                                   'Tumor_ReadCount_Alt',
                                                   'Normal_ReadCount_Ref',
                                                   'Normal_ReadCount_Alt')])
   colnames(readMatrix.primary)=c('AT','BT','AN','BN')
   dim(readMatrix.primary); dim(primary.chr)
-  
+```  
   
   ###############################
   # Run FALCON and view results.
   ###############################
   
+```{r}
   tauhat.primary=getChangepoints(readMatrix.primary)
   cn.primary = getASCN(readMatrix.primary, tauhat=tauhat.primary, rdep = rdep.primary, threshold = 0.3)
   
   # Chromosomal view of segmentation results.
-  pdf(file=paste('falcon.primary.',chr,'.pdf',sep=''),width=5,height=8)
+  #pdf(file=paste('falcon.primary.',chr,'.pdf',sep=''),width=5,height=8)
   view(cn.primary,pos=primary.chr[,'Start_position'], rdep = rdep.primary)
-  dev.off()
+  #dev.off()
   
   # save image file.
-  save.image(file=paste('falcon_primary_',chr,'.rda',sep=''))
-  
+  #save.image(file=paste('falcon_primary_',chr,'.rda',sep=''))
+```  
   
   ########################################
   # Further curate FALCON's segmentation.
@@ -266,11 +277,10 @@ tauhat.relapse=falcon::getChangepoints(readMatrix.relapse)
   # From the pdf above, we see that:
   # (1) There are small segments that need to be removed;
   # (2) Consecutive segments with similar allelic copy number states need to be combined.
-  if(length(tauhat.primary)>0){
+```{r}
+    if(length(tauhat.primary)>0){
     length.thres=10^6  # Threshold for length of segments, in base pair.
     delta.cn.thres=0.3  # Threshold of absolute copy number difference between consecutive segments.
-    source('falcon_demo/falcon.qc.R') # Can be downloaded from
-    #https://github.com/yuchaojiang/Canopy/blob/master/instruction/falcon.qc.R
     falcon.qc.list = falcon.qc(readMatrix = readMatrix.primary,
                                tauhat = tauhat.primary,
                                cn = cn.primary,
@@ -285,10 +295,10 @@ tauhat.relapse=falcon::getChangepoints(readMatrix.relapse)
   }
   
   # Chromosomal view of QC'ed segmentation results.
-  pdf(file=paste('falcon.primary.qc.',chr,'.pdf',sep=''),width=5,height=8)
+  #pdf(file=paste('falcon.primary.qc.',chr,'.pdf',sep=''),width=5,height=8)
   view(cn.primary,pos=primary.chr[,'Start_position'], rdep = rdep.primary)
-  dev.off()
-  
+  #dev.off()
+```  
   
   #################################################
   # Generate Canopy's input with s.d. measurement.
@@ -299,8 +309,7 @@ tauhat.relapse=falcon::getChangepoints(readMatrix.relapse)
   # For Canopy's input, we use Bootstrap-based method to estimate the
   # standard deviations for the allele-specific copy numbers.
   
-  source('falcon_demo/falcon.output.R') # Can be downloaded from
-  # https://github.com/yuchaojiang/Canopy/blob/master/instruction/falcon.output.R
+```{r}
   falcon.output=falcon.output(readMatrix = readMatrix.primary,
                               tauhat = tauhat.primary,
                               cn = cn.primary,
@@ -310,7 +319,7 @@ tauhat.relapse=falcon::getChangepoints(readMatrix.relapse)
   falcon.output = cbind(chr=rep(chr,nrow(falcon.output)), falcon.output)
   write.table(falcon.output, file=paste('faclon.primary.output.',chr,'.txt',sep=''), col.names =T, row.names = F, sep='\t', quote = F)  
 }
-
+```
 
 ###########################################################################
 ###########################################################################
