@@ -122,7 +122,7 @@ The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline
 
 * **Tumor allele-specific copy number by WGS**
   * *Experimental design*: WGS of matched tumor normal pair
-  * *Notebook*: [FALCON for ASCN detection](https://github.com/yuchaojiang/MARATHON/blob/master/notebook/falcon/rNotebook.md)
+  * *Notebook*: [FALCON for ASCN detection](https://github.com/yuchaojiang/MARATHON/blob/master/notebook/falcon/falconNotebook.md)
   * *Script*: [Profiling germline heterozygous loci](https://github.com/yuchaojiang/MARATHON/blob/master/script/germline_het_loci.sh), [FALCON for ASCN detection](https://github.com/yuchaojiang/MARATHON/blob/master/script/FALCON.R)
   * *More details*: [FALCON](https://CRAN.R-project.org/package=falcon)
 
