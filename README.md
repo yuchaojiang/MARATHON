@@ -53,12 +53,12 @@ MARATHON depends on CODEX, CODEX2, FALCON, FALCON-X, iCNV, and Canopy, which are
   ([CRAN](https://CRAN.R-project.org/package=Canopy), [GitHub](https://github.com/yuchaojiang/Canopy))
 
 
-## Installation Option 1: Docker Image
+## Installation Option 1: Docker Image - Good for ease of installation
 A docker image is available [here](https://hub.docker.com/r/lzeppelini/marathon/).
 This image is an Rstudio GUI built on rocker/tidyverse with all of the above packages pre-installed.  Also pre-installed is USSC HG19 human genome and "WES.1KG.WUGSC" toy data set. <br /> <br />
 Instructions for using Docker can be found [here](https://docs.docker.com/get-started/).
 
-## Installation Option 2: Install to R
+## Installation Option 2: Install to R - Good for performance
 Install all packages in the latest version of [R](https://www.r-project.org/).
 ```r
 install.packages("devtools")
@@ -122,6 +122,7 @@ The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline
 
 * **Tumor allele-specific copy number by WGS**
   * *Experimental design*: WGS of matched tumor normal pair
+  * *Notebook*: [FALCON for ASCN detection](https://github.com/yuchaojiang/MARATHON/blob/master/notebook/falcon/rNotebook.md)
   * *Script*: [Profiling germline heterozygous loci](https://github.com/yuchaojiang/MARATHON/blob/master/script/germline_het_loci.sh), [FALCON for ASCN detection](https://github.com/yuchaojiang/MARATHON/blob/master/script/FALCON.R)
   * *More details*: [FALCON](https://CRAN.R-project.org/package=falcon)
 
