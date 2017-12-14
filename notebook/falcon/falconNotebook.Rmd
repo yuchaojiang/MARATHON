@@ -7,11 +7,9 @@
         keep_md: true 
 ---  
 
-# This is a demo dataset from relapse genome of neuroblastoma with matched normal
-# from Eleveld et al. (Nature Genetics 2015).
+# This is a demo dataset from relapse genome of neuroblastoma with matched normal from Eleveld et al. (Nature Genetics 2015).
 
-# Falcon takes as input germline heterozygous variants, which can be called by 
-# GATK or VarScan2.  See [Profiling germline heterozygous loci](https://github.com/yuchaojiang/MARATHON/blob/master/script/germline_het_loci.sh) for details.
+# Falcon takes as input germline heterozygous variants, which can be called by  GATK or VarScan2.  See [Profiling germline heterozygous loci](https://github.com/yuchaojiang/MARATHON/blob/master/script/germline_het_loci.sh) for details.
 
 #Load Falcon package
 ```{r}
@@ -27,7 +25,7 @@ source(paste0(faclonURL, "/falcon.qc.R?raw=True"))
 source(paste0(faclonURL, "/falcon.output.R?raw=True"))
 ```
 
-# download the primary and relapse germline heterozygous variants data (This data was generated using "germline_het_loci.sh" script)
+# download the primary and relapse germline heterozygous variants data (This data was generated using [Profiling germline heterozygous loci](https://github.com/yuchaojiang/MARATHON/blob/master/script/germline_het_loci.sh))
 ```{r}
 gitUrl = "https://github.com/yuchaojiang/MARATHON/blob/master/data"
 source_data(paste0(gitUrl, "/relapse.rda?raw=True"))
