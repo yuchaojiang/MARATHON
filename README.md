@@ -16,7 +16,7 @@ If you have any questions or problems when using MARATHON, please feel free to o
 
 #### Installation Option 1: Docker Image - Good for ease of installation
 A docker image is available [here](https://hub.docker.com/r/lzeppelini/marathon/).
-This image is an Rstudio GUI built on rocker/tidyverse with MARATHON as well as all of its dependent packages pre-installed.  Also pre-installed is UCSC hg19 human reference genome and "WES.1KG.WUGSC" toy data set. Note that this can take a while to download the human reference genome as well as the toy sequencing dataset. Instructions for using Docker can be found [here](https://docs.docker.com/get-started/).
+This image is an Rstudio GUI built on rocker/tidyverse with MARATHON as well as all of its dependent packages and datasets pre-installed. Note that this can take a while to download the human reference genome as well as the toy sequencing dataset. Instructions for using Docker can be found [here](https://docs.docker.com/get-started/).
 
 #### Installation Option 2: Install to R/RStudio - Good for performance
 Install all packages in the latest version of [R](https://www.r-project.org/).
@@ -48,34 +48,34 @@ The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline
 
 ## Running MARATHON
 
-**R notebook** with step-by-step demonstration, results, and plots is available [*here*](http://htmlpreview.github.io/?https://github.com/yuchaojiang/MARATHON/blob/master/notebook/codexNormalization/MARATHON.html). Corresponding **Rmd script** is available [*here*](https://github.com/yuchaojiang/MARATHON/blob/master/notebook/codexNormalization/MARATHON.Rmd).
+**R notebook** with step-by-step demonstration, results, and plots is available [*here*](http://htmlpreview.github.io/?https://github.com/yuchaojiang/MARATHON/blob/master/notebook/codexNormalization/MARATHON.html). Corresponding **Rmd script** is available [*here*](https://github.com/yuchaojiang/MARATHON/blob/master/notebook/codexNormalization/MARATHON.Rmd). To break it down, MARATHON can be roughly applied to six experimental designs as outlined below.
 
-* **Total copy number analysis of normal**
+* Total copy number analysis of normal
   * *Experimental design*: WES/WGS with or without matched microarray, greater than 20 samples
   * *Script*: [CODEX normalization](https://github.com/yuchaojiang/MARATHON/blob/master/script/CODEX.R), [CODEX --> iCNV](https://github.com/yuchaojiang/MARATHON/blob/master/script/CODEX_iCNV.R)
   * *More details*: [CODEX](https://github.com/yuchaojiang/CODEX), [iCNV](https://github.com/zhouzilu/iCNV)
 
-* **Total copy number analysis of tumor**
+* Total copy number analysis of tumor
   * *Experimental design*: WES/WGS/targeted sequencing of tumor with greater than 20 normal controls (no need to be matched)
   * *Script*: [CODEX2 normalization and segmentation](https://github.com/yuchaojiang/MARATHON/blob/master/script/CODEX2.R)
   * *More details*: [CODEX2](https://github.com/yuchaojiang/CODEX2)
 
-* **Tumor allele-specific copy number by WGS**
+* Tumor allele-specific copy number by WGS
   * *Experimental design*: WGS of matched tumor normal pair
   * *Script*: [Profiling germline heterozygous loci](https://github.com/yuchaojiang/MARATHON/blob/master/script/germline_het_loci.sh), [FALCON for ASCN detection](https://github.com/yuchaojiang/MARATHON/blob/master/script/FALCON.R)
   * *More details*: [FALCON](https://CRAN.R-project.org/package=falcon)
 
-* **Tumor allele-specific copy number by WES**
+* Tumor allele-specific copy number by WES
   * *Experimental design*: WES/WGS of tumor with matched normal, one or more tumor samples, greater than 20 normal controls (no need to be matched)
   * *Script*: [Profiling germline heterozygous loci](https://github.com/yuchaojiang/MARATHON/blob/master/script/germline_het_loci.sh), [CODEX2 --> FALCON-X](https://github.com/yuchaojiang/MARATHON/blob/master/script/CODEX2_FALCONX.R)
   * *More details*: [CODEX2](https://github.com/yuchaojiang/CODEX2), [FALCON-X](https://CRAN.R-project.org/package=falconx)
 
-* **Tumor phylogeny analysis by WGS**
+* Tumor phylogeny analysis by WGS
   * *Experimental design*: WGS of multiple spatially or temporally separated tumor samples with matched normal
   * *Script*: [Profiling somatic point mutations](https://github.com/yuchaojiang/MARATHON/blob/master/script/somatic_SNV.sh), [FALCON -- > Canopy](https://github.com/yuchaojiang/MARATHON/blob/master/script/FALCON_Canopy.R)
   * *More details*: [FALCON](https://CRAN.R-project.org/package=falcon), [Canopy](https://github.com/yuchaojiang/Canopy)
 
-* **Tumor phylogeny analysis by WES**
+* Tumor phylogeny analysis by WES
   * *Experimental design*: WES/WGS of multiple spatially or temporally separated tumor samples with matched normal, greater than 20 normal controls (no need to be matched)
   * *Script*: [Profiling somatic point mutations](https://github.com/yuchaojiang/MARATHON/blob/master/script/somatic_SNV.sh), [CODEX2 --> FALCON-X](https://github.com/yuchaojiang/MARATHON/blob/master/script/CODEX2_FALCONX.R), [Canopy](https://github.com/yuchaojiang/MARATHON/blob/master/script/Canopy.R)
   * *More details*: [CODEX2](https://github.com/yuchaojiang/CODEX2), [FALCON-X](https://CRAN.R-project.org/package=falconx), [Canopy](https://github.com/yuchaojiang/Canopy)
