@@ -16,8 +16,7 @@ If you have any questions or problems when using MARATHON, please feel free to o
 
 #### Installation Option 1: Docker Image - Good for ease of installation
 A docker image is available [here](https://hub.docker.com/r/lzeppelini/marathon/).
-This image is an Rstudio GUI built on rocker/tidyverse with all of the above packages pre-installed.  Also pre-installed is USSC HG19 human genome and "WES.1KG.WUGSC" toy data set. Note that this can take a while to download the human reference genome as well as the toy sequencing dataset. <br /> <br />
-Instructions for using Docker can be found [here](https://docs.docker.com/get-started/).
+This image is an Rstudio GUI built on rocker/tidyverse with MARATHON as well as all of its dependent packages pre-installed.  Also pre-installed is UCSC hg19 human reference genome and "WES.1KG.WUGSC" toy data set. Note that this can take a while to download the human reference genome as well as the toy sequencing dataset. Instructions for using Docker can be found [here](https://docs.docker.com/get-started/).
 
 #### Installation Option 2: Install to R/RStudio - Good for performance
 Install all packages in the latest version of [R](https://www.r-project.org/).
