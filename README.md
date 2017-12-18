@@ -25,7 +25,7 @@ install.packages(c("canopy", "falcon", "falconx", "fields", "truncnorm", "ggplot
 source("https://bioconductor.org/biocLite.R")
 biocLite(c("CODEX", "WES.1KG.WUGSC"))
 library(devtools)
-install_github(c("yuchaojiang/CODEX2/package", "zhouzilu/iCNV"))
+install_github(c("yuchaojiang/CODEX2/package", "zhouzilu/iCNV/package"))
 ```
 
 
