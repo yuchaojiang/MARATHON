@@ -14,35 +14,14 @@ The manuscript for MARATHON is currently under review. Pre-print is available [h
 If you have any questions or problems when using MARATHON, please feel free to open a new issue [here](https://github.com/yuchaojiang/MARATHON/issues). You can also email the maintainers of the corresponding packages -- the contact information is shown under Developers & Maintainers.
 
 
-## Depends & Installation
+## Installation
 
-MARATHON depends on CODEX, CODEX2, FALCON, FALCON-X, iCNV, and Canopy, which are all publicly available R-packages in CRAN, Bioconductor, and/or GitHub.
-
-* **CODEX**: A Normalization and Copy Number Variation Detection Method for Whole Exome Sequencing
-  ([Bioconductor](http://bioconductor.org/packages/CODEX/), [GitHub](https://github.com/yuchaojiang/CODEX))
-
-* **CODEX2**: Full-spectrum copy number variation detection by high-throughput DNA sequencing
-  ([GitHub](https://github.com/yuchaojiang/CODEX2))
-
-* **iCNV**: Integrated copy number variation detection toolset
-  ([GitHub](https://github.com/zhouzilu/iCNV))
-
-* **FALCON**: Finding Allele-Specific Copy Number in Next-Generation Sequencing Data
-  ([CRAN](https://CRAN.R-project.org/package=falcon))
-
-* **FALCON-X**: Finding Allele-Specific Copy Number in Whole-Exome Sequencing Data
-  ([CRAN](https://CRAN.R-project.org/package=falconx))
-
-* **Canopy**: Accessing Intra-Tumor Heterogeneity and Tracking Longitudinal and Spatial Clonal Evolutionary History by Next-Generation Sequencing
-  ([CRAN](https://CRAN.R-project.org/package=Canopy), [GitHub](https://github.com/yuchaojiang/Canopy))
-
-
-## Installation Option 1: Docker Image - Good for ease of installation
+#### Installation Option 1: Docker Image - Good for ease of installation
 A docker image is available [here](https://hub.docker.com/r/lzeppelini/marathon/).
 This image is an Rstudio GUI built on rocker/tidyverse with all of the above packages pre-installed.  Also pre-installed is USSC HG19 human genome and "WES.1KG.WUGSC" toy data set. <br /> <br />
 Instructions for using Docker can be found [here](https://docs.docker.com/get-started/). ***********Note: this might take a while *************
 
-## Installation Option 2: Install to R - Good for performance
+#### Installation Option 2: Install to R - Good for performance
 Install all packages in the latest version of [R](https://www.r-project.org/).
 ```r
 install.packages("devtools")
@@ -132,14 +111,39 @@ The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline
 
 Please cite MARATHON as well as all the dependent packages that you use.
 
-* MARATHON: [Jiang et al. 2017 bioRixv](https://www.biorxiv.org/content/early/2017/09/28/195230)
-* CODEX: [Jiang et al. 2015 Nucleic Acids Research](https://academic.oup.com/nar/article/43/6/e39/2453417/CODEX-a-normalization-and-copy-number-variation)
-* CODEX2: [Jiang et al. 2017 bioRixv](https://www.biorxiv.org/content/early/2017/10/30/211698)
-* iCNV: [Zhou et al. 2017 bioRixv](https://www.biorxiv.org/content/early/2017/09/01/172700)
-* FALCON: [Chen et al. 2015 Nucleic Acids Research](https://academic.oup.com/nar/article/43/4/e23/2410993/Allele-specific-copy-number-profiling-by-next)
-* FALCON-X: [Chen et al. 2017 Annals of Applied Statistics](https://projecteuclid.org/euclid.aoas/1500537739)
-* Canopy: [Jiang et al. 2016 PNAS](http://www.pnas.org/content/113/37/E5528.full)
+* **MARATHON**: Integrative pipeline for profiling DNA copy number and inferring tumor phylogeny ([GitHub](https://github.com/yuchaojiang/MARATHON))
+  <br>
+  [Jiang et al. 2017 bioRixv](https://www.biorxiv.org/content/early/2017/09/28/195230)
 
+* **CODEX**: A Normalization and Copy Number Variation Detection Method for Whole Exome Sequencing
+  ([Bioconductor](http://bioconductor.org/packages/CODEX/), [GitHub](https://github.com/yuchaojiang/CODEX))
+  <br>
+  [Jiang et al. 2015 Nucleic Acids Research](https://academic.oup.com/nar/article/43/6/e39/2453417/CODEX-a-normalization-and-copy-number-variation)
+
+* **CODEX2**: Full-spectrum copy number variation detection by high-throughput DNA sequencing
+  ([GitHub](https://github.com/yuchaojiang/CODEX2))
+  <br>
+  [Jiang et al. 2017 bioRixv](https://www.biorxiv.org/content/early/2017/10/30/211698)
+
+* **iCNV**: Integrated copy number variation detection toolset
+  ([GitHub](https://github.com/zhouzilu/iCNV))
+  <br>
+  [Zhou et al. 2017 bioRixv](https://www.biorxiv.org/content/early/2017/09/01/172700)
+
+* **FALCON**: Finding Allele-Specific Copy Number in Next-Generation Sequencing Data
+  ([CRAN](https://CRAN.R-project.org/package=falcon))
+  <br>
+  [Chen et al. 2015 Nucleic Acids Research](https://academic.oup.com/nar/article/43/4/e23/2410993/Allele-specific-copy-number-profiling-by-next)
+
+* **FALCON-X**: Finding Allele-Specific Copy Number in Whole-Exome Sequencing Data
+  ([CRAN](https://CRAN.R-project.org/package=falconx))
+  <br>
+  [Chen et al. 2017 Annals of Applied Statistics](https://projecteuclid.org/euclid.aoas/1500537739)
+
+* **Canopy**: Accessing Intra-Tumor Heterogeneity and Tracking Longitudinal and Spatial Clonal Evolutionary History by Next-Generation Sequencing
+  ([CRAN](https://CRAN.R-project.org/package=Canopy), [GitHub](https://github.com/yuchaojiang/Canopy))
+  <br>
+  [Jiang et al. 2016 PNAS](http://www.pnas.org/content/113/37/E5528.full)
 
 
 ## Developers & Maintainers
