@@ -88,40 +88,39 @@ The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline
 
 Please cite MARATHON as well as all the dependent packages that you use.
 
-* **MARATHON**: Integrative pipeline for profiling DNA copy number and inferring tumor phylogeny ([GitHub](https://github.com/yuchaojiang/MARATHON))
+* **MARATHON**: [Jiang et al. 2017 bioRixv](https://www.biorxiv.org/content/early/2017/09/28/195230)
   <br>
-  [Jiang et al. 2017 bioRixv](https://www.biorxiv.org/content/early/2017/09/28/195230)
+  Integrative pipeline for profiling DNA copy number and inferring tumor phylogeny ([GitHub](https://github.com/yuchaojiang/MARATHON))
 
-* **CODEX**: A Normalization and Copy Number Variation Detection Method for Whole Exome Sequencing
+* **CODEX**: [Jiang et al. 2015 Nucleic Acids Research](https://academic.oup.com/nar/article/43/6/e39/2453417/CODEX-a-normalization-and-copy-number-variation)
+  <br>
+  A Normalization and Copy Number Variation Detection Method for Whole Exome Sequencing
   ([Bioconductor](http://bioconductor.org/packages/CODEX/), [GitHub](https://github.com/yuchaojiang/CODEX))
-  <br>
-  [Jiang et al. 2015 Nucleic Acids Research](https://academic.oup.com/nar/article/43/6/e39/2453417/CODEX-a-normalization-and-copy-number-variation)
 
-* **CODEX2**: Full-spectrum copy number variation detection by high-throughput DNA sequencing
+* **CODEX2**: [Jiang et al. 2017 bioRixv](https://www.biorxiv.org/content/early/2017/10/30/211698)
+  <br>
+  Full-spectrum copy number variation detection by high-throughput DNA sequencing
   ([GitHub](https://github.com/yuchaojiang/CODEX2))
+  
+* **iCNV**: [Zhou et al. 2017 bioRixv](https://www.biorxiv.org/content/early/2017/09/01/172700)
   <br>
-  [Jiang et al. 2017 bioRixv](https://www.biorxiv.org/content/early/2017/10/30/211698)
-
-* **iCNV**: Integrated copy number variation detection toolset
+  Integrated copy number variation detection toolset
   ([GitHub](https://github.com/zhouzilu/iCNV))
+  
+* **FALCON**: [Chen et al. 2015 Nucleic Acids Research](https://academic.oup.com/nar/article/43/4/e23/2410993/Allele-specific-copy-number-profiling-by-next)
   <br>
-  [Zhou et al. 2017 bioRixv](https://www.biorxiv.org/content/early/2017/09/01/172700)
-
-* **FALCON**: Finding Allele-Specific Copy Number in Next-Generation Sequencing Data
+  Finding Allele-Specific Copy Number in Next-Generation Sequencing Data
   ([CRAN](https://CRAN.R-project.org/package=falcon))
-  <br>
-  [Chen et al. 2015 Nucleic Acids Research](https://academic.oup.com/nar/article/43/4/e23/2410993/Allele-specific-copy-number-profiling-by-next)
 
-* **FALCON-X**: Finding Allele-Specific Copy Number in Whole-Exome Sequencing Data
+* **FALCON-X**: [Chen et al. 2017 Annals of Applied Statistics](https://projecteuclid.org/euclid.aoas/1500537739)
+  <br>
+  Finding Allele-Specific Copy Number in Whole-Exome Sequencing Data
   ([CRAN](https://CRAN.R-project.org/package=falconx))
-  <br>
-  [Chen et al. 2017 Annals of Applied Statistics](https://projecteuclid.org/euclid.aoas/1500537739)
 
-* **Canopy**: Accessing Intra-Tumor Heterogeneity and Tracking Longitudinal and Spatial Clonal Evolutionary History by Next-Generation Sequencing
+* **Canopy**: [Jiang et al. 2016 PNAS](http://www.pnas.org/content/113/37/E5528.full)
+  <br>
+  Accessing Intra-Tumor Heterogeneity and Tracking Longitudinal and Spatial Clonal Evolutionary History by Next-Generation Sequencing
   ([CRAN](https://CRAN.R-project.org/package=Canopy), [GitHub](https://github.com/yuchaojiang/Canopy))
-  <br>
-  [Jiang et al. 2016 PNAS](http://www.pnas.org/content/113/37/E5528.full)
-
 
 ## Developers & Maintainers
 
