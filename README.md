@@ -48,7 +48,7 @@ The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline
 
 ## Running MARATHON
 
-**R notebook** with step-by-step demonstration, results, and plots is available [*here*](http://htmlpreview.github.io/?https://github.com/yuchaojiang/MARATHON/blob/master/notebook/codexNormalization/MARATHON.html). Corresponding **Rmd script** is available [*here*](https://github.com/yuchaojiang/MARATHON/blob/master/notebook/codexNormalization/MARATHON.Rmd). To break it down, MARATHON can be roughly applied to six experimental designs as outlined below.
+**R notebook** with step-by-step demonstration, results, and plots is available [*here*](http://htmlpreview.github.io/?https://github.com/yuchaojiang/MARATHON/blob/master/notebook/MARATHON.html). Corresponding **Rmd script** is available [*here*](https://github.com/yuchaojiang/MARATHON/blob/master/notebook/MARATHON.Rmd). To break it down, MARATHON can be roughly applied to six experimental designs as outlined below.
 
 * Total copy number analysis of normal
   * *Experimental design*: WES/WGS with or without matched microarray, greater than 20 samples
