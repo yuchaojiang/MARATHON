@@ -149,13 +149,17 @@ Please cite MARATHON as well as all the dependent packages that you use.
   Department of Biostatistics & Department of Genetics, UNC-Chapel Hill
   
 * [Hao Chen](https://anson.ucdavis.edu/~haochen/) (hxchen at ucdavis dot edu)
-
+  <br>
   Department of Statistics, UC Davis
 
-* [Zilu Zhou](https://statistics.wharton.upenn.edu/profile/zhouzilu/) (zhouzilu at pennmedicine dot upenn dot edu)
+* Gene Urrutia (urrutia at email dot unc dot edu)
+  <br>
+  Department of Biostatistics, UNC-Chapel Hill
 
+* [Zilu Zhou](https://statistics.wharton.upenn.edu/profile/zhouzilu/) (zhouzilu at pennmedicine dot upenn dot edu)
+  <br>
   Genomics and Computational Biology Graduate Group, UPenn
 
 * [Nancy R. Zhang](https://statistics.wharton.upenn.edu/profile/nzh/) (nzh at wharton dot upenn dot edu)
-
+  <br>
   Department of Statistics, UPenn
