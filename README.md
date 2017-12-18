@@ -21,7 +21,7 @@ This image is an Rstudio GUI built on rocker/tidyverse with MARATHON as well as 
 #### Installation Option 2: Install to R/RStudio - Good for performance
 Install all packages in the latest version of [R](https://www.r-project.org/).
 ```r
-install.packages(c("canopy", "falcon", "falconx", "fields", "truncnorm", "ggplot2", "devtools"))
+install.packages(c("canopy", "falcon", "falconx", "devtools"))
 source("https://bioconductor.org/biocLite.R")
 biocLite(c("CODEX", "WES.1KG.WUGSC"))
 library(devtools)
