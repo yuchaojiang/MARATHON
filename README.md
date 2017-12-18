@@ -8,24 +8,6 @@ Copy number variation is an important and abundant source of variation in the hu
 
 The manuscript for MARATHON is currently under review. Pre-print is available [here via bioRixv](https://www.biorxiv.org/content/early/2017/09/28/195230).
 
-## Developers & Maintainers
-
-* [Yuchao Jiang](http://sph.unc.edu/adv_profile/yuchao-jiang-phd/) (yuchaoj at email dot unc dot edu)
-
-  Department of Biostatistics & Department of Genetics, UNC-Chapel Hill
-  
-* [Hao Chen](https://anson.ucdavis.edu/~haochen/) (hxchen at ucdavis dot edu)
-
-  Department of Statistics, UC Davis
-
-* [Zilu Zhou](https://statistics.wharton.upenn.edu/profile/zhouzilu/) (zhouzilu at pennmedicine dot upenn dot edu)
-
-  Genomics and Computational Biology Graduate Group, UPenn
-
-* [Nancy R. Zhang](https://statistics.wharton.upenn.edu/profile/nzh/) (nzh at wharton dot upenn dot edu)
-
-  Department of Statistics, UPenn
-
 
 ## Questions & Problems
 
@@ -158,3 +140,22 @@ Please cite MARATHON as well as all the dependent packages that you use.
 * FALCON-X: [Chen et al. 2017 Annals of Applied Statistics](https://projecteuclid.org/euclid.aoas/1500537739)
 * Canopy: [Jiang et al. 2016 PNAS](http://www.pnas.org/content/113/37/E5528.full)
 
+
+
+## Developers & Maintainers
+
+* [Yuchao Jiang](http://sph.unc.edu/adv_profile/yuchao-jiang-phd/) (yuchaoj at email dot unc dot edu)
+  <br>
+  Department of Biostatistics & Department of Genetics, UNC-Chapel Hill
+  
+* [Hao Chen](https://anson.ucdavis.edu/~haochen/) (hxchen at ucdavis dot edu)
+
+  Department of Statistics, UC Davis
+
+* [Zilu Zhou](https://statistics.wharton.upenn.edu/profile/zhouzilu/) (zhouzilu at pennmedicine dot upenn dot edu)
+
+  Genomics and Computational Biology Graduate Group, UPenn
+
+* [Nancy R. Zhang](https://statistics.wharton.upenn.edu/profile/nzh/) (nzh at wharton dot upenn dot edu)
+
+  Department of Statistics, UPenn
