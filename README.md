@@ -48,27 +48,25 @@ The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline
 
 ## Running MARATHON
 
+**R notebook** with step-by-step demonstration, results, and plots is available [*here*](http://htmlpreview.github.io/?https://github.com/yuchaojiang/MARATHON/blob/master/notebook/codexNormalization/MARATHON.html). Corresponding **Rmd script** is available [*here*](https://github.com/yuchaojiang/MARATHON/blob/master/notebook/codexNormalization/MARATHON.Rmd).
+
 * **Total copy number analysis of normal**
   * *Experimental design*: WES/WGS with or without matched microarray, greater than 20 samples
-  * *Notebook*: [CODEX normalization](http://htmlpreview.github.io/?https://github.com/yuchaojiang/MARATHON/blob/master/notebook/codexNormalization/rNotebook.html);  [Rmd script](https://github.com/yuchaojiang/MARATHON/blob/master/notebook/codexNormalization/rNotebook.Rmd)
   * *Script*: [CODEX normalization](https://github.com/yuchaojiang/MARATHON/blob/master/script/CODEX.R), [CODEX --> iCNV](https://github.com/yuchaojiang/MARATHON/blob/master/script/CODEX_iCNV.R)
   * *More details*: [CODEX](https://github.com/yuchaojiang/CODEX), [iCNV](https://github.com/zhouzilu/iCNV)
 
 * **Total copy number analysis of tumor**
   * *Experimental design*: WES/WGS/targeted sequencing of tumor with greater than 20 normal controls (no need to be matched)
-  * *Notebook*: [CODEX2 normalization](http://htmlpreview.github.io/?https://github.com/yuchaojiang/MARATHON/blob/master/notebook/CODEX2/CODEX2.html);  [Rmd script](https://github.com/yuchaojiang/MARATHON/blob/master/notebook/CODEX2/CODEX2.Rmd)
   * *Script*: [CODEX2 normalization and segmentation](https://github.com/yuchaojiang/MARATHON/blob/master/script/CODEX2.R)
   * *More details*: [CODEX2](https://github.com/yuchaojiang/CODEX2)
 
 * **Tumor allele-specific copy number by WGS**
   * *Experimental design*: WGS of matched tumor normal pair
-  * *Notebook*: [FALCON for ASCN detection](http://htmlpreview.github.io/?https://github.com/yuchaojiang/MARATHON/blob/master/notebook/falcon/falconNotebook.html)
   * *Script*: [Profiling germline heterozygous loci](https://github.com/yuchaojiang/MARATHON/blob/master/script/germline_het_loci.sh), [FALCON for ASCN detection](https://github.com/yuchaojiang/MARATHON/blob/master/script/FALCON.R)
   * *More details*: [FALCON](https://CRAN.R-project.org/package=falcon)
 
 * **Tumor allele-specific copy number by WES**
   * *Experimental design*: WES/WGS of tumor with matched normal, one or more tumor samples, greater than 20 normal controls (no need to be matched)
-  * *Notebook*: [CODEX2 --> FALCON-X](http://htmlpreview.github.io/?https://github.com/yuchaojiang/MARATHON/blob/master/notebook/falconX/falconXNotebook.html)
   * *Script*: [Profiling germline heterozygous loci](https://github.com/yuchaojiang/MARATHON/blob/master/script/germline_het_loci.sh), [CODEX2 --> FALCON-X](https://github.com/yuchaojiang/MARATHON/blob/master/script/CODEX2_FALCONX.R)
   * *More details*: [CODEX2](https://github.com/yuchaojiang/CODEX2), [FALCON-X](https://CRAN.R-project.org/package=falconx)
 
