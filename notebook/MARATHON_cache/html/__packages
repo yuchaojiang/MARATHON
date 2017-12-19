@@ -1,0 +1,14 @@
+base
+BiocGenerics
+S4Vectors
+IRanges
+GenomeInfoDb
+GenomicRanges
+XVector
+Biostrings
+Rsamtools
+rtracklayer
+BSgenome
+BSgenome.Hsapiens.UCSC.hg19
+CODEX
+WES.1KG.WUGSC
