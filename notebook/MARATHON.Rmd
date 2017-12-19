@@ -31,7 +31,7 @@ knitr::include_graphics("https://raw.githubusercontent.com/yuchaojiang/MARATHON/
 knitr::include_graphics("https://raw.githubusercontent.com/yuchaojiang/MARATHON/master/figure/Table1.png")
 ```
 
-**Table 1**. Analysis scenarios and pipeline design. The last column shows the sequencing of software that should be used for each analysis scenario. *By “normal” we mean samples that are not derived from tumor tissue. Broad copy number changes are not expected to cover the genome in the normal controls.
+**Table 1**. Analysis scenarios and pipeline design. The last column shows the sequencing of software that should be used for each analysis scenario. *By "normal" we mean samples that are not derived from tumor tissue. Broad copy number changes are not expected to cover the genome in the normal controls.
 
 
 # Running MARATHON
@@ -45,6 +45,7 @@ Get bam file directories, sample names from .txt file, and exonic positions from
 
 ```{r}
 library(CODEX, quietly = TRUE)
+library(CODEX2, quietly = TRUE)
 library(WES.1KG.WUGSC) # Load Toy data from the 1000 Genomes Project.
 dirPath <- system.file("extdata", package = "WES.1KG.WUGSC")
 bamFile <- list.files(dirPath, pattern = '*.bam$')
@@ -107,7 +108,7 @@ plot(K, BIC, type = "b", xlab = "Number of latent variables", pch=20)
 Poisson-likelihood recursive segmentation.
 ```{r message=FALSE}
 optK = K[which.max(BIC)]
-finalcall <- segment(Y_qc, Yhat, optK = optK, K = K, sampname_qc,
+finalcall <- segment.recursive(Y_qc, Yhat, optK = optK, K = K, sampname_qc,
                      ref_qc, chr, lmax = 200, mode = "integer")
 head(finalcall)
 ```
@@ -138,7 +139,7 @@ For WES data, biases and artifacts cannot be fully captured by comparing the tum
 
 ## Tumor phylogeny analysis by WGS/WES
 
-Canopy [@jiang2016assessing] identifies subclones within a tumor, determines the mutational profiles of these subclones, and infers the tumor’s phylogenetic history by NGS data from temporally and/or spatially separated tumor resections from the same patient. Canopy jointly models somatic copy number changes and SNVs in a similar fashion to non-negative matrix factorization and adopts a Bayesian framework to reconstruct phylogeny with posterior confidence assessment. Canopy takes as input both somatic ASCN changes returned by FALCON/FALCON-X as well as somatic SNVs and outputs tumor phylogenetic trees with somatic mutations placed along tree branches and subclones placed at the leaves. 
+Canopy [@jiang2016assessing] identifies subclones within a tumor, determines the mutational profiles of these subclones, and infers the tumor's phylogenetic history by NGS data from temporally and/or spatially separated tumor resections from the same patient. Canopy jointly models somatic copy number changes and SNVs in a similar fashion to non-negative matrix factorization and adopts a Bayesian framework to reconstruct phylogeny with posterior confidence assessment. Canopy takes as input both somatic ASCN changes returned by FALCON/FALCON-X as well as somatic SNVs and outputs tumor phylogenetic trees with somatic mutations placed along tree branches and subclones placed at the leaves. 
 
 
 # Session info
