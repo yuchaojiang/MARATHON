@@ -33,6 +33,22 @@ knitr::include_graphics("https://raw.githubusercontent.com/yuchaojiang/MARATHON/
 
 **Table 1**. Analysis scenarios and pipeline design. The last column shows the sequencing of software that should be used for each analysis scenario. *By "normal" we mean samples that are not derived from tumor tissue. Broad copy number changes are not expected to cover the genome in the normal controls.
 
+# Installation
+
+**Installation Option 1**: Docker Image - Good for ease of installation
+A docker image is available [here](https://hub.docker.com/r/lzeppelini/marathon/).
+This image is an Rstudio GUI built on rocker/tidyverse with MARATHON as well as all of its dependent packages and datasets pre-installed. Note that this can take a while to download the human reference genome as well as the toy sequencing dataset. Instructions for using Docker can be found [here](https://docs.docker.com/get-started/).
+
+**Installation Option 2**: Install to R/RStudio - Good for performance
+Install all packages in the latest version of [R](https://www.r-project.org/).
+```{r, eval=FALSE}
+install.packages(c("canopy", "falcon", "falconx", "devtools"))
+source("https://bioconductor.org/biocLite.R")
+biocLite(c("CODEX", "WES.1KG.WUGSC"))
+library(devtools)
+install_github(c("yuchaojiang/CODEX2/package", "zhouzilu/iCNV/package", "yuchaojiang/MARATHON/package"))
+```
+
 
 # Running MARATHON
 
@@ -43,9 +59,8 @@ CODEX [@jiang2015codex] adopts a Poisson latent factor model for normalization t
 
 Get bam file directories, sample names from .txt file, and exonic positions from .bed file.
 
-```{r}
-library(CODEX, quietly = TRUE)
-library(CODEX2, quietly = TRUE)
+```{r, message=FALSE, warning=FALSE}
+library(MARATHON, quietly = TRUE)
 library(WES.1KG.WUGSC) # Load Toy data from the 1000 Genomes Project.
 dirPath <- system.file("extdata", package = "WES.1KG.WUGSC")
 bamFile <- list.files(dirPath, pattern = '*.bam$')
@@ -114,10 +129,10 @@ head(finalcall)
 ```
 
 
-### CODEX2 for total copy number analysis in normal with improved sensitivity
+### CODEX2 for calling improvement
 CODEX2 [@jiang2017codex2] builds on CODEX with a significant improvement of sensitivity for both rare and common variants.
 
-### iCNV for using B-allele frequency and log-ratio at heterozygous loci to improve calling accuracy
+### iCNV for calling improvement
 iCNV [@zhou2017integrative] uses the normalized coverage from CODEX/CODEX2, and makes use of sequenced reads at inherited single nucleotide polymorphism (SNP) positions for CNV detection. These heterozygous loci are shown to be valuable in improving detection and genotyping accuracy. iCNV takes as input normalized coverage by CODEX/CODEX2, allelic frequency at inherited SNP positions from sequencing, and log-ratio and B-allele frequency from SNP array. Output is CNV calls with quality scores.
 
 
@@ -132,9 +147,108 @@ CODEX2 [@jiang2017codex2] can be applied to two scenarios: the case control scen
 
 For allele-specific copy number estimation in a matched tumor-normal setting, FALCON [@chen2014allele] is based on a change-point model on a process of a mixture of two bivariate Binomial distributions. FALCON takes as input allelic read counts at germline heterozygous loci and outputs ASCN estimates with genome segmentations. 
 
+Calculate depth ratio (total read counts of tumor versus normal). Restrict our analysis to chromosome 14, where a copy-neutral loss of heterozygosity has been previously reported.
+```{r}
+coverageData = relapse.demo
+rdep=sum(coverageData$Tumor_ReadCount_Total)/sum(coverageData$Normal_ReadCount_Total)
+chr = 14
+coverageChr=coverageData[which(coverageData[,'Chromosome']==chr),]
+```
+
+Remove variants with missing genotype.
+```{r}
+nonMissing1 = coverageChr[,'Match_Norm_Seq_Allele1']!=' '
+nonMissing2 = coverageChr[,'Match_Norm_Seq_Allele2']!=' '
+nonMissing3 = coverageChr[,'Reference_Allele']!=' '
+nonMissing4 = coverageChr[,'TumorSeq_Allele1']!=' '
+nonMissing5 = coverageChr[,'TumorSeq_Allele2']!=' '
+coverageChr=coverageChr[nonMissing1 & nonMissing2 & nonMissing3 & nonMissing4 & nonMissing5,]
+```
+  
+Get germline heterozygous loci where normal allele1 differs from normal allele2.
+```{r}
+coverageChrHet=coverageChr[(as.matrix(coverageChr[,'Match_Norm_Seq_Allele1'])!=as.matrix(coverageChr[,'Match_Norm_Seq_Allele2'])),]
+```
+  
+QC procedures to remove false neg and false pos variants. The thresholds can be adjusted.
+
+```{r}
+# Remove indels (this can be relaxed but we think indels are harder to call than SNPs).
+indelThresh = 1
+indel.filter1=nchar(as.matrix(coverageChrHet[,'Reference_Allele']))<=indelThresh
+indel.filter2=nchar(as.matrix(coverageChrHet[,'Match_Norm_Seq_Allele1']))<=indelThresh
+indel.filter3=nchar(as.matrix(coverageChrHet[,'Match_Norm_Seq_Allele2']))<=indelThresh
+indel.filter4=nchar(as.matrix(coverageChrHet[,'TumorSeq_Allele1']))<=indelThresh
+indel.filter5=nchar(as.matrix(coverageChrHet[,'TumorSeq_Allele2']))<=indelThresh
+coverageChrHet=coverageChrHet[indel.filter1 & indel.filter2 & indel.filter3 & indel.filter4 & indel.filter5,]
+
+# Filter on coverage: total number of reads greater than 30 in both tumor and normal.
+coverageThresh = 30
+depth.filter1=(coverageChrHet[,"Normal_ReadCount_Ref"]+coverageChrHet[,"Normal_ReadCount_Alt"])>=coverageThresh
+depth.filter2=(coverageChrHet[,"Tumor_ReadCount_Ref"]+coverageChrHet[,"Tumor_ReadCount_Alt"])>=coverageThresh
+coverageChrHet=coverageChrHet[depth.filter1 & depth.filter2,]
+```  
+  
+Generat input for FALCON (data frame with four columns), run FALCON, and view FALCON's segmentation.
+
+```{r message=FALSE, results=FALSE, fig.align = "center"}
+readMatrix=as.data.frame(coverageChrHet[,c('Tumor_ReadCount_Ref',
+                                                   'Tumor_ReadCount_Alt',
+                                                   'Normal_ReadCount_Ref',
+                                                   'Normal_ReadCount_Alt')])
+colnames(readMatrix)=c('AT','BT','AN','BN')
+tauhat = getChangepoints(readMatrix)
+cn = getASCN(readMatrix, tauhat=tauhat, rdep = rdep, threshold = 0.3)
+view(cn, pos=coverageChrHet[,'Start_position'], rdep = rdep)
+```
+
+From the figure above, we see that: (1) There are small segments that need to be removed; (2) Consecutive segments with similar allelic copy number states need to be combined. Therefore, we need to further curate FALCON's segmentation results.
+  
+```{r, fig.align = "center"}
+if(length(tauhat)>0){
+  length.thres=10^6  # Threshold for length of segments, in base pair.
+  delta.cn.thres=0.3  # Threshold of absolute copy number difference between consecutive segments.
+  falcon.qc.list = falcon.qc(readMatrix = readMatrix,
+                             tauhat = tauhat,
+                             cn = cn,
+                             st_bp = coverageChrHet[,"Start_position"],
+                             end_bp = coverageChrHet[,"End_position"],
+                             rdep = rdep,
+                             length.thres = length.thres,
+                             delta.cn.thres = delta.cn.thres)
+  tauhat=falcon.qc.list$tauhat
+  cn=falcon.qc.list$cn
+}
+# Chromosomal view of QC'ed segmentation results.
+view(cn,pos=coverageChrHet[,'Start_position'], rdep = rdep)
+```
+
+The code below is to generate table output including genomic locations for segment boudaries, as well as mean and standard deviation for each segment. For Canopy's input, we use Bootstrap-based method to estimate the standard deviations for the allele-specific copy numbers.
+
+```{r}  
+  falcon.output=falcon.output(readMatrix = readMatrix,
+                              tauhat = tauhat,
+                              cn = cn,
+                              st_bp = coverageChrHet[,"Start_position"],
+                              end_bp = coverageChrHet[,"End_position"],
+                              nboot = 5000)
+  falcon.output = cbind(chr=rep(chr,nrow(falcon.output)), falcon.output)
+  falcon.output
+```  
+
+
+
+
 ## Tumor allele-specific copy number by WES
 
 For WES data, biases and artifacts cannot be fully captured by comparing the tumor sample to the matched normal sample. FALCON-X [@chen2017allele] extends upon FALCON, where it takes as inputs allelic read counts at germline heterozygous loci and total coverage biases for each of these loci estimated by CONDEX2 and outputs ASCN estimates.
+
+
+
+
+
+
+
 
 
 ## Tumor phylogeny analysis by WGS/WES
