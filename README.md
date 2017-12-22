@@ -28,7 +28,6 @@ library(devtools)
 install_github(c("yuchaojiang/CODEX2/package", "zhouzilu/iCNV/package", "yuchaojiang/MARATHON/package"))
 ```
 
-
 ## Pipeline overview
 
 The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline for the relationship between the software: CODEX and CODEX2 perform read depth normalization for total copy number profiling; read depth normalized by CODEX/CODEX2 is received by iCNV, which combines it with allele-specific read counts and microarray data to detect CNVs; FALCON and FALCON-X perform ASCN analysis; and Canopy receives input from FALCON/FALCON-X to perform tumor phylogeny reconstruction.
@@ -48,7 +47,7 @@ The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline
 
 ## Running MARATHON
 
-**R notebook** with step-by-step demonstration, results, and plots is available [***here***](https://rawgit.com/yuchaojiang/MARATHON/master/notebook/MARATHON.html). Corresponding **Rmd script** is available [***here***](https://github.com/yuchaojiang/MARATHON/blob/master/notebook/MARATHON.Rmd).
+**R notebook** with step-by-step demonstration and rich display is available [***here***](https://rawgit.com/yuchaojiang/MARATHON/master/notebook/MARATHON.html). Corresponding **Rmd script** is available [***here***](https://github.com/yuchaojiang/MARATHON/blob/master/notebook/MARATHON.Rmd).
 
 
 ## Citation
