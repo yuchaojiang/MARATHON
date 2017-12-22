@@ -18,7 +18,7 @@ knitr::opts_chunk$set(tidy=FALSE, cache=TRUE,
 ```	
 
 
-# Overview of analysis pipeline
+# 1. Overview of analysis pipeline
 
 The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline for the relationship between the software: CODEX and CODEX2 perform read depth normalization for total copy number profiling; read depth normalized by CODEX/CODEX2 is received by iCNV, which combines it with allele-specific read counts and microarray data to detect CNVs; FALCON and FALCON-X perform ASCN analysis; and Canopy receives input from FALCON/FALCON-X to perform tumor phylogeny reconstruction.
 
@@ -33,13 +33,39 @@ knitr::include_graphics("https://raw.githubusercontent.com/yuchaojiang/MARATHON/
 
 **Table 1**. Analysis scenarios and pipeline design. The last column shows the sequencing of software that should be used for each analysis scenario. *By "normal" we mean samples that are not derived from tumor tissue. Broad copy number changes are not expected to cover the genome in the normal controls.
 
-# Installation
+# 2. Questions & issues
 
-**Installation Option 1**: Docker Image - Good for ease of installation
+  If you have any questions or problems when using MARATHON, please feel free to open a new issue [here](https://github.com/yuchaojiang/MARATHON/issues). You can also email the maintainers of the corresponding packages -- the contact information is below.
+  
+  
+* [Yuchao Jiang](http://sph.unc.edu/adv_profile/yuchao-jiang-phd/) (yuchaoj at email dot unc dot edu)
+  <br>
+  Department of Biostatistics & Department of Genetics, UNC-Chapel Hill
+  
+* [Hao Chen](https://anson.ucdavis.edu/~haochen/) (hxchen at ucdavis dot edu)
+  <br>
+  Department of Statistics, UC Davis
+
+* Gene Urrutia (urrutia at email dot unc dot edu)
+  <br>
+  Department of Biostatistics, UNC-Chapel Hill
+
+* [Zilu Zhou](https://statistics.wharton.upenn.edu/profile/zhouzilu/) (zhouzilu at pennmedicine dot upenn dot edu)
+  <br>
+  Genomics and Computational Biology Graduate Group, UPenn
+
+* [Nancy R. Zhang](https://statistics.wharton.upenn.edu/profile/nzh/) (nzh at wharton dot upenn dot edu)
+  <br>
+  Department of Statistics, UPenn
+
+# 3. Installation
+## 3.1 Installation Option 1: Docker image - good for ease of installation
+
 A docker image is available [here](https://hub.docker.com/r/lzeppelini/marathon/).
 This image is an Rstudio GUI built on rocker/tidyverse with MARATHON as well as all of its dependent packages and datasets pre-installed. Note that this can take a while to download the human reference genome as well as the toy sequencing dataset. Instructions for using Docker can be found [here](https://docs.docker.com/get-started/).
 
-**Installation Option 2**: Install to R/RStudio - Good for performance
+## 3.2 Installation Option 2: Install to R/RStudio - good for performance
+
 Install all packages in the latest version of [R](https://www.r-project.org/).
 ```{r, eval=FALSE}
 install.packages(c("canopy", "falcon", "falconx", "devtools"))
@@ -50,11 +76,11 @@ install_github(c("yuchaojiang/CODEX2/package", "zhouzilu/iCNV/package", "yuchaoj
 ```
 
 
-# Running MARATHON
+# 4. Running MARATHON
 
-## Total copy number analysis of normal
+## 4.1. Total copy number analysis of normal
 
-### CODEX for data normalization and total copy number analysis in normal
+### 4.1.1. CODEX for data normalization and total copy number analysis in normal
 CODEX [@jiang2015codex] adopts a Poisson latent factor model for normalization to remove biases due to GC content, exon capture and amplification efficiency, and latent systemic artifacts.
 
 Get bam file directories, sample names from .txt file, and exonic positions from .bed file.
@@ -129,23 +155,440 @@ head(finalcall)
 ```
 
 
-### CODEX2 for calling improvement
+
+### 4.1.2. CODEX2 for calling improvement
 CODEX2 [@jiang2017codex2] builds on CODEX with a significant improvement of sensitivity for both rare and common variants.
 
-### iCNV for calling improvement
+
+#### 4.1.2.1. Analysis overview
+
+The figure below illustrates the two experimental designs for which CODEX2 can be applied: (i) case-control design with a group of negative control samples, where the goal is to detect CNVs disproportionately present in the ‘cases’ versus the ‘controls’; and (ii) detection of all CNVs present in all samples design, such as in the Exome Aggregation Consortium. The key innovation in CODEX2 is the usage of negative control genome regions in a genome-wide latent factor model for sample- and position-specific background correction, and the utilization of negative control samples, under a case-control design, to further improve background bias estimation under this model. The negative control genome regions defined by CODEX2 are regions that do not harbor common CNVs, but that are still allowed to harbor rare CNVs, and can be constructed from existing studies or learned from data.
+
+```{r, out.width = "600px", fig.align = "center", echo=FALSE}
+knitr::include_graphics("https://raw.githubusercontent.com/yuchaojiang/CODEX2/master/demo/Figure1.png")
+```
+
+
+#### 4.1.2.2. Pre-processing
+This step is to get directories of .bam files, read in exon target positions from .bed files, and get sample names. The direct input of CODEX2 include: *bamdir*, which is a vector indicating the directories of all .bam files; *sampname*, which is a column vector with row entries of sample names; *bedFile*, which indicates the directory of the .bed file (WES bait file, no header, sorted by start and end positions); and *chr*, which specifies the chromosome. CODEX2 processes the entire genome chromosome by chromosome; make sure  the chromosome formats are consistent between the .bed and the .bam files.
+```{r, message=FALSE}
+library(MARATHON)
+library(WES.1KG.WUGSC) # Load Toy data from the 1000 Genomes Project.
+dirPath <- system.file("extdata", package = "WES.1KG.WUGSC")
+bamFile <- list.files(dirPath, pattern = '*.bam$')
+bamdir <- file.path(dirPath, bamFile)
+sampname <- as.matrix(read.table(file.path(dirPath, "sampname")))
+bedFile <- file.path(dirPath, "chr22_400_to_500.bed")
+chr <- 22
+bambedObj <- getbambed(bamdir = bamdir, bedFile = bedFile, 
+                       sampname = sampname, projectname = "CODEX_demo", chr)
+bamdir <- bambedObj$bamdir; sampname <- bambedObj$sampname
+ref <- bambedObj$ref; projectname <- bambedObj$projectname; chr <- bambedObj$chr
+```
+
+Getting raw read depth, GC content and mappability: read depth matrix, as well as read lengths across all samples, will be returned.
+```{r, message=FALSE}
+coverageObj <- getcoverage(bambedObj, mapqthres = 20)
+Y <- coverageObj$Y; readlength <- coverageObj$readlength
+gc <- getgc(chr, ref)
+mapp <- getmapp(chr, ref)
+```
+
+Quality control: take a sample-wise and exon-wise quality control procedure on 
+the depth of coverage matrix.
+```{r}
+qcObj <- qc(Y, sampname, chr, ref, mapp, gc, cov_thresh = c(20, 4000), 
+    length_thresh = c(20, 2000), mapp_thresh = 0.9, gc_thresh = c(20, 80))
+Y_qc <- qcObj$Y_qc; sampname_qc <- qcObj$sampname_qc; gc_qc <- qcObj$gc_qc
+mapp_qc <- qcObj$mapp_qc; ref_qc <- qcObj$ref_qc; qcmat <- qcObj$qcmat
+#write.table(qcmat, file = paste(projectname, '_', chr, '_qcmat', '.txt', sep=''),
+#            sep='\t', quote=FALSE, row.names=FALSE)
+```
+
+Running CODEX2: For demonstration purpose, we in silico spiked in CNVs spanning exon 1580 - 1620 with a population frequency 40%. There are altogether 90 samples, 36 of which have the heterozygous deletion. The toy dataset is stored as part of the CODEX2 R-package.
+
+#### 4.1.2.3. Running CODEX2 with negative control regions
+
+We can empirically identify common CNV regions by a first-pass CODEX run: For exons residing in common CNV regions, the s.d. of normalized z-scores across all samples will be large.
+
+```{r, message= FALSE, eval=FALSE}
+# Empirically identify common CNV regions from the data.
+normObj=normalize_null(Y_qc = Y_qc, gc_qc = gc_qc, K = 1:6)
+z.codex = log(Y_qc/normObj$Yhat[[which.max(normObj$BIC)]])
+plot(1:nrow(z.codex), apply(z.codex,1,sd))
+which(apply(z.codex,1,sd)>=0.25) 
+cnv_index1 = which(apply(z.codex,1,sd)>=0.25) 
+# This can also be provided by the user as known,
+# e.g., from existing database (DGV or dbVar) or knowledge (tumor supressors or oncogenes).
+cnv_index2 = 1580:1620
+head(cnv_index1 == cnv_index2)
+
+normObj=normalize_codex2_nr(Y_qc = Y_qc, gc_qc = gc_qc, 
+                            K = 1:6, cnv_index = cnv_index1)
+Yhat.nr=normObj$Yhat; fGC.hat.nr=normObj$fGC.hat;
+beta.hat.nr=normObj$beta.hat; g.hat.nr=normObj$g.hat; h.hat.nr=normObj$h.hat
+AIC.nr=normObj$AIC; BIC.nr=normObj$BIC; RSS.nr=normObj$RSS
+```
+
+Running Poisson-likelihood recursive segmentation by CODEX2
+```{r, message=FALSE, eval = FALSE}
+finalcall.codex2.nr <- segment.recursive(Y_qc, Yhat.nr, optK = which.max(BIC.nr),
+                                         K = 1:6, sampname_qc = paste('sample',1:ncol(Y_qc),sep=''),
+                                         ref_qc = IRanges(start=1:nrow(Y_qc)*100, end=1:nrow(Y_qc)*100+50),
+                                         chr = 18, lmax = 200, mode = "integer")
+# write.table(finalcall.codex2.nr, file = 'finalcall.codex2.nr.int.txt', 
+#             sep='\t', quote=FALSE, row.names=FALSE)
+```
+
+
+### 4.1.3. iCNV for calling improvement
 iCNV [@zhou2017integrative] uses the normalized coverage from CODEX/CODEX2, and makes use of sequenced reads at inherited single nucleotide polymorphism (SNP) positions for CNV detection. These heterozygous loci are shown to be valuable in improving detection and genotyping accuracy. iCNV takes as input normalized coverage by CODEX/CODEX2, allelic frequency at inherited SNP positions from sequencing, and log-ratio and B-allele frequency from SNP array. Output is CNV calls with quality scores.
 
+#### 4.1.3.1. Bam file normalization using CODEX
+Researchers working on WGS need to generate your own BED file for CODEX normalization. We made a function [bed_generator](https://github.com/zhouzilu/iCNV/raw/master/iCNV_rdoc.pdf) to help with this. For WES and targeted sequencing, the BED file is from pull-down design. Follow code below to get normalized NGS PLR. Due to the file upload size restriction, raw demo BAM file isn't uploaded to Github. Please email zhouzilu@pennmedicine.upenn.edu to request BAM files.
+
+```{r, eval=FALSE}
+library(MARATHON)
+# Pre-process
+dirPath <- 'demo/ngs/bam'# 'PATH/TO/BAM'
+bamFile <- list.files(dirPath, pattern = '*.bam$')
+bamdir <- file.path(dirPath, bamFile)
+sampname <- as.matrix(read.table(file.path(dirPath, "sampname")))
+bedFile <- file.path(dirPath, "chr22_18000_to_38000.bed")
+chr <- 22
+bambedObj <- getbambed(bamdir = bamdir, bedFile = bedFile, 
+                   sampname = sampname, projectname = "icnv.demo", chr)
+bamdir <- bambedObj$bamdir; sampname <- bambedObj$sampname
+ref <- bambedObj$ref; projectname <- bambedObj$projectname; chr <- bambedObj$chr
+# Get coverage
+coverageObj <- getcoverage(bambedObj, mapqthres = 20)
+Y <- coverageObj$Y; readlength <- coverageObj$readlength
+# Get GC content and mappability
+gc <- getgc(chr, ref)
+mapp <- getmapp(chr, ref)
+# Quality control
+qcObj <- qc(Y, sampname, chr, ref, mapp, gc, cov_thresh = c(20, 4000), 
+            length_thresh = c(20, 2000), mapp_thresh = 0.9, gc_thresh = c(20, 80))
+Y_qc <- qcObj$Y_qc; sampname_qc <- qcObj$sampname_qc; gc_qc <- qcObj$gc_qc
+mapp_qc <- qcObj$mapp_qc; ref_qc <- qcObj$ref_qc; qcmat <- qcObj$qcmat
+# CODEX normalization
+normObj <- normalize(Y_qc, gc_qc, K = 1:9)
+Yhat <- normObj$Yhat; AIC <- normObj$AIC; BIC <- normObj$BIC
+RSS <- normObj$RSS; K <- normObj$K
+choiceofK(AIC, BIC, RSS, K, filename = paste0(projectname, "_", chr, "_choiceofK.pdf"))
+save(qcObj,normObj,sampname,file=paste0(projectname,"_",chr,".rda") )
+```
+CODEX reports all three statistical metrics (AIC, BIC, variance reduction) and uses BIC as the default method to determine the number of Poisson factors. Since false positives can be screened out through a closer examination of the post-segmentation data, whereas CNV signals removed in the normalization step cannot be recovered, CODEX opts for a more conservative normalization that, when in doubt, uses a smaller value of K.
+```{r, eval=FALSE}
+load(paste0(projectname,"_",chr,".rda"))
+optK = K[which.max(BIC)] # by default or customize given curves
+# Log-transformed z-score based on CODEX's normalization results
+Y_qc <- qcObj$Y_qc; sampname_qc <- qcObj$sampname_qc; gc_qc <- qcObj$gc_qc
+mapp_qc <- qcObj$mapp_qc; ref_qc <- qcObj$ref_qc; qcmat <- qcObj$qcmat
+Yhat <- normObj$Yhat; AIC <- normObj$AIC; BIC <- normObj$BIC
+RSS <- normObj$RSS; K <- normObj$K
+ref_qc=qcObj$ref_qc # IRanges object for exon target
+sampname_qc=qcObj$sampname_qc # sample names
+Y_norm=normObj$Yhat[[optK]] # normalized read count under null (no CNV)
+plr=log(pmax(Y_qc,0.0001)/pmax(Y_norm,0.0001)) # log transformed z-scores
+ngs_plr=lapply(seq_len(ncol(plr)), function(i) plr[,i])
+ngs_plr.pos=lapply(seq_len(ncol(plr)),function(x){return(cbind(start(ref_qc),end(ref_qc)))})
+save(sampname_qc,ngs_plr,ngs_plr.pos,file=paste0(projectname,'plrObj_',chr,'_',optK,'.rda'))
+```
+
+#### 4.1.3.2. B-allele frequency calling of germline variant
+
+For sequencing data without SNV callsets in VCF format, we manually call SNVs from quality controlled BAM files by the mpileup module in samtools, and calculate B allele frequency(BAF) on heterozygous loci by dividing DV (Number of high-quality non-reference bases, FORMAT) from DP (Number of high-quality bases, FORMAT). Example code are:
+```{bash, eval=FALSE}
+# Prerequest: samtools, bcftools and reference fasta file
+cd PATH/TO/BAM
+for i in *bam; do PATH/TO/SAMTOOLS/samtools mpileup -ugI -t DP -t DV -f PATH/TO/REF/human_hg37.fasta $i | ~/bcftools-1.3.1/bcftools call -cv -O z -o PATH/TO/OUTPUT/$i.vcf.gz; done
+```
+
+We could further extract variants BAF info from vcf file by function [bambaf_from_vcf](https://github.com/zhouzilu/iCNV/raw/master/iCNV_rdoc.pdf). 
+```{r, eval=FALSE}
+library(MARATHON)
+projectname = "icnv.demo"
+dir='ngs/baf' # PATH/TO/FOLDER
+bambaf_from_vcf(dir,'vcf.sample.list',chr=22,projectname) # ignore chr argement if want to convert all chromosome 1-22
+load(file.path(dir,'bambaf_22.rda'))
+str(ngs_baf)
+str(ngs_baf.pos)
+```
+
+#### 4.1.3.3. SNP array LRR normalization and BAF
+Due to the fact that signal intensity files vary from platform to platform, we set a standard signal intensity file format for each individual: 
+```
+Name,Chr,POS,sample_1.Log R Ratio,sample_1.B Allele Freq
+rs1,22,15462739,-0.096390619874,0.0443964861333
+rs2,22,15520991,-0.154103130102,0.963218688965
+rs3,22,15780940,-0.110297381878,0.0457459762692
+rs4,22,15863717,-0.21270519495,0.957377910614
+rs5,22,16532045,-0.0330782271922,0.0300635993481
+```
+The first row is rsid (Name), followed by chromosome (Chr), position (POS), log R ratio (sample1.Log R Ratio), and BAF (sample1.B Allele Freq). Function [get_array_input](https://github.com/zhouzilu/iCNV/blob/master/iCNV_rdoc.pdf) can be used to convert the data input to iCNV's format. For example, in the demo dataset:
+```{r, eval=FALSE}
+# iCNV_array_input
+dir='array' # PATH/TO/FOLDER
+projectname = "icnv.demo"
+pattern=paste0('*.csv.arrayicnv$')
+get_array_intput(dir,pattern,chr=22,projectname=projectname)
+load(file.path(dir,paste0(projectname,'array_lrrbaf_22.rda')))
+str(snp_lrr)
+str(snp_lrr.pos)
+str(snp_baf)
+str(snp_baf.pos)
+```
+
+For some of the SNP array LRR data, we need to apply singular value decomposition (SVD) to remove high-dimensional noise and preserve low-dimension signal. Noisy data has the feature of local strip across samples (use the `plot_intensity` function). Conventional way for identifying the elbow point to determine the number of PCs can be applied here. More details can be found [here](https://github.com/zhouzilu/iCNV/blob/master/package/vignettes/iCNV-vignette.Rmd).
+
+#### 4.1.3.4. Mutiple platform CNV detection
+
+At this step, we should alreday have PLR and variants BAF from sequencing, normalized LRR and BAF from SNP array. Please make sure all the input are of type list. This is mainly to accomadate the fact that the lengths for `ngs_baf` and `ngs_baf.pos` are sample specific. Try out with demo code and sample dataset availabe [here](https://github.com/zhouzilu/iCNV/tree/master/demo.zip).
+
+```{r, eval=FALSE}
+dir='array' # PATH/TO/ARRAYDATA
+load(file.path(dir,paste0(projectname,'array_lrrbaf_22.rda'))) # load array data
+load(file.path('ngs',paste0(projectname,'plrObj_22_2.rda'))) # load NGS PLR
+
+dir='ngs/baf' # PATH/TO/NGSBAF
+load(file.path(dir,paste0(projectname,'bambaf_22.rda'))) # load NGS BAF
+
+str(ngs_plr) # List of n vector, each one is the PLR for an exon
+str(ngs_plr.pos) # List of n matrix (p x 2), each one is the start and end location for an exon
+str(ngs_baf) # List of n vector, each one is the variants BAF from .bam
+str(ngs_baf.pos) # List of n vector, each one is the variants BAF position
+str(snp_lrr) # List of n vector, each one is the normalized LRR for a SNP
+str(snp_lrr.pos) # List of n vector, each one is a SNP position
+str(snp_baf) # List of n vector, each one is the BAF for a SNP
+str(snp_baf.pos) # List of n vector, each one is the SNP BAF position
+projname='icnv.demo'
+icnv_res0=iCNV_detection(ngs_plr,snp_lrr,
+                         ngs_baf,snp_baf,
+                         ngs_plr.pos,snp_lrr.pos,
+                         ngs_baf.pos,snp_baf.pos,
+                         projname=projname,CN=0,mu=c(-3,0,2),cap=T,visual = 1)
+icnv.output = output_list(icnv_res0,sampname_qc,CN=0)
+head(icnv.output)
+```
+
+#### 4.1.3.5. Single platform CNV detection
+
+At this step, we should alreday have PLR and variants BAF from sequencing OR normalized LRR and BAF from SNP array. Please make sure all the input are in list form. 
+Try out with demo code and sample dataset available [here](https://github.com/zhouzilu/iCNV/tree/master/demo).
+
+NGS only CNV detection using iCNV
+```{r, eval=FALSE}
+str(ngs_plr) # List of n vector, each one is the PLR for an exon
+str(ngs_plr.pos) # List of n matrix (p x 2), each one is the start and end location for an exon
+str(ngs_baf) # List of n vector, each one is the variants BAF from .bam
+str(ngs_baf.pos) # List of n vector, each one is the variants BAF position
+projname='icnv.demo.ngs'
+icnv_res0_ngs=iCNV_detection(ngs_plr=ngs_plr, ngs_baf = ngs_baf, ngs_plr.pos = ngs_plr.pos,ngs_baf.pos = ngs_baf.pos, projname=projname,CN=0,mu=c(-3,0,2),cap=T,visual = 2)
+icnv.output = output_list(icnv_res0,sampname_qc,CN=0)
+head(icnv.output)
+```
+
+SNP array only CNV detection using iCNV
+```{r, eval=FALSE}
+str(snp_lrr) # List of n vector, each one is the normalized LRR for a SNP
+str(snp_lrr.pos) # List of n vector, each one is a SNP position
+str(snp_baf) # List of n vector, each one is the BAF for a SNP
+str(snp_baf.pos) # List of n vector, each one is the SNP BAF position
+projname='icnv.demo.snp'
+icnv_res0_snp=iCNV_detection(snp_lrr=snp_lrr, snp_baf = snp_baf, snp_lrr.pos = snp_lrr.pos,snp_baf.pos = snp_baf.pos, projname=projname,CN=0,mu=c(-3,0,2),cap=T,visual = 2)
+icnv.output = output_list(icnv_res0,sampname_qc,CN=0)
+head(icnv.output)
+```
 
 
 
-## Total copy number analysis of tumor
+## 4.2. Total copy number analysis of tumor
 
 CODEX2 [@jiang2017codex2] can be applied to two scenarios: the case control scenario where the goal is to detect CNVs that are enriched in the case samples; and the scenario where control samples are not available and the goal is simply to profile all CNVs. CODEX and CODEX2 take as input assembled BAM files as well as bed files specifying targets for WES and targeted sequencing and output normalized read counts and tab-delimited text files with copy number calls.
 
+### 4.2.1. Analysis overview
 
-## Tumor allele-specific copy number by WGS
+The figure below illustrates the two experimental designs for which CODEX2 can be applied: (i) case-control design with a group of negative control samples, where the goal is to detect CNVs disproportionately present in the ‘cases’ versus the ‘controls’; and (ii) detection of all CNVs present in all samples design, such as in the Exome Aggregation Consortium. The key innovation in CODEX2 is the usage of negative control genome regions in a genome-wide latent factor model for sample- and position-specific background correction, and the utilization of negative control samples, under a case-control design, to further improve background bias estimation under this model. The negative control genome regions defined by CODEX2 are regions that do not harbor common CNVs, but that are still allowed to harbor rare CNVs, and can be constructed from existing studies or learned from data.
+
+```{r, out.width = "600px", fig.align = "center", echo=FALSE}
+knitr::include_graphics("https://raw.githubusercontent.com/yuchaojiang/CODEX2/master/demo/Figure1.png")
+```
+
+
+### 4.2.2. Pre-processing
+
+This step is to get directories of .bam files, read in exon target positions from .bed files, and get sample names. The direct input of CODEX2 include: *bamdir*, which is a vector indicating the directories of all .bam files; *sampname*, which is a column vector with row entries of sample names; *bedFile*, which indicates the directory of the .bed file (WES bait file, no header, sorted by start and end positions); and *chr*, which specifies the chromosome. CODEX2 processes the entire genome chromosome by chromosome; make sure  the chromosome formats are consistent between the .bed and the .bam files.
+```{r, message=FALSE}
+library(MARATHON)
+library(WES.1KG.WUGSC) # Load Toy data from the 1000 Genomes Project.
+dirPath <- system.file("extdata", package = "WES.1KG.WUGSC")
+bamFile <- list.files(dirPath, pattern = '*.bam$')
+bamdir <- file.path(dirPath, bamFile)
+sampname <- as.matrix(read.table(file.path(dirPath, "sampname")))
+bedFile <- file.path(dirPath, "chr22_400_to_500.bed")
+chr <- 22
+bambedObj <- getbambed(bamdir = bamdir, bedFile = bedFile, 
+                       sampname = sampname, projectname = "CODEX_demo", chr)
+bamdir <- bambedObj$bamdir; sampname <- bambedObj$sampname
+ref <- bambedObj$ref; projectname <- bambedObj$projectname; chr <- bambedObj$chr
+```
+
+Getting raw read depth, GC content and mappability: read depth matrix, as well as read lengths across all samples, will be returned.
+```{r, message=FALSE}
+coverageObj <- getcoverage(bambedObj, mapqthres = 20)
+Y <- coverageObj$Y; readlength <- coverageObj$readlength
+gc <- getgc(chr, ref)
+mapp <- getmapp(chr, ref)
+```
+
+Quality control: take a sample-wise and exon-wise quality control procedure on 
+the depth of coverage matrix.
+```{r}
+qcObj <- qc(Y, sampname, chr, ref, mapp, gc, cov_thresh = c(20, 4000), 
+    length_thresh = c(20, 2000), mapp_thresh = 0.9, gc_thresh = c(20, 80))
+Y_qc <- qcObj$Y_qc; sampname_qc <- qcObj$sampname_qc; gc_qc <- qcObj$gc_qc
+mapp_qc <- qcObj$mapp_qc; ref_qc <- qcObj$ref_qc; qcmat <- qcObj$qcmat
+#write.table(qcmat, file = paste(projectname, '_', chr, '_qcmat', '.txt', sep=''),
+#            sep='\t', quote=FALSE, row.names=FALSE)
+```
+
+Running CODEX2: For demonstration purpose, we in silico spiked in CNVs spanning exon 1580 - 1620 with a population frequency 40%. There are altogether 90 samples, 36 of which have the heterozygous deletion. The toy dataset is stored as part of the CODEX2 R-package.
+
+### 4.2.3. Running CODEX2 with negative control samples
+
+Y_qc and gc_qc can be obtained from the sequencing bam files using the code in the previous section. For the case-control scenario, the normal sample index is known (samples without spike-in signals).
+
+```{r, message=FALSE}
+# Below are pre-computed demo dataset, stored as part of the CODEX2 R-package.
+Y_qc = Y_qc_codex2
+gc_qc = gc_qc_codex2
+norm_index = norm_index_codex2
+
+normObj=normalize_codex2_ns(Y_qc = Y_qc, gc_qc = gc_qc, 
+                            K = 1:6, norm_index = norm_index)
+Yhat.ns=normObj$Yhat; fGC.hat.ns=normObj$fGC.hat;
+beta.hat.ns=normObj$beta.hat; g.hat.ns=normObj$g.hat; h.hat.ns=normObj$h.hat
+AIC.ns=normObj$AIC; BIC.ns=normObj$BIC; RSS.ns=normObj$RSS
+```
+
+Choose the number of latent Poisson factors. Use BIC as the model selection metric by default.
+
+```{r, eval=FALSE}
+choiceofK(AIC.ns, BIC.ns, RSS.ns, K = 1:6 , filename = "codex2_ns_choiceofK.pdf")
+```
+
+
+```{r, echo=FALSE, fig.height = 2.5, fig.width = 6, fig.align = "center"}
+par(mfrow = c(1, 3))
+plot(1:6, RSS.ns, type = "b", xlab = "Number of latent variables", pch=20)
+plot(1:6, AIC.ns, type = "b", xlab = "Number of latent variables", pch=20)
+plot(1:6, BIC.ns, type = "b", xlab = "Number of latent variables", pch=20)
+par(mfrow = c(1,1))
+```
+
+
+### 4.2.4. Running CODEX2 with negative control regions
+
+We can empirically identify common CNV regions by a first-pass CODEX run: For exons residing in common CNV regions, the s.d. of normalized z-scores across all samples will be large.
+
+```{r, message= FALSE, eval=FALSE}
+# Empirically identify common CNV regions from the data.
+normObj=normalize_null(Y_qc = Y_qc, gc_qc = gc_qc, K = 1:6)
+z.codex = log(Y_qc/normObj$Yhat[[which.max(normObj$BIC)]])
+plot(1:nrow(z.codex), apply(z.codex,1,sd))
+which(apply(z.codex,1,sd)>=0.25) 
+cnv_index1 = which(apply(z.codex,1,sd)>=0.25) 
+# This can also be provided by the user as known,
+# e.g., from existing database (DGV or dbVar) or knowledge (tumor supressors or oncogenes).
+cnv_index2 = 1580:1620
+head(cnv_index1 == cnv_index2)
+
+normObj=normalize_codex2_nr(Y_qc = Y_qc, gc_qc = gc_qc, 
+                            K = 1:6, cnv_index = cnv_index1)
+Yhat.nr=normObj$Yhat; fGC.hat.nr=normObj$fGC.hat;
+beta.hat.nr=normObj$beta.hat; g.hat.nr=normObj$g.hat; h.hat.nr=normObj$h.hat
+AIC.nr=normObj$AIC; BIC.nr=normObj$BIC; RSS.nr=normObj$RSS
+```
+
+### 4.2.5. Running Poisson-likelihood recursive segmentation by CODEX2
+
+```{r, message=FALSE}
+finalcall.codex2.ns <- segment.recursive(Y_qc, Yhat.ns, optK = which.max(BIC.ns),
+                               K = 1:6, sampname_qc = paste('sample',1:ncol(Y_qc),sep=''),
+                               ref_qc = IRanges(start=1:nrow(Y_qc)*100, end=1:nrow(Y_qc)*100+50),
+                               chr = 18, lmax = 200, mode = "integer")
+# For CODEX2 with negative control regions, simply change 'ns' to 'nr'.
+nrow(finalcall.codex2.ns[finalcall.codex2.ns[,'st_exon']=='1580',])
+nrow(finalcall.codex2.ns) # identified 4 additional CNVs (false positives)
+# this can be easily filtered out by a QC on the CNV lengths in kb or number of exons
+head(finalcall.codex2.ns[finalcall.codex2.ns[,'st_exon']=='1580',])
+
+# write.table(finalcall.codex2.ns, file = 'finalcall.codex2.ns.int.txt', 
+#             sep='\t', quote=FALSE, row.names=FALSE)
+```
+
+
+
+
+
+## 4.3. Tumor allele-specific copy number by WGS
 
 For allele-specific copy number estimation in a matched tumor-normal setting, FALCON [@chen2014allele] is based on a change-point model on a process of a mixture of two bivariate Binomial distributions. FALCON takes as input allelic read counts at germline heterozygous loci and outputs ASCN estimates with genome segmentations. 
+
+### 4.3.1. Calling heterozygous loci
+
+```{bash, eval = FALSE}
+# 1. Index the genome template
+bwa index ~/structure/hg19/ucsc.hg19.fasta
+
+# 2. Align reads in .fastq file to the template (sample sequenced at two different lanes)
+bwa mem -M -t 16 ucsc.hg19.fasta _EGAR00001248897_UCF_1014_NoIndex_L008_R1_001.fastq _EGAR00001248897_UCF_1014_NoIndex_L008_R2_001.fastq > _EGAR00001248897_UCF_1014_NoIndex_L008.sam
+
+bwa mem -M -t 16 ucsc.hg19.fasta _EGAR00001248899_UCF1014_NoIndex_L002_R1_001.fastq _EGAR00001248899_UCF1014_NoIndex_L002_R2_001.fastq > _EGAR00001248899_UCF1014_NoIndex_L002.sam
+
+# 3. Convert .sam to .bam and sort
+samtools view -bS _EGAR00001248897_UCF_1014_NoIndex_L008.sam > _EGAR00001248897_UCF_1014_NoIndex_L008.bam
+line=_EGAR00001248897_UCF_1014_NoIndex_L008.bam
+java -jar SortSam.jar INPUT=$line OUTPUT=$line.sorted.bam SORT_ORDER=coordinate 
+
+samtools view -bS _EGAR00001248899_UCF1014_NoIndex_L002.sam > _EGAR00001248899_UCF1014_NoIndex_L002.bam
+line=_EGAR00001248899_UCF1014_NoIndex_L002.bam
+java -jar SortSam.jar INPUT=$line OUTPUT=$line.sorted.bam SORT_ORDER=coordinate 
+
+# 4. Add read group
+line=_EGAR00001248897_UCF_1014_NoIndex_L008.bam
+#line=_EGAR00001248899_UCF1014_NoIndex_L002.bam
+
+java -jar AddOrReplaceReadGroups.jar INPUT=$line.sorted.bam OUTPUT=$line.sorted.rg.bam RGID=$line RGLB=WGS_UCF1014 RGPL=ILLUMINA RGPU=machine RGSM=UCF1014
+samtools index $line.sorted.rg.bam
+
+# 5. Merge two different lanes (sample sequenced at two different lanes)
+samtools merge UCF1014.merge.bam _EGAR00001248899_UCF1014_NoIndex_L002.bam.sorted.rg.bam _EGAR00001248897_UCF_1014_NoIndex_L008.bam.sorted.rg.bam
+java -jar SortSam.jar INPUT=UCF1014.merge.bam OUTPUT=UCF1014.merge.sorted.bam SORT_ORDER=coordinate 
+samtools index UCF1014.merge.sorted.bam
+
+# 6. Dedup
+java -jar MarkDuplicates.jar INPUT=UCF1014.merge.sorted.bam OUTPUT=UCF1014.merge.sorted.dedup.bam  METRICS_FILE=UCF1014.merge.sorted.dedup.metrics.txt PROGRAM_RECORD_ID= MarkDuplicates PROGRAM_GROUP_VERSION=null PROGRAM_GROUP_NAME=MarkDuplicates
+java -jar BuildBamIndex.jar INPUT=UCF1014.merge.sorted.dedup.bam
+
+# 7. Realign
+java -jar GenomeAnalysisTK.jar -T RealignerTargetCreator -R ucsc.hg19.fasta -I UCF1014.merge.sorted.dedup.bam -known Mills_and_1000G_gold_standard.indels.hg19.sites.vcf -known 1000G_phase1.indels.hg19.sites.vcf -o UCF1014.merge.sorted.dedup.target_intervals.list 
+
+java -jar ~/bin/GenomeAnalysisTK.jar -T IndelRealigner -R ucsc.hg19.fasta -I UCF1014.merge.sorted.dedup.bam -targetIntervals UCF1014.merge.sorted.dedup.target_intervals.list -known Mills_and_1000G_gold_standard.indels.hg19.sites.vcf -known 1000G_phase1.indels.hg19.sites.vcf -o UCF1014.merge.sorted.dedup.realigned.bam
+
+# 8. Recalibrate
+java -jar GenomeAnalysisTK.jar -T BaseRecalibrator -R ucsc.hg19.fasta -I UCF1014.merge.sorted.dedup.realigned.bam -knownSites dbsnp_138.hg19.vcf -knownSites Mills_and_1000G_gold_standard.indels.hg19.sites.vcf -knownSites 1000G_phase1.indels.hg19.sites.vcf -o UCF1014.merge.sorted.dedup.realigned.recal_data.table
+
+java -jar GenomeAnalysisTK.jar -T PrintReads -R ucsc.hg19.fasta -I UCF1014.merge.sorted.dedup.realigned.bam -BQSR UCF1014.merge.sorted.dedup.realigned.recal_data.table -o UCF1014.merge.sorted.dedup.realigned.recal.bam
+samtools index UCF1014.merge.sorted.dedup.realigned.recal.bam
+
+# 9. GATK HaplotypeCaller
+java -jar GenomeAnalysisTK.jar -R ucsc.hg19.fasta -T HaplotypeCaller -I UCF1014.merge.sorted.dedup.realigned.recal.bam -o UCF1014.merge.sorted.dedup.realigned.recal.raw.snps.indels.g.vcf
+```
+
+
+### 4.3.2. Running FALCON for allele-specific copy number profiling
 
 Calculate depth ratio (total read counts of tumor versus normal). Restrict our analysis to chromosome 14, where a copy-neutral loss of heterozygosity has been previously reported.
 ```{r}
@@ -238,28 +681,508 @@ The code below is to generate table output including genomic locations for segme
 
 
 
-
-## Tumor allele-specific copy number by WES
+## 4.4. Tumor allele-specific copy number by WES
 
 For WES data, biases and artifacts cannot be fully captured by comparing the tumor sample to the matched normal sample. FALCON-X [@chen2017allele] extends upon FALCON, where it takes as inputs allelic read counts at germline heterozygous loci and total coverage biases for each of these loci estimated by CONDEX2 and outputs ASCN estimates.
 
 
+### 4.4.1. Calling heterozygous loci
+```{bash, eval = FALSE}
+# 1. Index the genome template
+bwa index ~/structure/hg19/ucsc.hg19.fasta
+
+# 2. Align reads in .fastq file to the template (sample sequenced at two different lanes)
+bwa mem -M -t 16 ucsc.hg19.fasta _EGAR00001248897_UCF_1014_NoIndex_L008_R1_001.fastq _EGAR00001248897_UCF_1014_NoIndex_L008_R2_001.fastq > _EGAR00001248897_UCF_1014_NoIndex_L008.sam
+
+bwa mem -M -t 16 ucsc.hg19.fasta _EGAR00001248899_UCF1014_NoIndex_L002_R1_001.fastq _EGAR00001248899_UCF1014_NoIndex_L002_R2_001.fastq > _EGAR00001248899_UCF1014_NoIndex_L002.sam
+
+# 3. Convert .sam to .bam and sort
+samtools view -bS _EGAR00001248897_UCF_1014_NoIndex_L008.sam > _EGAR00001248897_UCF_1014_NoIndex_L008.bam
+line=_EGAR00001248897_UCF_1014_NoIndex_L008.bam
+java -jar SortSam.jar INPUT=$line OUTPUT=$line.sorted.bam SORT_ORDER=coordinate 
+
+samtools view -bS _EGAR00001248899_UCF1014_NoIndex_L002.sam > _EGAR00001248899_UCF1014_NoIndex_L002.bam
+line=_EGAR00001248899_UCF1014_NoIndex_L002.bam
+java -jar SortSam.jar INPUT=$line OUTPUT=$line.sorted.bam SORT_ORDER=coordinate 
+
+# 4. Add read group
+line=_EGAR00001248897_UCF_1014_NoIndex_L008.bam
+#line=_EGAR00001248899_UCF1014_NoIndex_L002.bam
+
+java -jar AddOrReplaceReadGroups.jar INPUT=$line.sorted.bam OUTPUT=$line.sorted.rg.bam RGID=$line RGLB=WGS_UCF1014 RGPL=ILLUMINA RGPU=machine RGSM=UCF1014
+samtools index $line.sorted.rg.bam
+
+# 5. Merge two different lanes (sample sequenced at two different lanes)
+samtools merge UCF1014.merge.bam _EGAR00001248899_UCF1014_NoIndex_L002.bam.sorted.rg.bam _EGAR00001248897_UCF_1014_NoIndex_L008.bam.sorted.rg.bam
+java -jar SortSam.jar INPUT=UCF1014.merge.bam OUTPUT=UCF1014.merge.sorted.bam SORT_ORDER=coordinate 
+samtools index UCF1014.merge.sorted.bam
+
+# 6. Dedup
+java -jar MarkDuplicates.jar INPUT=UCF1014.merge.sorted.bam OUTPUT=UCF1014.merge.sorted.dedup.bam  METRICS_FILE=UCF1014.merge.sorted.dedup.metrics.txt PROGRAM_RECORD_ID= MarkDuplicates PROGRAM_GROUP_VERSION=null PROGRAM_GROUP_NAME=MarkDuplicates
+java -jar BuildBamIndex.jar INPUT=UCF1014.merge.sorted.dedup.bam
+
+# 7. Realign
+java -jar GenomeAnalysisTK.jar -T RealignerTargetCreator -R ucsc.hg19.fasta -I UCF1014.merge.sorted.dedup.bam -known Mills_and_1000G_gold_standard.indels.hg19.sites.vcf -known 1000G_phase1.indels.hg19.sites.vcf -o UCF1014.merge.sorted.dedup.target_intervals.list 
+
+java -jar ~/bin/GenomeAnalysisTK.jar -T IndelRealigner -R ucsc.hg19.fasta -I UCF1014.merge.sorted.dedup.bam -targetIntervals UCF1014.merge.sorted.dedup.target_intervals.list -known Mills_and_1000G_gold_standard.indels.hg19.sites.vcf -known 1000G_phase1.indels.hg19.sites.vcf -o UCF1014.merge.sorted.dedup.realigned.bam
+
+# 8. Recalibrate
+java -jar GenomeAnalysisTK.jar -T BaseRecalibrator -R ucsc.hg19.fasta -I UCF1014.merge.sorted.dedup.realigned.bam -knownSites dbsnp_138.hg19.vcf -knownSites Mills_and_1000G_gold_standard.indels.hg19.sites.vcf -knownSites 1000G_phase1.indels.hg19.sites.vcf -o UCF1014.merge.sorted.dedup.realigned.recal_data.table
+
+java -jar GenomeAnalysisTK.jar -T PrintReads -R ucsc.hg19.fasta -I UCF1014.merge.sorted.dedup.realigned.bam -BQSR UCF1014.merge.sorted.dedup.realigned.recal_data.table -o UCF1014.merge.sorted.dedup.realigned.recal.bam
+samtools index UCF1014.merge.sorted.dedup.realigned.recal.bam
+
+# 9. GATK HaplotypeCaller
+java -jar GenomeAnalysisTK.jar -R ucsc.hg19.fasta -T HaplotypeCaller -I UCF1014.merge.sorted.dedup.realigned.recal.bam -o UCF1014.merge.sorted.dedup.realigned.recal.raw.snps.indels.g.vcf
+```
 
 
+### 4.4.2. Running CODEX2 to get bias matrix
+
+Below is demo dataset consisting of 39 tumor-normal paired whole-exome sequencing, published in [Maxwell et al.](https://www.nature.com/articles/s41467-017-00388-9) (Nature Communications, 2017).  We focus on chr17, where copy-neutral loss-of-heterozygosity has been reported. Below are allelic reads, genotype, and genomic locations, which can be extracted from vcf files. rda files available for download [here] (https://github.com/yuchaojiang/Canopy/tree/master/instruction)
+
+```{r}
+library(MARATHON)
+chr=17
+head(mymatrix.demo)# genomic locations and SNP info across all loci from chr17
+# genotype in blood (bloodGT1 and blood GT2) and tumor (tumorGT1 and tumor GT2) across all samples
+head(genotype.demo[,1:8]) 
+#allelic reads in blood (AN and BN) and tumor (AT and BT) across all samples
+head(reads.demo[,1:8]) 
+```
+
+Apply CODEX2 to get total coverage bias. First we get GC content from a 50bp window centered at the SNP, as well as total read depth at each loci.
+
+```{r}
+pos=as.numeric(mymatrix.demo[,'POS'])
+ref=IRanges(start=pos-25,end=pos+25)
+gc=getgc(chr,ref) # GC content for each loci
+Y = reads.demo[,seq(1,ncol(reads.demo),2)] +
+    reads.demo[,seq(2,ncol(reads.demo),2)] # total read depth for each loci
+colnames(Y)=paste('samp',1:(ncol(Y)/2),'_',rep(c('N','T'),ncol(Y)/2),sep='')
+head(Y[,1:8])
+```
+
+QC procedure -- remove loci with low median coverage across samples.
+
+```{r, message=FALSE}
+pos.filter=(apply(Y,1,median)>=20)
+pos=pos[pos.filter]; ref=ref[pos.filter]; gc=gc[pos.filter]
+genotype.demo=genotype.demo[pos.filter,]; reads.demo=reads.demo[pos.filter,]
+mymatrix.demo=mymatrix.demo[pos.filter,]; Y=Y[pos.filter,]
+
+normObj=normalize_codex2_ns(Y,gc,K=1:3,norm_index=seq(1,77,2))
+# choiceofK(normObj$AIC,normObj$BIC,normObj$RSS,K=1:3,filename='CODEX2_falconX_demo.pdf')
+Yhat=round(normObj$Yhat[[which.max(normObj$BIC)]],0)
+```
+
+### 4.4.3. Running FALCON-X for allele-specific copy number profiling
+
+Generate input for FALCON-X: allelic read depth and genotype across all loci.
+
+```{r, message=FALSE}
+n=39 # total number of samples
+for (i in 1:n){
+  message('Generating input for sample',i,'...\n')
+  ids = (4*i-3):(4*i)
+  ids2 = (2*i-1):(2*i)
+  mydata = as.data.frame(cbind(mymatrix.demo[,1:2], 
+                               genotype.demo[,ids],
+                               reads.demo[,ids],
+                               Yhat[,ids2]))
+  colnames(mydata) = c("chr", "pos", "bloodGT1", "bloodGT2", "tumorGT1",
+                       "tumorGT2", "AN", "BN", "AT", "BT", 'sN','sT')
+  ids=which(as.numeric(mydata[,3])!=as.numeric(mydata[,4])) # select heterozygou loci
+  newdata0 = mydata[ids,]
+  index.na=apply(is.na(newdata0), 1, any)
+  newdata=newdata0[index.na==FALSE,]
+  
+  # Remove loci with multiple alternative alleles
+  mut.alt.filter=(newdata$tumorGT1==newdata$bloodGT1 | newdata$tumorGT1==newdata$bloodGT2) &
+  (newdata$tumorGT2==newdata$bloodGT1 | newdata$tumorGT2==newdata$bloodGT2)
+  newdata=newdata[mut.alt.filter,]
+  # write text at germline heterozygous loci, which is used as input for Falcon-X
+  write.table(newdata, file=paste("sample",i,"_het.txt",sep=""), quote=F, row.names=F)
+}
+```
+
+Apply FALCON-X to generate allele-specific copy number profiles. Note that CODEX normalize total read depth across samples, while falcon-x profiles ASCN in each sample separately.
+
+```{r, message=FALSE, results=FALSE, fig.align = "center"}
+k=10 # calling ASCN for the 10th sample
+ascn.input=read.table(paste("sample",k,"_het.txt",sep=""),head=T)
+readMatrix=ascn.input[,c('AN','BN','AT','BT')]
+biasMatrix=ascn.input[,c('sN','sT')]
+
+tauhat = getChangepoints.x(readMatrix, biasMatrix, pos=ascn.input$pos)
+cn = getASCN.x(readMatrix, biasMatrix, tauhat=tauhat, pos=ascn.input$pos, threshold = 0.3)
+# cn$tauhat would give the indices of change-points.
+# cn$ascn would give the estimated allele-specific copy numbers for each segment.
+# cn$Haplotype[[i]] would give the estimated haplotype for the major chromosome in segment i
+# if this segment has different copy numbers on the two homologous chromosomes.
+view(cn, pos=ascn.input$pos)
+```
+
+Further curate FALCON-X’s segmentation, i.e., remove small regions and combine consecutive regions with similar ASCN profiles.
+
+```{r, fig.align = "center"}
+if(length(tauhat)>0){
+  length.thres=10^6  # Threshold for length of segments, in base pair.
+  delta.cn.thres=0.3  # Threshold of absolute copy number difference between consecutive segments.
+  falcon.qc.list = falconx.qc(readMatrix = readMatrix,
+                              biasMatrix = biasMatrix,
+                              tauhat = tauhat,
+                              cn = cn,
+                              st_bp = ascn.input$pos,
+                              end_bp = ascn.input$pos,
+                              length.thres = length.thres,
+                              delta.cn.thres = delta.cn.thres)
+  
+  tauhat=falcon.qc.list$tauhat
+  cn=falcon.qc.list$cn
+}
+
+view(cn,pos=ascn.input$pos)
+```
 
 
-
-
-
-## Tumor phylogeny analysis by WGS/WES
+## 4.5. Tumor phylogeny analysis by WGS/WES
 
 Canopy [@jiang2016assessing] identifies subclones within a tumor, determines the mutational profiles of these subclones, and infers the tumor's phylogenetic history by NGS data from temporally and/or spatially separated tumor resections from the same patient. Canopy jointly models somatic copy number changes and SNVs in a similar fashion to non-negative matrix factorization and adopts a Bayesian framework to reconstruct phylogeny with posterior confidence assessment. Canopy takes as input both somatic ASCN changes returned by FALCON/FALCON-X as well as somatic SNVs and outputs tumor phylogenetic trees with somatic mutations placed along tree branches and subclones placed at the leaves. 
 
 
-# Session info
+This is a demo for using the Canopy package in R. Canopy is a statistical framework and computational procedure for identifying subpopulations within a tumor, determining the mutation profiles of each subpopulation, and inferring the tumor's phylogenetic history. The input to Canopy are variant allele frequencies of somatic single nucleotide alterations (SNAs) along with allele-specific coverage ratios between the tumor and matched normal sample for somatic copy number alterations (CNAs). These quantities can be directly taken from the output of existing software. Canopy provides a general mathematical framework for pooling data across samples and sites to infer the underlying parameters. For SNAs that fall within CNA regions, Canopy infers their temporal ordering and resolves their phase. When there are multiple evolutionary configurations consistent with the data, Canopy outputs all configurations along with their confidence.
+
+Below is an example on reconstructing tumor phylogeny of a transplantable metastasis model system derived from a heterogeneous human breast cancer cell line MDA-MB-231. Cancer cells from the parental line MDA-MB-231 were engrafted into mouse hosts leading to organ-specific metastasis. Mixed cell populations (MCPs) were in vivo selected from either bone or lung metastasis and grew into phenotypically stable and metastatically competent cancer cell lines. The parental line as well as the MCP sublines were whole-exome sequencedwith somatic SNAs and CNAs profiled. Canopy is used to infer metastatic phylogeny. Code for analysis of this dataset is broken down below with explanations and is further available [here](https://github.com/yuchaojiang/Canopy/blob/master/demo_code/canopy_demo_MDA231.R).
+
+
+### 4.5.1. CNA and SNA input
+The input to Canopy are variant allele frequencies of somatic SNAs along with allele-specific coverage ratios between the tumor and matched normal sample for somatic CNAs. For SNAs, let the matrices $R$ and $X$ be, respectively, the number of reads containing the mutant allele and the total number of reads for each locus across all samples. The ratio $R/X$ is the proportion of reads
+supporting the mutant allele, known as the variant allele frequency. For CNAs, Canopy directly takes output from allele-specific copy number estimation softwares, such as [FALCON-X](https://CRAN.R-project.org/package=falconx) or [Sequenza](https://CRAN.R-project.org/package=sequenza). These outputs are in the form of estimated major and minor copy number ratios, respectively denoted by $W^M$ and $W^m$, with their corresponding standard errors $\epsilon^M$ and $\epsilon^m$. Matrix $Y$ specifies whether SNAs are affected by CNAs; matrix $C$ specifies whether CNA regions harbor specific CNAs (this input is only needed if overlapping CNA events are observed).
+
+How to generate CNA and SNA data input is futher discussed [here](https://github.com/yuchaojiang/Canopy/blob/master/instruction/SNA_CNA_input.md). How to select ****informative**** SNA and CNA input is discussed [here](https://github.com/yuchaojiang/Canopy/blob/master/instruction/SNA_CNA_choice.md).
+
+Below is demo data input from project MDA231 (first case study in our paper).
+
+```{r, message=FALSE, warning=FALSE}
+library(MARATHON)
+data("MDA231")
+projectname = MDA231$projectname ## name of project
+R = MDA231$R; R ## mutant allele read depth (for SNAs)
+X = MDA231$X; X ## total depth (for SNAs)
+WM = MDA231$WM; WM ## observed major copy number (for CNA regions)
+Wm = MDA231$Wm; Wm ## observed minor copy number (for CNA regions)
+epsilonM = MDA231$epsilonM ## standard deviation of WM, pre-fixed here
+epsilonm = MDA231$epsilonm ## standard deviation of Wm, pre-fixed here
+## Matrix C specifices whether CNA regions harbor specific CNAs 
+## only needed if overlapping CNAs are observed, specifying which CNAs overlap
+C = MDA231$C; C
+Y = MDA231$Y; Y ## whether SNAs are affected by CNAs
+```
+
+
+### 4.5.2. Binomial clustering of SNAs
+
+A multivariate binomial mixture clustering step can be applied to the SNAs before MCMC sampling. We show in our paper via simulations that this pre-clustering method helps the Markov chain converge faster with smaller estimation error (especially when mutations show clear cluster patterns by visualization). This clustering step can also remove likely false positives before feeding the mutations to the MCMC algorithm.
+
+Below is a toy example, where three bulk tumor samples were in silico simulated from a tree of 4 clones/leaves. The 5 tree segments (excluding the leftmost branch, which corresponds to the normal clone) separate 200 mutations into 5 mutation clusters. More detailed demo codes for clustering can be found [here](https://github.com/yuchaojiang/Canopy/blob/master/clustering/binomial_EM.R). Detailed methods can be found in the [supplements](http://www.pnas.org/content/suppl/2016/08/26/1522203113.DCSupplemental/pnas.1522203113.sapp.pdf) of our paper under section Binomial mixture clustering. BIC is used for model selection. 2D (two longitudinal/spatial samples) or 3D (three samples) plots are generated for visualization.
+
+```{r}
+data(toy3)
+R=toy3$R; X=toy3$X # 200 mutations across 3 samples
+num_cluster=2:9 # Range of number of clusters to run
+num_run=10 # How many EM runs per clustering step for each mutation cluster wave
+canopy.cluster=canopy.cluster(R = R,
+                              X = X,
+                              num_cluster = num_cluster,
+                              num_run = num_run)
+bic_output=canopy.cluster$bic_output # BIC for model selection (# of clusters)
+Mu=canopy.cluster$Mu # VAF centroid for each cluster
+Tau=canopy.cluster$Tau  # Prior for mutation cluster, with a K+1 component
+sna_cluster=canopy.cluster$sna_cluster # cluster identity for each mutation
+```
+  
+```{r, fig.height = 4, fig.width = 8, fig.align = "center", echo=FALSE}
+par(mfrow=c(1,2))
+plot(num_cluster,bic_output,xlab='Number of mutation clusters',ylab='BIC',type='b',main='BIC for model selection')
+abline(v=num_cluster[which.max(bic_output)],lty=2)
+colc=c('green4','red3','royalblue1','darkorange1','royalblue4',
+       'mediumvioletred','seagreen4','olivedrab4','steelblue4','lavenderblush4')
+pchc=c(17,0,1,15,3,16,4,8,2,16)
+scatterplot3d((R/X)[,1],(R/X)[,2],(R/X)[,3],xlim=c(0,max(R/X)),ylim=c(0,max(R/X)),zlim=c(0,max(R/X)),color=colc[sna_cluster],pch=pchc[sna_cluster],
+              xlab='Sample1 VAF',ylab='Sample2 VAF',zlab='Sample3 VAF',
+              main='VAF clustering across 3 samples')
+par(mfrow=c(1,1))
+```
+
+Below is real dataset from Ding et al. (Nature 2012), where a leukemia patient was sequenced at two timepoints -- primary tumor (sample 1) and relapse genome (sample 2). The real dataset is noisier and can potentially contain false positives for somatic mutations. We thus include in the mixture a multivariate uniform component on the unit interval, which corresponds to mutations that have high standard errors during sequencing or that are likely to be false positives. The code and SNA input for this dataset can be found [here](https://github.com/yuchaojiang/Canopy/blob/master/clustering/binomial_EM.R).
+
+```{r, message=FALSE, results=FALSE}
+data(AML43)
+R=AML43$R; X=AML43$X
+num_cluster=4 # Range of number of clusters to run
+num_run=6 # How many EM runs per clustering step for each mutation cluster wave
+Tau_Kplus1=0.05 # Pre-specified proportion of noise component
+Mu.init=cbind(c(0.01,0.15,0.25,0.45),
+              c(0.2,0.2,0.01,0.2)) # Initial value for centroid
+canopy.cluster=canopy.cluster(R = R,
+                              X = X,
+                              num_cluster = num_cluster,
+                              num_run = num_run,
+                              Mu.init = Mu.init,
+                              Tau_Kplus1=Tau_Kplus1)
+Mu=canopy.cluster$Mu # VAF centroid for each cluster
+Tau=canopy.cluster$Tau  # Prior for mutation cluster, with a K+1 component
+sna_cluster=canopy.cluster$sna_cluster # cluster identity for each mutation
+
+R.qc=R[sna_cluster<=4,] # exclude mutations in the noise cluster
+X.qc=X[sna_cluster<=4,]
+sna_cluster.qc=sna_cluster[sna_cluster<=4]
+
+R.cluster=round(Mu*100)  # Generate pseudo-SNAs correponding to each cluster. 
+X.cluster=pmax(R.cluster,100)   # Total depth is set at 100 but can be obtained as median instead 
+rownames(R.cluster)=rownames(X.cluster)=paste('SNA.cluster',1:4,sep='')
+```
+  
+```{r, fig.height = 4.5, fig.width = 4, fig.align = "center", echo=FALSE}
+Mu=canopy.cluster$Mu # VAF centroid for each cluster
+Tau=canopy.cluster$Tau  # Prior for mutation cluster, with a K+1 component
+sna_cluster=canopy.cluster$sna_cluster # cluster identity for each mutation
+colc=c('green4','red3','royalblue1','darkorange1','royalblue4',
+       'mediumvioletred','seagreen4','olivedrab4','steelblue4','lavenderblush4')
+pchc=c(17,0,1,15,3,16,4,8,2,16)
+plot((R/X)[,1],(R/X)[,2],xlab='Sample1 VAF',ylab='Sample2 VAF',col=colc[sna_cluster],pch=pchc[sna_cluster],ylim=c(0,max(R/X)),xlim=c(0,max(R/X)))
+title('2D clustering on real AML data')
+```
+
+### 4.5.3. Phylogenetic tree (unknown)
+
+Each sampled tree is modeled as a list by Canopy. Below are the treeelements of the most likely tree from the project MDA231 (first case study in the paper). The most likely tree is obtained from the posterior distributionin the tree space from the MCMC sampling. How to visualize/plot the sampled trees is discussed later.
+
+```{r}
+data('MDA231_tree')
+MDA231_tree$Z # Z matrix specifies the position of the SNAs along the tree branch
+MDA231_tree$cna.copy # major and minor copy number (interger values) for each CNA
+MDA231_tree$CM # Major copy per clone for each CNA
+MDA231_tree$Cm # Minor copy per clone for each CNA
+MDA231_tree$Q # whether an SNA precedes a CNA
+MDA231_tree$H # if an SNA precedes a CNA, whether it resides in the major copy
+MDA231_tree$P # clonal compostion for each sample
+MDA231_tree$VAF # VAF based on current tree structure
+```
+
+
+
+### 4.5.4. MCMC sampling
+
+Canopy samples in subtree space with varying number of subclones(denoted as $K$) by a Markov chain Monte Carlo (MCMC) method. A plot of posterior likelihood (pdf format) will be generated for each subtree space and we recommend users to refer to the plot as a sanity check for sampling convergence and to choose the number of burn-ins and thinning accordingly. Note that this step can be time-consuming, especially with larger number of chains `numchain` specifies the number of chains with random initiations, a larger value of which is in favor of not getting stuck in local optima) and longer chains (`simrun` specifies number of iterations per chain). MCMC sampling is the most computationally heavy step in Canopy. It is recommended that jobs are run in parallel on high-performance cluster.
+
+There are four modes of MCMC sampling embedded in Canopy: (1) `canopy.sample`
+  which takes both SNA and CNA as input by default; (2) `canopy.sample.nocna` for cases where there is no CNA input; (3) `canopy.sample.cluster` for cases where SNAs are pre-clustered by the Binomial mixture EM algorithm; (4) `canopy.sample.cluster.nocna` for cases where there is no CNA input and SNAs are pre-clustered by the Binomial mixture EM algorithm. More details can be found [here](https://github.com/yuchaojiang/Canopy/blob/master/instruction/sampling_mode.md).
+
+Below is sampling code for the MDA231 dataset where both SNA and CNA are used as input.
+
+```{r, eval=FALSE}
+K = 3:6 # number of subclones
+numchain = 20 # number of chains with random initiations
+sampchain = canopy.sample(R = R, X = X, WM = WM, Wm = Wm, epsilonM = epsilonM, 
+                          epsilonm = epsilonm, C = C, Y = Y, K = K, numchain = numchain, 
+                          max.simrun = 50000, min.simrun = 10000, 
+                          writeskip = 200, projectname = projectname, cell.line = TRUE, 
+                          plot.likelihood = TRUE)
+save.image(file = paste(projectname, '_postmcmc_image.rda',sep=''),
+           compress = 'xz')
+```
+  
+  
+```{r, echo=FALSE}
+data("MDA231_sampchain")
+sampchain = MDA231_sampchain
+k = 3; K = 3:6
+sampchaink = MDA231_sampchain[[which(K==k)]]
+```
+```{r}
+length(sampchain) ## number of subtree spaces (K=3:6)
+length(sampchain[[which(K==4)]]) ## number of chains for subtree space with 4 subclones
+length(sampchain[[which(K==4)]][[1]]) ## number of posterior trees in each chain
+```
+  
+
+### 4.5.5. BIC for model selection
+Canopy uses BIC as a model selection criterion to determine to optimal number of subclones.
+
+```{r}
+burnin = 100
+thin = 5 # If there is error in the bic and canopy.post step below, make sure
+# burnin and thinning parameters are wisely selected so that there are
+# posterior trees left.
+bic = canopy.BIC(sampchain = sampchain, projectname = projectname, K = K,
+                 numchain = numchain, burnin = burnin, thin = thin, pdf = TRUE)
+optK = K[which.max(bic)]
+```
+
+```{r, fig.height = 4.5, fig.width = 8, fig.align = "center", echo=FALSE}
+# Note: this segment is soley for generating BIC plot in the vignettes.
+# Use Canopy.BIC() with pdf = TRUE to generate this plot directly.
+par(mfrow=c(1,2))
+projectname = 'MDA231'
+numchain = 20
+clikelihood = matrix(nrow = numchain, ncol = length(sampchaink[[1]]), data = NA)
+for(numi in 1:numchain){
+  for(i in 1:ncol(clikelihood)){
+    clikelihood[numi,i] = sampchaink[[numi]][[i]]$likelihood
+  }
+}
+plot(1:ncol(clikelihood), clikelihood[1,], type='l', xlab = 'Iteration',
+     ylab = 'Log-likelihood', col = 1, ylim = c(min(clikelihood), 
+                                                max(clikelihood)))
+for(numi in 2:numchain){
+  points(1:ncol(clikelihood), clikelihood[numi,], type = 'l', col = numi)
+}
+title(main=paste('Posterior likelihood', k, 'clones', numchain,
+                 'chains'),cex=0.6)
+plot(K, bic, xlab = 'Number of subclones', ylab = 'BIC', type = 'b', xaxt = "n")
+axis(1, at = K)
+abline(v = (3:6)[which.max(bic)], lty = 2)
+title('BIC for model selection')
+```
+
+### 4.5.6. Posterior evaluation of sampled trees, output, and plotting
+
+Canopy then runs a posterior evaluation of all sampled trees by MCMC. If modes of posterior probabilities (second column of `config.summary`) aren't obvious, check if the algorithm has converged (and run sampling longer if not).
+
+```{r}
+post = canopy.post(sampchain = sampchain, projectname = projectname, K = K,
+numchain = numchain, burnin = burnin, thin = thin, optK = optK,
+C = C, post.config.cutoff = 0.05)
+samptreethin = post[[1]]   # list of all post-burnin and thinning trees
+samptreethin.lik = post[[2]]   # likelihoods of trees in samptree
+config = post[[3]] # configuration for each posterior tree
+config.summary = post[[4]] # configuration summary
+print(config.summary)
+# first column: tree configuration
+# second column: posterior configuration probability in the entire tree space
+# third column: posterior configuration likelihood in the subtree space
+```
+
+
+One can then use Canopy to output and plot the most likely tree (i.e.,tree with the highest posterior likelihood). Mutations, clonal frequencies, and tree topology, etc., of the tree are obtained from the posterior distributions of subtree space with trees having the same configuration. In our MDA231 example, the most likely tree is the tree with configuration 3. **Note**: A separate txt file can be generated (with txt=TRUE and txt.name='*.txt') if the figure legend of mutational profiles (texts below the phylogenetic tree) in the plot is too long to be fitted entirely.
+
+```{r, eval=FALSE}
+config.i = config.summary[which.max(config.summary[,3]),1]
+cat('Configuration', config.i, 'has the highest posterior likelihood!\n')
+# plot the most likely tree in the posterior tree space
+output.tree = canopy.output(post, config.i, C)
+canopy.plottree(output.tree)
+
+# plot the tree with configuration 1 in the posterior tree space
+output.tree = canopy.output(post, 1, C)
+canopy.plottree(output.tree, pdf=TRUE, pdf.name = 
+paste(projectname,'_first_config.pdf',sep=''))
+```
+
+```{r, fig.align = "center", echo=FALSE}
+config.i = config.summary[which.max(config.summary[,3]),1]
+cat('Configuration', config.i, 'has the highest posterior likelihood!\n')
+# plot the most likely tree in the posterior tree space
+output.tree = canopy.output(post, config.i, C)
+canopy.plottree(output.tree)
+title('Most likely tree for project MD231')
+```
+
+
+### 4.5.7. Try it yourself
+
+Now try Canopy yourself using the simulated toy dataset below! Note that no overlapping CNAs are used as input and thus matrix $C$ doesn't need to be specified.
+
+```{r, eval=FALSE}
+library(MARATHON)
+data(toy)
+projectname = 'toy'
+R = toy$R; X = toy$X; WM = toy$WM; Wm = toy$Wm
+epsilonM = toy$epsilonM; epsilonm = toy$epsilonm; Y = toy$Y
+
+K = 3:6; numchain = 10
+sampchain = canopy.sample(R = R, X = X, WM = WM, Wm = Wm, epsilonM = epsilonM, 
+                          epsilonm = epsilonm, C = NULL, Y = Y, K = K, 
+                          numchain = numchain, simrun = 50000, writeskip = 200,
+                          projectname = projectname, cell.line = FALSE,
+                          plot.likelihood = TRUE)
+```
+
+The most likely tree is shown below. There should be only one tree configurationfrom the posterior tree space. The code for this toy dataset analysis can be found [here](https://github.com/yuchaojiang/Canopy/blob/master/demo_code/canopy_demo_toy.R).
+
+```{r, fig.align = "center", echo=FALSE}
+library(MARATHON)
+data(toy)
+canopy.plottree(toy$besttree, txt = FALSE, pdf = FALSE)
+title('Most likely tree for simulated toy dataset')
+```
+
+The second toy example has a different tree topology. Feel free to try Canopy on this dataset too! There should be also just one tree configuration as is shown below from the posterior tree space.  The code for this toy dataset analysis can be found [here](https://github.com/yuchaojiang/Canopy/blob/master/demo_code/canopy_demo_toy2.R).
+
+```{r, eval=FALSE}
+library(MARATHON)
+data(toy2)
+projectname = 'toy2'
+R = toy2$R; X = toy2$X; WM = toy2$WM; Wm = toy2$Wm
+epsilonM = toy2$epsilonM; epsilonm = toy2$epsilonm; Y = toy2$Y
+true.tree = toy2$true.tree  # true underlying tree
+K = 3:6; numchain = 15
+sampchain = canopy.sample(R = R, X = X, WM = WM, Wm = Wm, epsilonM = epsilonM, 
+                          epsilonm = epsilonm, C = NULL, Y = Y, K = K, 
+                          numchain = numchain, max.simrun = 100000,
+                          min.simrun = 10000, writeskip = 200,
+                          projectname = projectname, cell.line = FALSE,
+                          plot.likelihood = TRUE)
+```
+  
+```{r, fig.align = "center", echo=FALSE}
+data(toy2)
+canopy.plottree(toy2$true.tree, txt = FALSE, pdf = FALSE)
+title('Most likely tree for simulated toy dataset 2')
+```
+
+
+The third toy example consists of three bulk tumor samples, in silico simulated from a tree of 4 clones/leaves. The 5 tree segments (excluding the leftmost branch, which corresponds to the normal clone) separate 200 mutations into 5 mutation clusters. The SNA clustering details are outlined in section ``Binomial clustering of SNAs". The code for this toy dataset analysis is briefly attached below. Code in more details with visualization and posterior analysis can be found [here](https://github.com/yuchaojiang/Canopy/blob/master/demo_code/canopy_demo_toy3.R).
+
+```{r, eval=FALSE}
+library(MARATHON)
+data(toy3)
+R=toy3$R; X=toy3$X
+num_cluster=2:9 # Range of number of clusters to run
+num_run=10 # How many EM runs per clustering step for each mutation cluster wave
+canopy.cluster=canopy.cluster(R = R,
+X = X,
+num_cluster = num_cluster,
+num_run = num_run)
+
+bic_output=canopy.cluster$bic_output # BIC for model selection (# of clusters)
+Mu=canopy.cluster$Mu # VAF centroid for each cluster
+Tau=canopy.cluster$Tau  # Prior for mutation cluster, with a K+1 component
+sna_cluster=canopy.cluster$sna_cluster # cluster identity for each mutation
+
+projectname='toy3'
+K = 3:5 # number of subclones
+numchain = 15 # number of chains with random initiations
+sampchain = canopy.sample.cluster.nocna(R = R, X = X, sna_cluster = sna_cluster,
+K = K, numchain = numchain, 
+max.simrun = 100000, min.simrun = 20000,
+writeskip = 200, projectname = projectname,
+cell.line = FALSE, plot.likelihood = TRUE)
+save.image(file = paste(projectname, '_postmcmc_image.rda',sep=''),
+compress = 'xz')
+```
+
+
+
+
+
+
+# 5. Session info
 
 ```{r sessionInfo}
 sessionInfo()
 ```
 
-# References
+# 6. References
