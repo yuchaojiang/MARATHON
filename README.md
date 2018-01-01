@@ -18,6 +18,10 @@ If you have any questions or problems when using MARATHON, please feel free to o
 A docker image is available [here](https://hub.docker.com/r/lzeppelini/marathon/).
 This image is an Rstudio GUI built on rocker/tidyverse with MARATHON as well as all of its dependent packages and datasets pre-installed. Note that this can take a while to download the human reference genome as well as the toy sequencing dataset. Instructions for using Docker can be found [here](https://docs.docker.com/get-started/).
 
+```bash
+docker pull lzeppelini/marathon
+```
+
 #### Installation Option 2: Install to R/RStudio - Good for performance
 Install all packages in the latest version of [R](https://www.r-project.org/).
 ```r
