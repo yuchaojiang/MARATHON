@@ -28,8 +28,7 @@ Install all packages in the latest version of [R](https://www.r-project.org/).
 install.packages(c("canopy", "falcon", "falconx", "devtools"))
 source("https://bioconductor.org/biocLite.R")
 biocLite(c("CODEX", "WES.1KG.WUGSC"))
-library(devtools)
-install_github(c("yuchaojiang/CODEX2/package", "zhouzilu/iCNV/package", "yuchaojiang/MARATHON/package"))
+devtools::install_github(c("yuchaojiang/CODEX2/package", "zhouzilu/iCNV/package", "yuchaojiang/MARATHON/package"))
 ```
 
 ## Pipeline overview
