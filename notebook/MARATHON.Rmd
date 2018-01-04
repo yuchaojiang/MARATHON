@@ -68,7 +68,7 @@ This image is an Rstudio GUI built on rocker/tidyverse with MARATHON as well as 
 
 Install all packages in the latest version of [R](https://www.r-project.org/).
 ```{r, eval=FALSE}
-install.packages(c("canopy", "falcon", "falconx", "devtools"))
+install.packages(c("Canopy", "falcon", "falconx", "devtools"))
 source("https://bioconductor.org/biocLite.R")
 biocLite(c("CODEX", "WES.1KG.WUGSC"))
 library(devtools)
