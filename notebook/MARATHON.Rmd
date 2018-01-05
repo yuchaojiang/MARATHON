@@ -64,6 +64,10 @@ knitr::include_graphics("https://raw.githubusercontent.com/yuchaojiang/MARATHON/
 A docker image is available [here](https://hub.docker.com/r/lzeppelini/marathon/).
 This image is an Rstudio GUI built on rocker/tidyverse with MARATHON as well as all of its dependent packages and datasets pre-installed. Note that this can take a while to download the human reference genome as well as the toy sequencing dataset. Instructions for using Docker can be found [here](https://docs.docker.com/get-started/).
 
+```bash
+docker pull lzeppelini/marathon
+```
+
 ## 3.2 Installation Option 2: Install to R/RStudio - good for performance
 
 Install all packages in the latest version of [R](https://www.r-project.org/).
@@ -71,8 +75,7 @@ Install all packages in the latest version of [R](https://www.r-project.org/).
 install.packages(c("Canopy", "falcon", "falconx", "devtools"))
 source("https://bioconductor.org/biocLite.R")
 biocLite(c("CODEX", "WES.1KG.WUGSC"))
-library(devtools)
-install_github(c("yuchaojiang/CODEX2/package", "zhouzilu/iCNV/package", "yuchaojiang/MARATHON/package"))
+devtools::install_github(c("yuchaojiang/CODEX2/package", "zhouzilu/iCNV/package", "yuchaojiang/MARATHON/package"))
 ```
 
 
