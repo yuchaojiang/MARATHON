@@ -31,7 +31,7 @@ knitr::include_graphics("https://raw.githubusercontent.com/yuchaojiang/MARATHON/
 knitr::include_graphics("https://raw.githubusercontent.com/yuchaojiang/MARATHON/master/figure/Table1.png")
 ```
 
-**Table 1**. Analysis scenarios and pipeline design. The last column shows the sequencing of software that should be used for each analysis scenario. *By "normal" we mean samples that are not derived from tumor tissue. Broad copy number changes are not expected to cover the genome in the normal controls.
+**Table 1**. Analysis scenarios and pipeline design. The last column shows the sequence of software that should be used for each analysis scenario. * By “normal” we mean samples that are not derived from tumor tissue, which are not expected to carry chromosome-level copy number changes.
 
 # 2. Questions & issues
 
@@ -374,7 +374,7 @@ head(icnv.output)
 
 #### 4.1.3.5. Single platform CNV detection
 
-At this step, we should alreday have PLR and variants BAF from sequencing OR normalized LRR and BAF from SNP array. Please make sure all the input are in list form. 
+At this step, we should already have PLR and variants BAF from sequencing OR normalized LRR and BAF from SNP array. Please make sure all the input are in list form. 
 Try out with demo code and sample dataset available [here](https://github.com/zhouzilu/iCNV/tree/master/demo).
 
 NGS only CNV detection using iCNV
