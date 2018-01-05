@@ -41,7 +41,7 @@ The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline
   <img src='https://github.com/yuchaojiang/MARATHON/blob/master/figure/Figure1.jpg' width='600' height='300'>
 </p>
 
-**Table 1.** Analysis scenarios and pipeline design. The last column shows the sequencing of software that should be used for each analysis scenario. *By “normal” we mean samples that are not derived from tumor tissue. Broad copy number changes are not expected to cover the genome in the normal controls.
+**Table 1.** Analysis scenarios and pipeline design. The last column shows the sequence of software that should be used for each analysis scenario. * By “normal” we mean samples that are not derived from tumor tissue, which are not expected to carry chromosome-level copy number changes.
 
 <p align="center">
   <img src='https://github.com/yuchaojiang/MARATHON/blob/master/figure/Table1.png' width='600' height='320'>
