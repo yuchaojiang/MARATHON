@@ -767,7 +767,7 @@ head(reads.demo[,1:8])
 Apply CODEX2 to get total coverage bias. First we get GC content from a 50bp window centered at the SNP, as well as total read depth at each loci.
 
 ```{r}
-pos=as.numeric(mymatrix.demo[,'POS'])
+pos=as.numeric(paste(mymatrix.demo[,'POS']))
 ref=IRanges(start=pos-25,end=pos+25)
 gc=getgc(chr,ref) # GC content for each loci
 Y = reads.demo[,seq(1,ncol(reads.demo),2)] +
