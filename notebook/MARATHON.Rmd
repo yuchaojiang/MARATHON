@@ -215,6 +215,11 @@ Running CODEX2: For demonstration purpose, we in silico spiked in CNVs spanning 
 We can empirically identify common CNV regions by a first-pass CODEX run: For exons residing in common CNV regions, the s.d. of normalized z-scores across all samples will be large.
 
 ```{r, message= FALSE, eval=FALSE}
+# Below are pre-computed demo dataset, stored as part of the CODEX2 R-package.
+Y_qc = Y_qc_codex2
+gc_qc = gc_qc_codex2
+norm_index = norm_index_codex2
+
 # Empirically identify common CNV regions from the data.
 normObj=normalize_null(Y_qc = Y_qc, gc_qc = gc_qc, K = 1:6)
 z.codex = log(Y_qc/normObj$Yhat[[which.max(normObj$BIC)]])
@@ -496,6 +501,11 @@ par(mfrow = c(1,1))
 We can empirically identify common CNV regions by a first-pass CODEX run: For exons residing in common CNV regions, the s.d. of normalized z-scores across all samples will be large.
 
 ```{r, message= FALSE, eval=FALSE}
+# Below are pre-computed demo dataset, stored as part of the CODEX2 R-package.
+Y_qc = Y_qc_codex2
+gc_qc = gc_qc_codex2
+norm_index = norm_index_codex2
+
 # Empirically identify common CNV regions from the data.
 normObj=normalize_null(Y_qc = Y_qc, gc_qc = gc_qc, K = 1:6)
 z.codex = log(Y_qc/normObj$Yhat[[which.max(normObj$BIC)]])
