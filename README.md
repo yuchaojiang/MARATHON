@@ -105,7 +105,7 @@ Please cite MARATHON as well as all the dependent packages that you use.
   <br>
   Department of Statistics, UC Davis
 
-* [Zilu Zhou] (zhouzilu at pennmedicine dot upenn dot edu)
+* Zilu Zhou (zhouzilu at pennmedicine dot upenn dot edu)
   <br>
   Genomics and Computational Biology Graduate Group, UPenn
 
