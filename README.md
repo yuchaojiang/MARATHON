@@ -4,7 +4,7 @@ Copy number variation is an important and abundant source of variation in the hu
 
 ## Manuscript
 
-The manuscript for MARATHON is currently under review. Pre-print is available [here via bioRixv](https://www.biorxiv.org/content/early/2017/09/28/195230).
+The manuscript for MARATHON is currently under review. Pre-print is available [here via bioRixv](https://www.biorxiv.org/content/early/2018/01/05/195230).
 
 
 ## Questions & Problems
@@ -57,7 +57,7 @@ The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline
 
 Please cite MARATHON as well as all the dependent packages that you use.
 
-* **MARATHON**: [Jiang et al. 2017 bioRixv](https://www.biorxiv.org/content/early/2017/09/28/195230)
+* **MARATHON**: [Urrutia et al. 2017 bioRixv](https://www.biorxiv.org/content/early/2018/01/05/195230)
   <br>
   Integrative pipeline for profiling DNA copy number and inferring tumor phylogeny ([GitHub](https://github.com/yuchaojiang/MARATHON))
 
@@ -93,6 +93,10 @@ Please cite MARATHON as well as all the dependent packages that you use.
 
 ## Developers & Maintainers
 
+* Gene Urrutia (urrutia at email dot unc dot edu)
+  <br>
+  Department of Biostatistics, UNC-Chapel Hill
+
 * [Yuchao Jiang](http://sph.unc.edu/adv_profile/yuchao-jiang-phd/) (yuchaoj at email dot unc dot edu)
   <br>
   Department of Biostatistics & Department of Genetics, UNC-Chapel Hill
@@ -101,11 +105,7 @@ Please cite MARATHON as well as all the dependent packages that you use.
   <br>
   Department of Statistics, UC Davis
 
-* Gene Urrutia (urrutia at email dot unc dot edu)
-  <br>
-  Department of Biostatistics, UNC-Chapel Hill
-
-* [Zilu Zhou](https://statistics.wharton.upenn.edu/profile/zhouzilu/) (zhouzilu at pennmedicine dot upenn dot edu)
+* [Zilu Zhou] (zhouzilu at pennmedicine dot upenn dot edu)
   <br>
   Genomics and Computational Biology Graduate Group, UPenn
 
