@@ -276,7 +276,7 @@ mapp &lt;-<span class="st"> </span><span class="kw">getmapp</span>(chr, ref)</co
 Y_qc &lt;-<span class="st"> </span>qcObj<span class="op">$</span>Y_qc; sampname_qc &lt;-<span class="st"> </span>qcObj<span class="op">$</span>sampname_qc; gc_qc &lt;-<span class="st"> </span>qcObj<span class="op">$</span>gc_qc
 mapp_qc &lt;-<span class="st"> </span>qcObj<span class="op">$</span>mapp_qc; ref_qc &lt;-<span class="st"> </span>qcObj<span class="op">$</span>ref_qc; qcmat &lt;-<span class="st"> </span>qcObj<span class="op">$</span>qcmat</code></pre></div>
 <p>Normalization with normal controls</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">normObj &lt;-<span class="st"> </span><span class="kw">normalizeParallel</span>(Y_qc, gc_qc, <span class="dt">K =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">6</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">normObj &lt;-<span class="st"> </span><span class="kw">normalize</span>(Y_qc, gc_qc, <span class="dt">K =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">6</span>)
 Yhat &lt;-<span class="st"> </span>normObj<span class="op">$</span>Yhat; AIC &lt;-<span class="st"> </span>normObj<span class="op">$</span>AIC; BIC &lt;-<span class="st"> </span>normObj<span class="op">$</span>BIC
 RSS &lt;-<span class="st"> </span>normObj<span class="op">$</span>RSS; K &lt;-<span class="st"> </span>normObj<span class="op">$</span>K</code></pre></div>
 <p>Choose the number of latent factors</p>
@@ -336,7 +336,7 @@ Y_qc =<span class="st"> </span>Y_qc_codex2
 gc_qc =<span class="st"> </span>gc_qc_codex2
 
 <span class="co"># Empirically identify common CNV regions from the data.</span>
-normObj=<span class="kw">normalizeParallel</span>(<span class="dt">Y_qc =</span> Y_qc, <span class="dt">gc_qc =</span> gc_qc, <span class="dt">K =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">6</span>)
+normObj=<span class="kw">normalize_null</span>(<span class="dt">Y_qc =</span> Y_qc, <span class="dt">gc_qc =</span> gc_qc, <span class="dt">K =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">6</span>)
 z.codex =<span class="st"> </span><span class="kw">log</span>(Y_qc<span class="op">/</span>normObj<span class="op">$</span>Yhat[[<span class="kw">which.max</span>(normObj<span class="op">$</span>BIC)]])
 cnv_index1 =<span class="st"> </span><span class="kw">which</span>(<span class="kw">apply</span>(z.codex,<span class="dv">1</span>,sd)<span class="op">&gt;=</span><span class="fl">0.25</span>) 
 
@@ -629,7 +629,7 @@ Y_qc =<span class="st"> </span>Y_qc_codex2
 gc_qc =<span class="st"> </span>gc_qc_codex2
 
 <span class="co"># Empirically identify common CNV regions from the data.</span>
-normObj=<span class="kw">normalizeParallel</span>(<span class="dt">Y_qc =</span> Y_qc, <span class="dt">gc_qc =</span> gc_qc, <span class="dt">K =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">6</span>)
+normObj=<span class="kw">normalize_null</span>(<span class="dt">Y_qc =</span> Y_qc, <span class="dt">gc_qc =</span> gc_qc, <span class="dt">K =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">6</span>)
 z.codex =<span class="st"> </span><span class="kw">log</span>(Y_qc<span class="op">/</span>normObj<span class="op">$</span>Yhat[[<span class="kw">which.max</span>(normObj<span class="op">$</span>BIC)]])
 cnv_index1 =<span class="st"> </span><span class="kw">which</span>(<span class="kw">apply</span>(z.codex,<span class="dv">1</span>,sd)<span class="op">&gt;=</span><span class="fl">0.25</span>) 
 <span class="co"># This can also be provided by the user as known,</span>

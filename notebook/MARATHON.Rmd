@@ -127,7 +127,7 @@ mapp_qc <- qcObj$mapp_qc; ref_qc <- qcObj$ref_qc; qcmat <- qcObj$qcmat
 
 Normalization with normal controls
 ```{r message= FALSE}
-normObj <- normalizeParallel(Y_qc, gc_qc, K = 1:6)
+normObj <- normalize(Y_qc, gc_qc, K = 1:6)
 Yhat <- normObj$Yhat; AIC <- normObj$AIC; BIC <- normObj$BIC
 RSS <- normObj$RSS; K <- normObj$K
 ```
@@ -215,7 +215,7 @@ Y_qc = Y_qc_codex2
 gc_qc = gc_qc_codex2
 
 # Empirically identify common CNV regions from the data.
-normObj=normalizeParallel(Y_qc = Y_qc, gc_qc = gc_qc, K = 1:6)
+normObj=normalize_null(Y_qc = Y_qc, gc_qc = gc_qc, K = 1:6)
 z.codex = log(Y_qc/normObj$Yhat[[which.max(normObj$BIC)]])
 cnv_index1 = which(apply(z.codex,1,sd)>=0.25) 
 
@@ -494,7 +494,7 @@ Y_qc = Y_qc_codex2
 gc_qc = gc_qc_codex2
 
 # Empirically identify common CNV regions from the data.
-normObj=normalizeParallel(Y_qc = Y_qc, gc_qc = gc_qc, K = 1:6)
+normObj=normalize_null(Y_qc = Y_qc, gc_qc = gc_qc, K = 1:6)
 z.codex = log(Y_qc/normObj$Yhat[[which.max(normObj$BIC)]])
 cnv_index1 = which(apply(z.codex,1,sd)>=0.25) 
 # This can also be provided by the user as known,
