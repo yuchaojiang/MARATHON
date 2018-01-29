@@ -129,7 +129,7 @@ mapp_qc <- qcObj$mapp_qc; ref_qc <- qcObj$ref_qc; qcmat <- qcObj$qcmat
 
 Normalization with normal controls.
 
-```{r message=F}
+```{r message= FALSE}
 normObj <- normalize(Y_qc, gc_qc, K = 1:6)
 Yhat <- normObj$Yhat; AIC <- normObj$AIC; BIC <- normObj$BIC
 RSS <- normObj$RSS; K <- normObj$K
@@ -165,7 +165,7 @@ CODEX2 [@jiang2017codex2] builds on CODEX with a significant improvement of sens
 
 #### 4.1.2.1. Analysis overview
 
-The figure below illustrates the two experimental designs for which CODEX2 can be applied: (i) case-control design with a group of negative control samples, where the goal is to detect CNVs disproportionately present in the ‘cases’ versus the ‘controls’; and (ii) detection of all CNVs present in all samples design, such as in the Exome Aggregation Consortium. The key innovation in CODEX2 is the usage of negative control genome regions in a genome-wide latent factor model for sample- and position-specific background correction, and the utilization of negative control samples, under a case-control design, to further improve background bias estimation under this model. The negative control genome regions defined by CODEX2 are regions that do not harbor common CNVs, but that are still allowed to harbor rare CNVs, and can be constructed from existing studies or learned from data.
+The figure below illustrates the two experimental designs for which CODEX2 can be applied: (A) case-control design with a group of negative control samples, where the goal is to detect CNVs disproportionately present in the ‘cases’ versus the ‘controls’; and (B) detection of all CNVs present in all samples design, such as in the Exome Aggregation Consortium. The key innovation in CODEX2 is the usage of negative control genome regions in a genome-wide latent factor model for sample- and position-specific background correction, and the utilization of negative control samples, under a case-control design, to further improve background bias estimation under this model. The negative control genome regions defined by CODEX2 are regions that do not harbor common CNVs, but that are still allowed to harbor rare CNVs, and can be constructed from existing studies or learned from data.
 
 ```{r, out.width = "600px", fig.align = "center", echo=FALSE}
 knitr::include_graphics("https://raw.githubusercontent.com/yuchaojiang/CODEX2/master/demo/Figure1.png")
@@ -214,11 +214,10 @@ Running CODEX2: For demonstration purpose, we in silico spiked in CNVs spanning 
 
 We can empirically identify common CNV regions by a first-pass CODEX run: For exons residing in common CNV regions, the s.d. of normalized z-scores across all samples will be large.
 
-```{r, message= FALSE, eval=FALSE}
+```{r, message= TRUE}
 # Below are pre-computed demo dataset, stored as part of the CODEX2 R-package.
 Y_qc = Y_qc_codex2
 gc_qc = gc_qc_codex2
-norm_index = norm_index_codex2
 
 # Empirically identify common CNV regions from the data.
 normObj=normalize_null(Y_qc = Y_qc, gc_qc = gc_qc, K = 1:6)
@@ -504,7 +503,6 @@ We can empirically identify common CNV regions by a first-pass CODEX run: For ex
 # Below are pre-computed demo dataset, stored as part of the CODEX2 R-package.
 Y_qc = Y_qc_codex2
 gc_qc = gc_qc_codex2
-norm_index = norm_index_codex2
 
 # Empirically identify common CNV regions from the data.
 normObj=normalize_null(Y_qc = Y_qc, gc_qc = gc_qc, K = 1:6)
@@ -993,7 +991,7 @@ Canopy samples in subtree space with varying number of subclones(denoted as $K$)
 There are four modes of MCMC sampling embedded in Canopy: (1) `canopy.sample`
   which takes both SNA and CNA as input by default; (2) `canopy.sample.nocna` for cases where there is no CNA input; (3) `canopy.sample.cluster` for cases where SNAs are pre-clustered by the Binomial mixture EM algorithm; (4) `canopy.sample.cluster.nocna` for cases where there is no CNA input and SNAs are pre-clustered by the Binomial mixture EM algorithm. More details can be found [here](https://github.com/yuchaojiang/Canopy/blob/master/instruction/sampling_mode.md).
 
-Below is sampling code for the MDA231 dataset where both SNA and CNA are used as input.
+Below is sampling code for the MDA231 dataset (see section 4.5.1) where both SNA and CNA are used as input.
 
 ```{r, eval=FALSE}
 K = 3:6 # number of subclones
