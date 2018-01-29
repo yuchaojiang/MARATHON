@@ -75,7 +75,7 @@ Install all packages in the latest version of [R](https://www.r-project.org/).
 install.packages(c("Canopy", "falcon", "falconx", "devtools"))
 source("https://bioconductor.org/biocLite.R")
 biocLite(c("CODEX", "WES.1KG.WUGSC"))
-devtools::install_github(c("yuchaojiang/CODEX2/package", "zhouzilu/iCNV/package", "yuchaojiang/MARATHON/package"))
+devtools::install_github(c("yuchaojiang/CODEX2/package", "zhouzilu/iCNV", "yuchaojiang/MARATHON/package"))
 ```
 
 
@@ -872,6 +872,90 @@ The input to Canopy are variant allele frequencies of somatic SNAs along with al
 supporting the mutant allele, known as the variant allele frequency. For CNAs, Canopy directly takes output from allele-specific copy number estimation softwares, such as [FALCON-X](https://CRAN.R-project.org/package=falconx) or [Sequenza](https://CRAN.R-project.org/package=sequenza). These outputs are in the form of estimated major and minor copy number ratios, respectively denoted by $W^M$ and $W^m$, with their corresponding standard errors $\epsilon^M$ and $\epsilon^m$. Matrix $Y$ specifies whether SNAs are affected by CNAs; matrix $C$ specifies whether CNA regions harbor specific CNAs (this input is only needed if overlapping CNA events are observed).
 
 How to generate CNA and SNA data input is futher discussed [here](https://github.com/yuchaojiang/Canopy/blob/master/instruction/SNA_CNA_input.md). How to select ****informative**** SNA and CNA input is discussed [here](https://github.com/yuchaojiang/Canopy/blob/master/instruction/SNA_CNA_choice.md).
+
+```{bash, eval = FALSE}
+
+# 1. Index the genome template
+bwa index ~ $GENOME_DIR/hg19/ucsc.hg19.fasta
+
+# 2. Align reads in .fastq file to the template
+bwa mem -M -t 16 $GENOME_DIR/ucsc.hg19.fasta sampleRead1.fastq \
+  sampleRead2.fastq > sample.sam
+
+# 3. Convert .sam to .bam and sort
+samtools view -bS sample.sam > sample.bam
+java -jar $PATH_PICARD/picard.jar SortSam \
+  INPUT=sample.bam \
+  OUTPUT=sample.sorted.bam SORT_ORDER=coordinate
+
+# 4. Add read group and index
+java -jar $PATH_PICARD/picard.jar AddOrReplaceReadGroups \
+  INPUT=sample.sorted.bam OUTPUT=sample.sorted.rg.bam \
+  RGID=sample RGLB=myRGLB RGPL=myRGPL RGPU=myRGPU RGSM=myRGSM
+samtools index sample.sorted.rg.bam
+(
+# 5. *Not Run (Merge two different lanes if sample sequenced at two different lanes),
+# sort, index
+#samtools merge sampleMerge.bam \
+#  sampleLane1.sorted.rg.bam sampleLane2.sorted.rg.bam
+#java -jar SortSam.jar INPUT=sampleMerge.bam \
+#  OUTPUT=sampleMerge.sorted.bam SORT_ORDER=coordinate
+
+
+# 6. Dedup, index
+java -jar $PATH_PICARD/picard.jar MarkDuplicates \
+  INPUT=sample.sorted.rg.bam OUTPUT=sample.sorted.dedup.bam  \
+  METRICS_FILE=sample.sorted.dedup.metrics.txt \
+  PROGRAM_RECORD_ID= MarkDuplicates \
+  PROGRAM_GROUP_VERSION=null \
+  PROGRAM_GROUP_NAME=MarkDuplicates
+java -jar $PATH_PICARD/picard.jar BuildBamIndex \
+  INPUT=sample.sorted.dedup.bam
+
+# 7. Realign
+java -jar $PATH_GATK/GenomeAnalysisTK.jar \
+  -T RealignerTargetCreator \
+  -R $GENOME_DIR/ucsc.hg19.fasta \
+  -I sample.sorted.dedup.bam \
+  -known $GENOME_DIR/Mills_and_1000G_gold_standard.indels.hg19.sites.vcf \
+  -known $GENOME_DIR/1000G_phase1.indels.hg19.sites.vcf \
+  -o sample.sorted.dedup.target_intervals.list
+
+java -jar $PATH_GATK/GenomeAnalysisTK.jar \
+  -T IndelRealigner \
+  -R $GENOME_DIR/ucsc.hg19.fasta \
+  -I sample.sorted.dedup.bam \
+  -targetIntervals sampleMerge.sorted.dedup.target_intervals.list \
+  -known $GENOME_DIR/Mills_and_1000G_gold_standard.indels.hg19.sites.vcf \
+  -known $GENOME_DIR/1000G_phase1.indels.hg19.sites.vcf \
+  -o sample.sorted.dedup.realigned.bam
+
+# 8. Recalibrate Base Quality Scores
+java -jar $PATH_GATK/GenomeAnalysisTK.jar \
+  -T BaseRecalibrator \
+  -R $GENOME_DIR/ucsc.hg19.fasta \
+  -I sample.sorted.dedup.realigned.bam \
+  -knownSites $GENOME_DIR/dbsnp_138.hg19.vcf \
+  -knownSites $VCF_DIR/Mills_and_1000G_gold_standard.indels.hg19.sites.vcf \
+  -knownSites $VCF_DIR/1000G_phase1.indels.hg19.sites.vcf \
+  -o sample.sorted.dedup.realigned.recal_data.table
+
+java -jar $PATH_GATK/GenomeAnalysisTK.jar 
+  -T PrintReads \
+  -R $GENOME_DIR/ucsc.hg19.fasta \
+  -I sample.sorted.dedup.realigned.bam \
+  -BQSR sample.sorted.dedup.realigned.recal_data.table \
+  -o sample.sorted.dedup.realigned.recal.bam
+samtools index sample.sorted.dedup.realigned.recal.bam
+
+# 9. GATK UnifiedGenotyper
+java -jar $PATH_GATK/GenomeAnalysisTK.jar 
+  -T UnifiedGenotyper\
+  -R $GENOME_DIR/ucsc.hg19.fasta \
+  -I sample.sorted.dedup.realigned.recal.bam \
+  -o sample.sorted.dedup.realigned.recal.raw.snps.indels.g.vcf
+  
+```
 
 Below is demo data input from project MDA231 (first case study in our paper).
 
