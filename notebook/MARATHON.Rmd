@@ -74,8 +74,8 @@ Install all packages in the latest version of [R](https://www.r-project.org/).
 ```{r, eval=FALSE}
 install.packages(c("Canopy", "falcon", "falconx", "devtools"))
 source("https://bioconductor.org/biocLite.R")
-biocLite(c("CODEX", "WES.1KG.WUGSC"))
-devtools::install_github(c("yuchaojiang/CODEX2/package", "zhouzilu/iCNV", "yuchaojiang/MARATHON/package"))
+biocLite("WES.1KG.WUGSC")
+devtools::install_github(c("yuchaojiang/CODEX/package", "yuchaojiang/CODEX2/package", "zhouzilu/iCNV", "yuchaojiang/MARATHON/package"))
 ```
 
 
@@ -123,14 +123,11 @@ qcObj <- qc(Y, sampname, chr, ref, mapp, gc, cov_thresh = c(20, 4000),
             length_thresh = c(20, 2000), mapp_thresh = 0.9, gc_thresh = c(20, 80))
 Y_qc <- qcObj$Y_qc; sampname_qc <- qcObj$sampname_qc; gc_qc <- qcObj$gc_qc
 mapp_qc <- qcObj$mapp_qc; ref_qc <- qcObj$ref_qc; qcmat <- qcObj$qcmat
-# write.table(qcmat, file = paste(projectname, '_', chr, '_qcmat', '.txt', sep=''),
-#             sep='\t', quote=FALSE, row.names=FALSE)
 ```
 
-Normalization with normal controls.
-
+Normalization with normal controls
 ```{r message= FALSE}
-normObj <- normalize(Y_qc, gc_qc, K = 1:6)
+normObj <- normalizeParallel(Y_qc, gc_qc, K = 1:6)
 Yhat <- normObj$Yhat; AIC <- normObj$AIC; BIC <- normObj$BIC
 RSS <- normObj$RSS; K <- normObj$K
 ```
@@ -152,7 +149,7 @@ plot(K, BIC, type = "b", xlab = "Number of latent variables", pch=20)
 Poisson-likelihood recursive segmentation.
 ```{r message=FALSE}
 optK = K[which.max(BIC)]
-finalcall <- segment.recursive(Y_qc, Yhat, optK = optK, K = K, sampname_qc,
+finalcall <- segment(Y_qc, Yhat, optK = optK, K = K, sampname_qc,
                      ref_qc, chr, lmax = 200, mode = "integer")
 head(finalcall)
 ```
@@ -204,8 +201,6 @@ qcObj <- qc(Y, sampname, chr, ref, mapp, gc, cov_thresh = c(20, 4000),
     length_thresh = c(20, 2000), mapp_thresh = 0.9, gc_thresh = c(20, 80))
 Y_qc <- qcObj$Y_qc; sampname_qc <- qcObj$sampname_qc; gc_qc <- qcObj$gc_qc
 mapp_qc <- qcObj$mapp_qc; ref_qc <- qcObj$ref_qc; qcmat <- qcObj$qcmat
-#write.table(qcmat, file = paste(projectname, '_', chr, '_qcmat', '.txt', sep=''),
-#            sep='\t', quote=FALSE, row.names=FALSE)
 ```
 
 Running CODEX2: For demonstration purpose, we in silico spiked in CNVs spanning exon 1580 - 1620 with a population frequency 40%. There are altogether 90 samples, 36 of which have the heterozygous deletion. The toy dataset is stored as part of the CODEX2 R-package.
@@ -220,15 +215,12 @@ Y_qc = Y_qc_codex2
 gc_qc = gc_qc_codex2
 
 # Empirically identify common CNV regions from the data.
-normObj=normalize_null(Y_qc = Y_qc, gc_qc = gc_qc, K = 1:6)
+normObj=normalizeParallel(Y_qc = Y_qc, gc_qc = gc_qc, K = 1:6)
 z.codex = log(Y_qc/normObj$Yhat[[which.max(normObj$BIC)]])
-plot(1:nrow(z.codex), apply(z.codex,1,sd))
-which(apply(z.codex,1,sd)>=0.25) 
 cnv_index1 = which(apply(z.codex,1,sd)>=0.25) 
+
 # This can also be provided by the user as known,
 # e.g., from existing database (DGV or dbVar) or knowledge (tumor supressors or oncogenes).
-cnv_index2 = 1580:1620
-head(cnv_index1 == cnv_index2)
 
 normObj=normalize_codex2_nr(Y_qc = Y_qc, gc_qc = gc_qc, 
                             K = 1:6, cnv_index = cnv_index1)
@@ -238,13 +230,12 @@ AIC.nr=normObj$AIC; BIC.nr=normObj$BIC; RSS.nr=normObj$RSS
 ```
 
 Running Poisson-likelihood recursive segmentation by CODEX2
-```{r, message=FALSE, eval = FALSE}
-finalcall.codex2.nr <- segment.recursive(Y_qc, Yhat.nr, optK = which.max(BIC.nr),
-                                         K = 1:6, sampname_qc = paste('sample',1:ncol(Y_qc),sep=''),
-                                         ref_qc = IRanges(start=1:nrow(Y_qc)*100, end=1:nrow(Y_qc)*100+50),
-                                         chr = 18, lmax = 200, mode = "integer")
-# write.table(finalcall.codex2.nr, file = 'finalcall.codex2.nr.int.txt', 
-#             sep='\t', quote=FALSE, row.names=FALSE)
+```{r, message=FALSE}
+finalcall.codex2.nr <- segmentCBS(Y_qc, Yhat.nr, optK = which.max(BIC.nr),
+                                  K = 1:6, sampname_qc = paste('sample',1:ncol(Y_qc),sep=''),
+                                  ref_qc = IRanges(start=1:nrow(Y_qc)*100, end=1:nrow( Y_qc )*100+50),
+                                  chr = 18, lmax = 200, mode = "integer")
+finalcall.codex2.nr
 ```
 
 
@@ -456,8 +447,6 @@ qcObj <- qc(Y, sampname, chr, ref, mapp, gc, cov_thresh = c(20, 4000),
     length_thresh = c(20, 2000), mapp_thresh = 0.9, gc_thresh = c(20, 80))
 Y_qc <- qcObj$Y_qc; sampname_qc <- qcObj$sampname_qc; gc_qc <- qcObj$gc_qc
 mapp_qc <- qcObj$mapp_qc; ref_qc <- qcObj$ref_qc; qcmat <- qcObj$qcmat
-#write.table(qcmat, file = paste(projectname, '_', chr, '_qcmat', '.txt', sep=''),
-#            sep='\t', quote=FALSE, row.names=FALSE)
 ```
 
 Running CODEX2: For demonstration purpose, we in silico spiked in CNVs spanning exon 1580 - 1620 with a population frequency 40%. There are altogether 90 samples, 36 of which have the heterozygous deletion. The toy dataset is stored as part of the CODEX2 R-package.
@@ -497,7 +486,7 @@ par(mfrow = c(1,1))
 
 ### 4.2.4. Running CODEX2 with negative control regions
 
-We can empirically identify common CNV regions by a first-pass CODEX run: For exons residing in common CNV regions, the s.d. of normalized z-scores across all samples will be large.
+Alternatively, we can empirically identify common CNV regions by a first-pass CODEX run: For exons residing in common CNV regions, the s.d. of normalized z-scores across all samples will be large.
 
 ```{r, message= FALSE, eval=FALSE}
 # Below are pre-computed demo dataset, stored as part of the CODEX2 R-package.
@@ -505,15 +494,11 @@ Y_qc = Y_qc_codex2
 gc_qc = gc_qc_codex2
 
 # Empirically identify common CNV regions from the data.
-normObj=normalize_null(Y_qc = Y_qc, gc_qc = gc_qc, K = 1:6)
+normObj=normalizeParallel(Y_qc = Y_qc, gc_qc = gc_qc, K = 1:6)
 z.codex = log(Y_qc/normObj$Yhat[[which.max(normObj$BIC)]])
-plot(1:nrow(z.codex), apply(z.codex,1,sd))
-which(apply(z.codex,1,sd)>=0.25) 
 cnv_index1 = which(apply(z.codex,1,sd)>=0.25) 
 # This can also be provided by the user as known,
 # e.g., from existing database (DGV or dbVar) or knowledge (tumor supressors or oncogenes).
-cnv_index2 = 1580:1620
-head(cnv_index1 == cnv_index2)
 
 normObj=normalize_codex2_nr(Y_qc = Y_qc, gc_qc = gc_qc, 
                             K = 1:6, cnv_index = cnv_index1)
@@ -525,7 +510,7 @@ AIC.nr=normObj$AIC; BIC.nr=normObj$BIC; RSS.nr=normObj$RSS
 ### 4.2.5. Running Poisson-likelihood recursive segmentation by CODEX2
 
 ```{r, message=FALSE}
-finalcall.codex2.ns <- segment.recursive(Y_qc, Yhat.ns, optK = which.max(BIC.ns),
+finalcall.codex2.ns <- segmentCBS(Y_qc, Yhat.ns, optK = which.max(BIC.ns),
                                K = 1:6, sampname_qc = paste('sample',1:ncol(Y_qc),sep=''),
                                ref_qc = IRanges(start=1:nrow(Y_qc)*100, end=1:nrow(Y_qc)*100+50),
                                chr = 18, lmax = 200, mode = "integer")
@@ -535,8 +520,6 @@ nrow(finalcall.codex2.ns) # identified 4 additional CNVs (false positives)
 # this can be easily filtered out by a QC on the CNV lengths in kb or number of exons
 head(finalcall.codex2.ns[finalcall.codex2.ns[,'st_exon']=='1580',])
 
-# write.table(finalcall.codex2.ns, file = 'finalcall.codex2.ns.int.txt', 
-#             sep='\t', quote=FALSE, row.names=FALSE)
 ```
 
 
@@ -1085,8 +1068,8 @@ sampchain = canopy.sample(R = R, X = X, WM = WM, Wm = Wm, epsilonM = epsilonM,
                           max.simrun = 50000, min.simrun = 10000, 
                           writeskip = 200, projectname = projectname, cell.line = TRUE, 
                           plot.likelihood = TRUE)
-save.image(file = paste(projectname, '_postmcmc_image.rda',sep=''),
-           compress = 'xz')
+#save.image(file = paste(projectname, '_postmcmc_image.rda',sep=''),
+#           compress = 'xz')
 ```
   
   
@@ -1200,7 +1183,8 @@ epsilonM = toy$epsilonM; epsilonm = toy$epsilonm; Y = toy$Y
 K = 3:6; numchain = 10
 sampchain = canopy.sample(R = R, X = X, WM = WM, Wm = Wm, epsilonM = epsilonM, 
                           epsilonm = epsilonm, C = NULL, Y = Y, K = K, 
-                          numchain = numchain, simrun = 50000, writeskip = 200,
+                          numchain = numchain, max.simrun = 100000,
+                          min.simrun = 10000, writeskip = 200,
                           projectname = projectname, cell.line = FALSE,
                           plot.likelihood = TRUE)
 ```
