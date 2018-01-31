@@ -663,14 +663,14 @@ view(cn,pos=coverageChrHet[,'Start_position'], rdep = rdep)
 The code below is to generate table output including genomic locations for segment boudaries, as well as mean and standard deviation for each segment. For Canopy's input, we use Bootstrap-based method to estimate the standard deviations for the allele-specific copy numbers.
 
 ```{r}  
-  falcon.output=falcon.output(readMatrix = readMatrix,
+  falconOutput=falcon.output(readMatrix = readMatrix,
                               tauhat = tauhat,
                               cn = cn,
                               st_bp = coverageChrHet[,"Start_position"],
                               end_bp = coverageChrHet[,"End_position"],
                               nboot = 5000)
-  falcon.output = cbind(chr=rep(chr,nrow(falcon.output)), falcon.output)
-  falcon.output
+  falconOutput = cbind(chr=rep(chr,nrow(falcon.output)), falcon.output)
+  falconOutput
 ```  
 
 
