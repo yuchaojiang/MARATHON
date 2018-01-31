@@ -30,7 +30,7 @@ If a file containes only non-negative log2 values, color will not be displayed c
 }
 
 \author{
- Yuchao Jiang \email{yuchaoj@wharton.upenn.edu} 
+ Yuchao Jiang \email{yuchaoj@live.unc.edu} 
  
  Gene Urrutia \email{urutia@live.unc.edu} 
 }
