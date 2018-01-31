@@ -35,8 +35,6 @@ vcfTargets is target info from the vcf file.  This is useful for annotating X an
 }
 
 \examples{
-install.packages("/Users/urrutig1/Documents/gitRepos/MARATHON/package", repos = NULL, type = 'source')
-
 library(MARATHON)
 
 vcfFile = system.file("extdata", "sample.vcf", package="MARATHON")
