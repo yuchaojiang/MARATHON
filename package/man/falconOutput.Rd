@@ -14,7 +14,7 @@ CNV calls from falcon with chromosome, location, and number of exons covered
 \author{
 Hao Chen \email{hxchen@ucdavis.edu}
 
-Gene Urrutia \email{urrutia@live.unc.edu}
+Gene Urrutia \email{urrutia@email.unc.edu}
 }
 \examples{
 falconOutput

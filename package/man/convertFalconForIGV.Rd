@@ -30,9 +30,9 @@ If a file containes only non-negative log2 values, color will not be displayed c
 }
 
 \author{
- Yuchao Jiang \email{yuchaoj@live.unc.edu} 
+ Yuchao Jiang \email{yuchaoj@email.unc.edu} 
  
- Gene Urrutia \email{urutia@live.unc.edu} 
+ Gene Urrutia \email{urutia@email.unc.edu} 
 }
 \examples{
 library(MARATHON)
@@ -42,5 +42,5 @@ falconOutput  #from the MARTHON notebook section 4.3.2.
 
 convertFalconForIGV( 
   falconOutput = falconOutput, sampleName = "sample1", outPath = getwd(), log2 = FALSE)
-
+}
 \keyword{ package }

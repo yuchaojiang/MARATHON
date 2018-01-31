@@ -29,9 +29,9 @@ X is a matrix (SNA by sample) which contains the number of total (referecnce + a
 vcfTargets is target info from the vcf file.  This is useful for annotating X and R if desired.  }
 
 \author{
- Yuchao Jiang \email{yuchaoj@live.unc.edu} 
+ Yuchao Jiang \email{yuchaoj@email.unc.edu} 
  
- Gene Urrutia \email{urutia@live.unc.edu} 
+ Gene Urrutia \email{urutia@email.unc.edu} 
 }
 
 \examples{
@@ -42,6 +42,6 @@ vcfFile = system.file("extdata", "sample.vcf", package="MARATHON")
 myVCF = read.table(vcfFile, sep = "\t", header = T)
 
 canopyInput = readVCFforCanopy( myVCF )
-
+}
 \keyword{ package }
 
