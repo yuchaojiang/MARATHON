@@ -6,7 +6,7 @@
 Below is a view of allele-specific copy number for 3 samples using Integrative Genomics Viewer.  We see major, minor and total copy number for each sample across the genome.   In this example, chromosomes 2, 8, 9, 11, 12 and 17b (second CNA) show differential CNV by sample, so we would use these.  Chromosomes 7, 15, and 17a (first CNA) show near identical CNV by sample, so we would not use these.
   <p align="center">
   IGV allele-specific copy number view of 3 samples
-  <img src='https://github.com/yuchaojiang/MARATHON/blob/master/instruction/igvCNV.png' width='994' height='479'>
+  <img src='https://github.com/yuchaojiang/MARATHON/blob/master/instruction/igvCNA.png' width='994' height='479'>
   </p>
 
 ### SNA example
