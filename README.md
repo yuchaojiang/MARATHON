@@ -52,6 +52,26 @@ The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline
 
 **R notebook** with step-by-step demonstration and rich display is available [***here***](https://rawgit.com/yuchaojiang/MARATHON/master/notebook/MARATHON.html). Corresponding **Rmd script** is available [***here***](https://github.com/yuchaojiang/MARATHON/blob/master/notebook/MARATHON.Rmd).
 
+## Common Questions
+
+It is HIGHLY recommended that the users read the common questions below carefully before applying MARATHON and posting questions in the Google user group.  
+
+* [How do I generate SNA and CNA input for Canopy?](https://github.com/yuchaojiang/MARATHON/blob/master/instruction/SNA_CNA_choice.md)
+
+Additional instruction and common questions can be found at sites for the individual components of MARATHON:
+
+* [CODEX](https://github.com/yuchaojiang/CODEX/blob/master/README.md)
+
+* [CODEX2](https://github.com/yuchaojiang/CODEX2/blob/master/README.md)
+
+* [iCNV](https://github.com/zhouzilu/iCNV)
+
+* [FALCON](https://CRAN.R-project.org/package=falcon)
+
+* [FALCON-X](https://CRAN.R-project.org/package=falconx)
+
+* [Canopy](https://github.com/yuchaojiang/Canopy/blob/master/README.md)
+
 
 ## Citation
 
@@ -70,12 +90,12 @@ Please cite MARATHON as well as all the dependent packages that you use.
   <br>
   Full-spectrum copy number variation detection by high-throughput DNA sequencing
   ([GitHub](https://github.com/yuchaojiang/CODEX2))
-  
+
 * **iCNV**: [Zhou et al. 2017 bioRixv](https://www.biorxiv.org/content/early/2017/09/01/172700)
   <br>
   Integrated copy number variation detection toolset
   ([GitHub](https://github.com/zhouzilu/iCNV))
-  
+
 * **FALCON**: [Chen et al. 2015 Nucleic Acids Research](https://academic.oup.com/nar/article/43/4/e23/2410993/Allele-specific-copy-number-profiling-by-next)
   <br>
   Finding Allele-Specific Copy Number in Next-Generation Sequencing Data
@@ -100,7 +120,7 @@ Please cite MARATHON as well as all the dependent packages that you use.
 * [Yuchao Jiang](http://sph.unc.edu/adv_profile/yuchao-jiang-phd/) (yuchaoj at email dot unc dot edu)
   <br>
   Department of Biostatistics & Department of Genetics, UNC-Chapel Hill
-  
+
 * [Hao Chen](https://anson.ucdavis.edu/~haochen/) (hxchen at ucdavis dot edu)
   <br>
   Department of Statistics, UC Davis
