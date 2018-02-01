@@ -10,7 +10,7 @@ Below is a view of allele-specific copy number for 3 samples using Integrative G
   </p>
 
 ### SNA example
-Below is a heatmap of variant allele frequency by Gene and by sample.  This is a curated set which includes only VAF showing differential by sample.  These would be good candidates for input to Canopy.  The heatmap below is plotted using the [pheatmap R package](https://CRAN.R-project.org/package=pheatmap).
+Below is a heatmap of variant allele frequency by Gene and by sample.  This is a curated set which includes only VAF showing differential by sample.  These would be good candidates for input to Canopy, in particular the lower portion where the first 5 samples have low VAF, and the next 5 samples have high VAF.  The heatmap below is plotted using the [pheatmap R package](https://CRAN.R-project.org/package=pheatmap).
 <p align="center">
 SNA heatmap </br>
   <img src='https://github.com/yuchaojiang/MARATHON/blob/master/instruction/snaHeatmap.png' width='480' height='900'>

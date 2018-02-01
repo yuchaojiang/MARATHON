@@ -16,7 +16,7 @@ readVCFforCanopy( myVCF )
   }
 }
 \details{
-This function takes as input a data frame representing the VCF file as read using read.lines().  First 9 column names should be c("CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT").  Following column names should be sample names. see \href{http://www.internationalgenome.org/wiki/Analysis/vcf4.0/}{VCF format}
+This function takes as input a data frame representing the VCF file as read using read.table().  First 9 column names should be c("CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT").  Following column names should be sample names. see \href{http://www.internationalgenome.org/wiki/Analysis/vcf4.0/}{VCF format}
 }
 
 \value{

@@ -18,46 +18,46 @@ readVCFforCanopy = function( vcf ) {
   nSNPs = nrow( vcf )
   nSamples = ncol( vcf ) - 9 
   
-  AD.index.tumor = rep(0,nSNPs)
-  GT.index.tumor = rep(0,nSNPs)
-  DP.index.tumor = rep(0,nSNPs)
+  AD.index = rep(0,nSNPs)
+  GT.index = rep(0,nSNPs)
+  DP.index = rep(0,nSNPs)
   
   for (i in 1:nSNPs){
     temp = strsplit(format[i,],":")[[1]]
-    AD.index.tumor[i] = which(temp=="AD")
-    GT.index.tumor[i] = which(temp=='GT')
-    DP.index.tumor[i] = which(temp=='DP')
+    AD.index[i] = which(temp=="AD")
+    GT.index[i] = which(temp=='GT')
+    DP.index[i] = which(temp=='DP')
   }
   
-  genotype.tumor = reads.tumor = matrix( NA, nSNPs, nSamples * 2 )
+  genotype = reads = matrix( NA, nSNPs, nSamples * 2 )
   
   for(i in 1:nSNPs){
     for(j in 1:nSamples){
       jj = j + 9
       temp = strsplit(as.matrix(vcf[i,jj]),":")[[1]]
-      tempGT = strsplit(temp[GT.index.tumor[i]],"/")[[1]]
-      tempAD = strsplit(temp[AD.index.tumor[i]],",")[[1]]
-      tempDP = temp[DP.index.tumor[i]]
+      tempGT = strsplit(temp[GT.index[i]],"/")[[1]]
+      tempAD = strsplit(temp[AD.index[i]],",")[[1]]
+      tempDP = temp[DP.index[i]]
       genotype.temp=c(as.numeric(tempGT[1]), as.numeric(tempGT[2]))
-      genotype.tumor[i,(2*j-1):(2*j)] = genotype.temp
+      genotype[i,(2*j-1):(2*j)] = genotype.temp
       if(sum(!is.na(genotype.temp))==2){
         if(sum(genotype.temp==0)==2){
-          reads.tumor[i,(2*j-1):(2*j)]=c(as.numeric(tempDP),0)
+          reads[i,(2*j-1):(2*j)]=c(as.numeric(tempDP),0)
         } else if(sum(genotype.temp==1)==2){
-          reads.tumor[i,(2*j-1):(2*j)]=c(0,as.numeric(tempDP))
+          reads[i,(2*j-1):(2*j)]=c(0,as.numeric(tempDP))
         } else{
-          reads.tumor[i,(2*j-1):(2*j)] = as.numeric(tempAD[genotype.temp+1])
+          reads[i,(2*j-1):(2*j)] = as.numeric(tempAD[genotype.temp+1])
         }
       }
     }
     if (i%%1000==0) cat(i,'\t')
   }
   
-  mutantIndex = which( (1:ncol(reads.tumor) %% 2) == 0 )
-  R = reads.tumor[, mutantIndex]  #mutant read count
+  mutantIndex = which( (1:ncol(reads) %% 2) == 0 )
+  R = reads[, mutantIndex]  #mutant read count
   colnames(R) = sampleNames
   rownames(R) = vcf$ID
-  X = reads.tumor[, mutantIndex] + reads.tumor[, mutantIndex - 1] #total read count
+  X = reads[, mutantIndex] + reads[, mutantIndex - 1] #total read count
   colnames(X) = sampleNames
   rownames(X) = vcf$ID
   

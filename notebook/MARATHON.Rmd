@@ -522,8 +522,52 @@ head(finalcall.codex2.ns[finalcall.codex2.ns[,'st_exon']=='1580',])
 
 ```
 
+### 4.2.6. Running segmentation by Hidden Markov Model
+Also available is a Hidden Markov model for segmentation of CNV events, using 
+normalized read depth from whole exome sequencing.  This algorithm incorporates distance between exons as information. 
+```{r, message=FALSE}
+Y_qc <- qcObjDemo$Y_qc
+Yhat <- normObjDemo$Yhat
+BIC <- normObjDemo$BIC
+K <- normObjDemo$K
+sampname_qc <- qcObjDemo$sampname_qc
+ref_qc <- qcObjDemo$ref_qc
+chr <- bambedObjDemo$chr
+
+finalcall <- segmentHMM(Y_qc, Yhat, optK = K[which.max(BIC)], 
+  K = K, sampname_qc, ref_qc, chr, mode = "integer")
+
+finalcall
+```
 
 
+### 4.2.7. Visualization of copy number by IGV
+Finally, it is very helpful to visualize the results in the Integrative Genomics Viewer (IGV).
+Takes as input the output of segment (or segmentHMM) from CODEX/2 and converts to .seg format.  This is a preferred format for Integrative Genomics Viewer (IGV).  This function takes a single data frame as input, so combine CNV calls from all chromosomes beforehand if necessary.  This function writes to file, so specify the outPath is desired.  
+```{r}
+Y_qc <- qcObjDemo$Y_qc
+Yhat <- normObjDemo$Yhat
+BIC <- normObjDemo$BIC
+K <- normObjDemo$K
+sampname_qc <- qcObjDemo$sampname_qc
+ref_qc <- qcObjDemo$ref_qc
+chr <- bambedObjDemo$chr
+
+#Add simulated CNV
+Y_qc[1:10,10] = 1.5*Y_qc[1:10,10]   # add a dup
+Y_qc[50:60,10] = .5*Y_qc[50:60,10]  # add a del
+Y_qc[1:10,15] = 1.5*Y_qc[1:10,15]   # add a dup
+Y_qc[50:60,15] = .5*Y_qc[50:60,15]  # add a del
+Y_qc[25:35,15] = .5*Y_qc[25:35,15]  # add a del
+
+finalcall <- segment(Y_qc, Yhat, optK = K[which.max(BIC)], 
+  K = K, sampname_qc, ref_qc, chr, lmax = 200, mode = "fraction")
+
+#If necessary, combine (rbind) individual chromosome data frames 
+#  to single data frame
+
+convertForIGV( finalcall, outPath = NULL, filterFraction = TRUE )
+```
 
 
 ## 4.3. Tumor allele-specific copy number by WGS
@@ -581,13 +625,28 @@ samtools index UCF1014.merge.sorted.dedup.realigned.recal.bam
 java -jar GenomeAnalysisTK.jar -R ucsc.hg19.fasta -T HaplotypeCaller -I UCF1014.merge.sorted.dedup.realigned.recal.bam -o UCF1014.merge.sorted.dedup.realigned.recal.raw.snps.indels.g.vcf
 ```
 
+readVCFforCanopy is a function which generates canopy and falcon input from a VCF file, This function takes as input a data frame representing the VCF file as read using read.table().  First 9 column names should be c("CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT").  Following column names should be sample names. see \href{http://www.internationalgenome.org/wiki/Analysis/vcf4.0/}{VCF format}.  The function outputs a list of R(alternate reads), X(total reads), and vcfTargets which contains gene target info from the VCF.  Simple arithmetic generates the readMatrix as required by falcon::getASCN and falcon::getChangepoints. 
+
+```{r}
+vcfFile = system.file("extdata", "sample.vcf", package="MARATHON")
+
+myVCF = read.table(vcfFile, sep = "\t", header = T)
+
+canopyInput = readVCFforCanopy( myVCF )
+
+#assuming sample1 is from normal and sample2 is from tumor
+readMatrix = data.frame( AN = (canopyInput$X - canopyInput$R)[,1],
+                         BN = (canopyInput$R)[,1],
+                         AT = (canopyInput$X - canopyInput$R)[,2],
+                         BT = (canopyInput$R)[,2] )
+```
 
 ### 4.3.2. Running FALCON for allele-specific copy number profiling
 
 Calculate depth ratio (total read counts of tumor versus normal). Restrict our analysis to chromosome 14, where a copy-neutral loss of heterozygosity has been previously reported.
 ```{r}
 coverageData = relapse.demo
-rdep=sum(coverageData$Tumor_ReadCount_Total)/sum(coverageData$Normal_ReadCount_Total)
+rdep = sum(coverageData$Tumor_ReadCount_Total)/sum(coverageData$Normal_ReadCount_Total)
 chr = 14
 coverageChr=coverageData[which(coverageData[,'Chromosome']==chr),]
 ```
@@ -669,15 +728,25 @@ The code below is to generate table output including genomic locations for segme
                               st_bp = coverageChrHet[,"Start_position"],
                               end_bp = coverageChrHet[,"End_position"],
                               nboot = 5000)
-  falconOutput = cbind(chr=rep(chr,nrow(falcon.output)), falcon.output)
+  falconOutput = cbind(chr=rep(chr,nrow(falconOutput)), falconOutput)
   falconOutput
 ```  
 
+### 4.3.3. Visualization of allele-specific copy number by IGV
+Finally, it is very helpful to visualize the results in the Integrative Genomics Viewer (IGV).
+Takes as input the output of falcon.output and converts to .seg format.  This is a preferred format for Integrative Genomics Viewer (IGV).  This function takes a single data frame as input, so combine CNV calls from all chromosomes beforehand if necessary.  This function writes to file, so specify the outPath if desired.  
 
+```{r}
+falconOutput  #from the MARTHON notebook section 4.3.2. 
+#Running FALCON for allele-specific copy number profiling
+
+convertFalconForIGV( 
+  falconOutput = falconOutput, sampleName = "sample1", outPath = getwd(), log2 = FALSE)
+```
 
 ## 4.4. Tumor allele-specific copy number by WES
 
-For WES data, biases and artifacts cannot be fully captured by comparing the tumor sample to the matched normal sample. FALCON-X [@chen2017allele] extends upon FALCON, where it takes as inputs allelic read counts at germline heterozygous loci and total coverage biases for each of these loci estimated by CONDEX2 and outputs ASCN estimates.
+For WES data, biases and artifacts cannot be fully captured by comparing the tumor sample to the matched normal sample. FALCON-X [@chen2017allele] extends upon FALCON, where it takes as inputs allelic read counts at germline heterozygous loci and total coverage biases for each of these loci estimated by CODEX2 and outputs ASCN estimates.
 
 
 ### 4.4.1. Calling heterozygous loci
@@ -938,6 +1007,17 @@ java -jar $PATH_GATK/GenomeAnalysisTK.jar
   -I sample.sorted.dedup.realigned.recal.bam \
   -o sample.sorted.dedup.realigned.recal.raw.snps.indels.g.vcf
   
+```
+
+
+readVCFforCanopy is a function which generates canopy input from a VCF file, This function takes as input a data frame representing the VCF file as read using read.table().  First 9 column names should be c("CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT").  Following column names should be sample names. see \href{http://www.internationalgenome.org/wiki/Analysis/vcf4.0/}{VCF format}.  The function outputs a list of R(alternate reads), X(total reads), and vcfTargets which contains gene target info from the VCF.
+
+```{r}
+vcfFile = system.file("extdata", "sample.vcf", package="MARATHON")
+
+myVCF = read.table(vcfFile, sep = "\t", header = T)
+
+canopyInput = readVCFforCanopy( myVCF )
 ```
 
 Below is demo data input from project MDA231 (first case study in our paper).

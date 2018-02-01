@@ -52,26 +52,6 @@ The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline
 
 **R notebook** with step-by-step demonstration and rich display is available [***here***](https://rawgit.com/yuchaojiang/MARATHON/master/notebook/MARATHON.html). Corresponding **Rmd script** is available [***here***](https://github.com/yuchaojiang/MARATHON/blob/master/notebook/MARATHON.Rmd).
 
-## Common Questions
-
-It is HIGHLY recommended that the users read the common questions below carefully before applying MARATHON and posting questions in the Google user group.  
-
-* [How do I generate SNA and CNA input for Canopy?](https://github.com/yuchaojiang/MARATHON/blob/master/instruction/SNA_CNA_choice.md)
-
-Additional instruction and common questions can be found at sites for the individual components of MARATHON:
-
-* [CODEX](https://github.com/yuchaojiang/CODEX/blob/master/README.md)
-
-* [CODEX2](https://github.com/yuchaojiang/CODEX2/blob/master/README.md)
-
-* [iCNV](https://github.com/zhouzilu/iCNV)
-
-* [FALCON](https://CRAN.R-project.org/package=falcon)
-
-* [FALCON-X](https://CRAN.R-project.org/package=falconx)
-
-* [Canopy](https://github.com/yuchaojiang/Canopy/blob/master/README.md)
-
 
 ## Citation
 
