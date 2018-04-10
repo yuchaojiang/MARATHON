@@ -4,7 +4,7 @@ Copy number variation is an important and abundant source of variation in the hu
 
 ## Manuscript
 
-The manuscript for MARATHON is currently under review. Pre-print is available [here via bioRixv](https://www.biorxiv.org/content/early/2018/01/05/195230).
+Urrutia E, Chen H, Zhou Z, Zhang NR, Jiang Y. Integrative pipeline for profiling DNA copy number and inferring tumor phylogeny. *Bioinformatics*, bty057, 2018. [link](https://doi.org/10.1093/bioinformatics/bty057)
 
 
 ## Questions & Problems
