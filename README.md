@@ -57,7 +57,7 @@ The possible analysis scenarios are listed in Table 1. Figure 1 gives an outline
 
 Please cite MARATHON as well as all the dependent packages that you use.
 
-* **MARATHON**: [Urrutia et al. 2017 bioRixv](https://www.biorxiv.org/content/early/2018/01/05/195230)
+* **MARATHON**: [Urrutia et al. 2018 Bioinformatics](https://doi.org/10.1093/bioinformatics/bty057)
   <br>
   Integrative pipeline for profiling DNA copy number and inferring tumor phylogeny ([GitHub](https://github.com/yuchaojiang/MARATHON))
 
@@ -66,12 +66,12 @@ Please cite MARATHON as well as all the dependent packages that you use.
   A Normalization and Copy Number Variation Detection Method for Whole Exome Sequencing
   ([Bioconductor](http://bioconductor.org/packages/CODEX/), [GitHub](https://github.com/yuchaojiang/CODEX))
 
-* **CODEX2**: [Jiang et al. 2017 bioRixv](https://www.biorxiv.org/content/early/2017/10/30/211698)
+* **CODEX2**: [Jiang et al. 2018 bioRixv](https://www.biorxiv.org/content/early/2018/04/01/211698)
   <br>
   Full-spectrum copy number variation detection by high-throughput DNA sequencing
   ([GitHub](https://github.com/yuchaojiang/CODEX2))
 
-* **iCNV**: [Zhou et al. 2017 bioRixv](https://www.biorxiv.org/content/early/2017/09/01/172700)
+* **iCNV**: [Zhou et al. 2017 Bioinformatics](https://doi.org/10.1093/bioinformatics/bty104)
   <br>
   Integrated copy number variation detection toolset
   ([GitHub](https://github.com/zhouzilu/iCNV))
