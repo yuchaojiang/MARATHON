@@ -25,10 +25,10 @@ docker pull lzeppelini/marathon
 #### Installation Option 2: Install to R/RStudio - Good for performance
 Install all packages in the latest version of [R](https://www.r-project.org/).
 ```r
-install.packages(c("Canopy", "falcon", "falconx", "devtools"))
+install.packages(c("falcon", "falconx", "devtools"))
 source("https://bioconductor.org/biocLite.R")
 biocLite("WES.1KG.WUGSC")
-devtools::install_github(c("yuchaojiang/CODEX/package", "yuchaojiang/CODEX2/package", "zhouzilu/iCNV", "yuchaojiang/MARATHON/package"))
+devtools::install_github(c("yuchaojiang/CODEX/package", "yuchaojiang/CODEX2/package", "yuchaojiang/Canopy/package", "zhouzilu/iCNV", "yuchaojiang/MARATHON/package"))
 ```
 
 ## Pipeline overview
