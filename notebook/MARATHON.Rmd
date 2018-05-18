@@ -1166,7 +1166,7 @@ length(sampchain[[which(K==4)]][[1]]) ## number of posterior trees in each chain
 ```
   
 
-### 4.5.5.1 BIC for model selection
+### 4.5.5 BIC for model selection
 Canopy uses BIC as a model selection criterion to determine to optimal number of subclones.
 
 ```{r}
@@ -1205,7 +1205,7 @@ abline(v = (3:6)[which.max(bic)], lty = 2)
 title('BIC for model selection')
 ```
 
-### 4.5.5.2 Diagnostic for length of Markov chains
+#### 4.5.5.1 Diagnostic for length of Markov chains
 
 To determine if the markov chain has run long enough, we examine the stability.  The following function provides insight.  Here we see stability for the highest likelihood chains over a period of 50,000 trees.  That, is the most recent value is not greater than the mean of the past 50,000 trees.  If values are still climbing, then the chain shoudl be run longer, using min.simrun / max.simrum.  
 
@@ -1213,7 +1213,7 @@ To determine if the markov chain has run long enough, we examine the stability. 
 canopy.simrun.diagnostic(sampchain, optK, K, writeskip = 1000, yRange = 100 )
 ```
 
-### 4.5.5.3 Parallel Computing 
+#### 4.5.5.2 Parallel Computing 
 
 Parallel computing is easy and each chain can run simultneously given suffifient number of availiable cpu cores.  Simply use canopy.sample.parallel() instead of canopy.sample().  All parameters are identical.  
 
