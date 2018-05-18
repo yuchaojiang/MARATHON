@@ -75,7 +75,7 @@ Install all packages in the latest version of [R](https://www.r-project.org/).
 install.packages(c("Canopy", "falcon", "falconx", "devtools"))
 source("https://bioconductor.org/biocLite.R")
 biocLite("WES.1KG.WUGSC")
-devtools::install_github(c("yuchaojiang/CODEX/package", "yuchaojiang/CODEX2/package", "zhouzilu/iCNV", "yuchaojiang/MARATHON/package"))
+devtools::install_github(c("yuchaojiang/CODEX/package", "yuchaojiang/CODEX2/package", "yuchaojiang/Canopy/package", "zhouzilu/iCNV", "yuchaojiang/MARATHON/package"))
 ```
 
 
@@ -1144,7 +1144,7 @@ Below is sampling code for the MDA231 dataset (see section 4.5.1) where both SNA
 K = 3:6 # number of subclones
 numchain = 20 # number of chains with random initiations
 sampchain = canopy.sample(R = R, X = X, WM = WM, Wm = Wm, epsilonM = epsilonM, 
-                          epsilonm = epsilonm, C = C, Y = Y, K = K, numchain = numchain, 
+                          epsilonm = epsilonm, C = C, Y = Y, K = K, numchain = numchain,
                           max.simrun = 50000, min.simrun = 10000, 
                           writeskip = 200, projectname = projectname, cell.line = TRUE, 
                           plot.likelihood = TRUE)
@@ -1166,7 +1166,7 @@ length(sampchain[[which(K==4)]][[1]]) ## number of posterior trees in each chain
 ```
   
 
-### 4.5.5. BIC for model selection
+### 4.5.5.1 BIC for model selection
 Canopy uses BIC as a model selection criterion to determine to optimal number of subclones.
 
 ```{r}
@@ -1203,6 +1203,30 @@ plot(K, bic, xlab = 'Number of subclones', ylab = 'BIC', type = 'b', xaxt = "n")
 axis(1, at = K)
 abline(v = (3:6)[which.max(bic)], lty = 2)
 title('BIC for model selection')
+```
+
+### 4.5.5.2 Diagnostic for length of Markov chains
+
+To determine if the markov chain has run long enough, we examine the stability.  The following function provides insight.  Here we see stability for the highest likelihood chains over a period of 50,000 trees.  That, is the most recent value is not greater than the mean of the past 50,000 trees.  If values are still climbing, then the chain shoudl be run longer, using min.simrun / max.simrum.  
+
+```{r, fig.height = 5, fig.width = 9, fig.align = "center"}
+canopy.simrun.diagnostic(sampchain, optK, K, writeskip = 1000, yRange = 100 )
+```
+
+### 4.5.5.3 Parallel Computing 
+
+Parallel computing is easy and each chain can run simultneously given suffifient number of availiable cpu cores.  Simply use canopy.sample.parallel() instead of canopy.sample().  All parameters are identical.  
+
+If using high performance clusters, it may me necessary to request additional memory, as sampchain files are large.  Alternatively, one can raise the value of writeskip.  This is a way of pre-thinning the written record of trees.  If you raise writeskip, you may need sure to raise the thin parameter for canopy.BIC() and canopy.post()
+
+```{r, eval=FALSE}
+sampchain = canopy.sample.parallel(R = R, X = X, WM = WM, Wm = Wm, epsilonM = epsilonM, 
+                          epsilonm = epsilonm, C = C, Y = Y, K = K, numchain = numchain,
+                          max.simrun = 50000, min.simrun = 10000, 
+                          writeskip = 1000, projectname = projectname, cell.line = TRUE,
+                          plot.likelihood = TRUE)
+#save.image(file = paste(projectname, '_postmcmc_image.rda',sep=''),
+#           compress = 'xz')
 ```
 
 ### 4.5.6. Posterior evaluation of sampled trees, output, and plotting
