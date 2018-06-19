@@ -11,7 +11,7 @@
 
 <meta name="author" content="Yuchao Jiang, Hao Chen, Gene Urrutia, Zilu Zhou, Nancy Zhang" />
 
-<meta name="date" content="2018-05-18" />
+<meta name="date" content="2018-06-19" />
 
 <title>MARATHON: Integrative pipeline for profiling DNA copy number and inferring tumor phylogeny</title>
 
@@ -157,7 +157,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">MARATHON: Integrative pipeline for profiling DNA copy number and inferring tumor phylogeny</h1>
 <h4 class="author"><em>Yuchao Jiang, Hao Chen, Gene Urrutia, Zilu Zhou, Nancy Zhang</em></h4>
-<h4 class="date"><em>2018-05-18</em></h4>
+<h4 class="date"><em>2018-06-19</em></h4>
 <div class="abstract">
 <p class="abstract">Abstract</p>
 <p>Copy number variation is an important and abundant source of variation in the human genome, which has been associated with a number of diseases, especially cancer. Massively parallel next-generation sequencing allows copy number profiling with fine resolution. Such efforts, however, have met with mixed successes, with setbacks arising partly from the lack of reliable analytical methods to meet the diverse and unique challenges arising from the myriad experimental designs and study goals in genetic studies. In cancer genomics, detection of somatic copy number changes and profiling of allele-specific copy number (ASCN) are complicated by experimental biases and artifacts as well as normal cell contamination and cancer subclone admixture. Furthermore, careful statistical modeling is warranted to reconstruct tumor phylogeny by both somatic ASCN changes and single nucleotide variants. Here we describe a flexible computational pipeline, MARATHON (copy nuMber vARiAtion and Tumor pHylOgeNy), which integrates multiple related statistical software for copy number profiling and downstream analyses in disease genetic studies.</p>
@@ -241,7 +241,7 @@ $(document).ready(function () {
 <div id="installation-option-2-install-to-rrstudio---good-for-performance" class="section level2">
 <h2>3.2 Installation Option 2: Install to R/RStudio - good for performance</h2>
 <p>Install all packages in the latest version of <a href="https://www.r-project.org/">R</a>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="kw">c</span>(<span class="st">&quot;Canopy&quot;</span>, <span class="st">&quot;falcon&quot;</span>, <span class="st">&quot;falconx&quot;</span>, <span class="st">&quot;devtools&quot;</span>))
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="kw">c</span>(<span class="st">&quot;falcon&quot;</span>, <span class="st">&quot;falconx&quot;</span>, <span class="st">&quot;devtools&quot;</span>))
 <span class="kw">source</span>(<span class="st">&quot;https://bioconductor.org/biocLite.R&quot;</span>)
 <span class="kw">biocLite</span>(<span class="st">&quot;WES.1KG.WUGSC&quot;</span>)
 devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="kw">c</span>(<span class="st">&quot;yuchaojiang/CODEX/package&quot;</span>, <span class="st">&quot;yuchaojiang/CODEX2/package&quot;</span>, <span class="st">&quot;yuchaojiang/Canopy/package&quot;</span>, <span class="st">&quot;zhouzilu/iCNV&quot;</span>, <span class="st">&quot;yuchaojiang/MARATHON/package&quot;</span>))</code></pre></div>

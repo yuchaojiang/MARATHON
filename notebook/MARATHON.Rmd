@@ -72,7 +72,7 @@ docker pull lzeppelini/marathon
 
 Install all packages in the latest version of [R](https://www.r-project.org/).
 ```{r, eval=FALSE}
-install.packages(c("Canopy", "falcon", "falconx", "devtools"))
+install.packages(c("falcon", "falconx", "devtools"))
 source("https://bioconductor.org/biocLite.R")
 biocLite("WES.1KG.WUGSC")
 devtools::install_github(c("yuchaojiang/CODEX/package", "yuchaojiang/CODEX2/package", "yuchaojiang/Canopy/package", "zhouzilu/iCNV", "yuchaojiang/MARATHON/package"))
