@@ -1167,7 +1167,7 @@ length(sampchain[[which(K==4)]][[1]]) ## number of posterior trees in each chain
   
 
 ### 4.5.5 BIC for model selection
-Canopy uses BIC as a model selection criterion to determine to optimal number of subclones.
+Canopy uses BIC as a model selection criterion to determine to optimal number of subclones. The first [burnin] iterations are removed and of the remaining, every [thin]th iteration is considered.
 
 ```{r}
 burnin = 100
@@ -1207,7 +1207,9 @@ title('BIC for model selection')
 
 #### 4.5.5.1 Diagnostic for length of Markov chains
 
-To determine if the markov chain has run long enough, we examine the stability.  The following function provides insight.  Here we see stability for the highest likelihood chains over a period of 50,000 trees.  That, is the most recent value is not greater than the mean of the past 50,000 trees.  If values are still climbing, then the chain shoudl be run longer, using min.simrun / max.simrum.  
+To determine if the markov chain has run long enough, we examine the stability.  The following function provides insight. The right is a zoomed plot of the left.  All chains appear to be stable on the left, because the scale is so large.  However, the zoomed image on the right gives greater deatil and ability to determine stability.  Make sure writeskip here matches your setting in canopy.sample(). You can change yRange setting to expand the view so that more chains are visible. 
+
+On the right, we see stability for the highest likelihood chains over a period of 50,000 trees.  That, is the most recent value is not greater than the mean of the past 50,000 trees.  If values are still climbing, then the chain should be run longer, using min.simrun / max.simrum.  
 
 ```{r, fig.height = 5, fig.width = 9, fig.align = "center"}
 canopy.simrun.diagnostic(sampchain, optK, K, writeskip = 1000, yRange = 100 )
@@ -1217,7 +1219,7 @@ canopy.simrun.diagnostic(sampchain, optK, K, writeskip = 1000, yRange = 100 )
 
 Parallel computing is easy and each chain can run simultneously given suffifient number of availiable cpu cores.  Simply use canopy.sample.parallel() instead of canopy.sample().  All parameters are identical.  
 
-If using high performance clusters, it may me necessary to request additional memory, as sampchain files are large.  Alternatively, one can raise the value of writeskip.  This is a way of pre-thinning the written record of trees.  If you raise writeskip, you may need sure to raise the thin parameter for canopy.BIC() and canopy.post()
+If using high performance clusters, it may me necessary to request additional memory, as sampchain files are large.  Alternatively, one can raise the value of writeskip.  This is a way of pre-thinning the written record of trees.  If you raise writeskip, you may need to lower the thin parameter for canopy.BIC() and canopy.post() to ensure that enough iterations are kept.
 
 ```{r, eval=FALSE}
 sampchain = canopy.sample.parallel(R = R, X = X, WM = WM, Wm = Wm, epsilonM = epsilonM, 
@@ -1231,7 +1233,7 @@ sampchain = canopy.sample.parallel(R = R, X = X, WM = WM, Wm = Wm, epsilonM = ep
 
 ### 4.5.6. Posterior evaluation of sampled trees, output, and plotting
 
-Canopy then runs a posterior evaluation of all sampled trees by MCMC. If modes of posterior probabilities (second column of `config.summary`) aren't obvious, check if the algorithm has converged (and run sampling longer if not).
+Canopy then runs a posterior evaluation of all sampled trees by MCMC. If modes of posterior probabilities (second column of `config.summary`) aren't obvious, check if the algorithm has converged (and run sampling longer if not).  The first [burnin] iterations are removed and of the remaining, every [thin]th iteration is considered.
 
 ```{r}
 post = canopy.post(sampchain = sampchain, projectname = projectname, K = K,
