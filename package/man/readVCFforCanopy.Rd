@@ -12,36 +12,47 @@ readVCFforCanopy( myVCF )
 }
 \arguments{
   \item{myFileName}{
-    vcf represented as a data frame
+    path to VCF file
   }
 }
 \details{
-This function takes as input a data frame representing the VCF file as read using read.table().  First 9 column names should be c("CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT").  Following column names should be sample names. see \href{http://www.internationalgenome.org/wiki/Analysis/vcf4.0/}{VCF format}
+This function takes as input a the path to the VCF file.  First 9 column names following the header should be c("#CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT").  Following column names should be sample names. see \href{http://www.internationalgenome.org/wiki/Analysis/vcf4.0/}{VCF format}
 }
 
 \value{
-outputs a list of three objects:
+outputs a list of four objects:
 
-R is a matrix (SNA by sample) which contains the number of alternate reads.  Rownames of R (and X) are the "ID" of the VCF file
+R is a matrix (SNA by sample) which contains the number of alternate reads.  
 
-X is a matrix (SNA by sample) which contains the number of total (referecnce + alternate) reads
+X is a matrix (SNA by sample) which contains the number of total (referecnce + alternate) reads.
 
-vcfTargets is target info from the vcf file.  This is useful for annotating X and R if desired.  }
+vcfTargets is the snp info from the vcf file.  This is useful for annotating X and R if desired.  
+
+GenotypeMatrix is a snp by sample matrix representing alleles at that position (i.e. 0: homozygous ref, 1: heterozygous alt, 2: homozygous alt)
+
+}
 
 \author{
- Yuchao Jiang \email{yuchaoj@email.unc.edu} 
- 
- Gene Urrutia \email{urutia@email.unc.edu} 
+  Gene Urrutia \email{gene.urrutia@gmail.com} 
 }
 
 \examples{
 library(MARATHON)
+library(VariantAnnotation)
 
+#error file does not exist
+vcfFile = system.file("extdata", "sample_nonexistent.vcf", package="MARATHON")
+canopyInput = readVCF(vcfFile)
+
+#error file not in correct VCF format
 vcfFile = system.file("extdata", "sample.vcf", package="MARATHON")
+canopyInput = readVCF(vcfFile)
 
-myVCF = read.table(vcfFile, sep = "\t", header = T)
+#VCF file parsed correctly
+vcfFile = system.file("extdata", "sample_w_header.vcf", package="MARATHON")
+canopyInput = readVCF(vcfFile)
+lapply(canopyInput, head)
 
-canopyInput = readVCFforCanopy( myVCF )
 }
 \keyword{ package }
 

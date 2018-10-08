@@ -1,4 +1,49 @@
-readVCFforCanopy = function( vcf ) {
+
+readVCFforCanopy = function(vcfFile){
+  
+  if( !file.exists(vcfFile) ){
+    print("The VCF file does not exist.  Please ensure the path is correct.")
+    return(NULL)
+  }
+  
+  vcfData = try ( VariantAnnotation::readVcf(vcfFile) )
+  if ( class(vcfData) == "try-error" ){
+    print ( "The VCF exists but could not be parsed.  Ensure the file is in proper VCF format.  See VariantAnnotation::readVcf for further information." )
+    return( NULL )
+  }
+  
+  # Extract total read depth
+  X = geno(vcfData)$DP
+  
+  # Extract allele information
+  vcfTargets = rowRanges(vcfData)
+  
+  # Extract mutant allele count from Allele Depth
+  AD = geno(vcfData)$AD
+  RVector = unlist(lapply(AD, function(x) x[[2]]))
+  R = matrix(RVector,nrow(AD), ncol(AD))
+  dimnames(R) = dimnames(AD)
+  
+  # Convert to Genotype Matrix
+  lapply(geno(vcfData), head)
+  GT = head(geno(vcfData)$GT)
+  genotypeMatrix = matrix(0, nrow(GT), ncol(GT))
+  genotypeMatrix[GT %in% c("0/0", "0|0")] = 0
+  genotypeMatrix[GT %in% c("0/1", "0|1", "1/0", "1|0")] = 1
+  genotypeMatrix[GT %in% c("1/1", "1|1")] = 2
+  dimnames(genotypeMatrix) = dimnames(GT)
+  
+  canopyInput = list(R = R,
+                     X = geno(vcfData)$DP,
+                     vcfTargets = rowRanges(vcfData),
+                     GenotypeMatrix = genotypeMatrix
+  )
+  return( canopyInput ) 
+  
+}
+
+
+readVCFDataFrameforCanopy = function( vcf ) {
   
   correctNames = c("CHROM", "POS", "ID", "REF", 
                    "ALT", "QUAL", "FILTER", "INFO", "FORMAT")
@@ -66,3 +111,5 @@ readVCFforCanopy = function( vcf ) {
              X = X)
   out 
 }
+
+
