@@ -28,3 +28,8 @@ MARATHON
 data.table
 ggplot2
 gridExtra
+Biobase
+matrixStats
+DelayedArray
+SummarizedExperiment
+VariantAnnotation

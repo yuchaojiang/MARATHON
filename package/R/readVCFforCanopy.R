@@ -25,18 +25,30 @@ readVCFforCanopy = function(vcfFile){
   dimnames(R) = dimnames(AD)
   
   # Convert to Genotype Matrix
-  lapply(geno(vcfData), head)
-  GT = head(geno(vcfData)$GT)
+  #lapply(geno(vcfData), head)
+  GT = geno(vcfData)$GT
   genotypeMatrix = matrix(0, nrow(GT), ncol(GT))
   genotypeMatrix[GT %in% c("0/0", "0|0")] = 0
   genotypeMatrix[GT %in% c("0/1", "0|1", "1/0", "1|0")] = 1
   genotypeMatrix[GT %in% c("1/1", "1|1")] = 2
   dimnames(genotypeMatrix) = dimnames(GT)
   
+  # Convert to Reads Matrix
+  vcfSampleNames = colnames(AD)
+  readsMatrixList = lapply(vcfSampleNames, function(mySample) {
+    RefVector = unlist(lapply(AD[, mySample], function(x) x[[1]]))
+    AltVector = unlist(lapply(AD[, mySample], function(x) x[[2]]))
+    readsMatrixSub = cbind(RefVector, AltVector)
+    colnames(readsMatrixSub) = paste(mySample, c("Ref", "Alt"), sep = "_")
+    return( readsMatrixSub ) 
+  } )
+  readsMatrix = do.call( cbind, readsMatrixList )
+                           
   canopyInput = list(R = R,
                      X = geno(vcfData)$DP,
                      vcfTargets = rowRanges(vcfData),
-                     GenotypeMatrix = genotypeMatrix
+                     GenotypeMatrix = genotypeMatrix,
+                     ReadsMatrix = readsMatrix
   )
   return( canopyInput ) 
   

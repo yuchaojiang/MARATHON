@@ -625,20 +625,15 @@ samtools index UCF1014.merge.sorted.dedup.realigned.recal.bam
 java -jar GenomeAnalysisTK.jar -R ucsc.hg19.fasta -T HaplotypeCaller -I UCF1014.merge.sorted.dedup.realigned.recal.bam -o UCF1014.merge.sorted.dedup.realigned.recal.raw.snps.indels.g.vcf
 ```
 
-readVCFforCanopy is a function which generates canopy and falcon input from a VCF file, This function takes as input a data frame representing the VCF file as read using read.table().  First 9 column names should be c("CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT").  Following column names should be sample names. see \href{http://www.internationalgenome.org/wiki/Analysis/vcf4.0/}{VCF format}.  The function outputs a list of R(alternate reads), X(total reads), and vcfTargets which contains gene target info from the VCF.  Simple arithmetic generates the readMatrix as required by falcon::getASCN and falcon::getChangepoints. 
+readVCFforCanopy is a function which generates canopy and falcon input from a VCF file. This function takes as input a the path to the VCF file.  First 9 column names after the header should be c("#CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT").  Following column names should be sample names. see \href{http://www.internationalgenome.org/wiki/Analysis/variant-call-format/}{VCF format}.  The function outputs a list of R(alternate reads), X(total reads), and vcfTargets which contains gene target info from the VCF.  
+GenotypeMatrix is a snp by sample matrix representing alleles at that position (i.e. 0: homozygous ref, 1: heterozygous alt, 2: homozygous alt)
+ReadsMatrix is a matrix where rows are positions and each sample has two columns, first the  reference allele count, and second the alternate allele count.
+
 
 ```{r}
-vcfFile = system.file("extdata", "sample.vcf", package="MARATHON")
-
-myVCF = read.table(vcfFile, sep = "\t", header = T)
-
-canopyInput = readVCFforCanopy( myVCF )
-
-#assuming sample1 is from normal and sample2 is from tumor
-readMatrix = data.frame( AN = (canopyInput$X - canopyInput$R)[,1],
-                         BN = (canopyInput$R)[,1],
-                         AT = (canopyInput$X - canopyInput$R)[,2],
-                         BT = (canopyInput$R)[,2] )
+vcfFile = system.file("extdata", "sample_w_header.vcf", package="MARATHON")
+canopyInput = readVCFforCanopy(vcfFile)
+lapply(canopyInput, head)
 ```
 
 ### 4.3.2. Running FALCON for allele-specific copy number profiling
@@ -913,7 +908,6 @@ view(cn,pos=ascn.input$pos)
 
 Canopy [@jiang2016assessing] identifies subclones within a tumor, determines the mutational profiles of these subclones, and infers the tumor's phylogenetic history by NGS data from temporally and/or spatially separated tumor resections from the same patient. Canopy jointly models somatic copy number changes and SNVs in a similar fashion to non-negative matrix factorization and adopts a Bayesian framework to reconstruct phylogeny with posterior confidence assessment. Canopy takes as input both somatic ASCN changes returned by FALCON/FALCON-X as well as somatic SNVs and outputs tumor phylogenetic trees with somatic mutations placed along tree branches and subclones placed at the leaves. 
 
-
 This is a demo for using the Canopy package in R. Canopy is a statistical framework and computational procedure for identifying subpopulations within a tumor, determining the mutation profiles of each subpopulation, and inferring the tumor's phylogenetic history. The input to Canopy are variant allele frequencies of somatic single nucleotide alterations (SNAs) along with allele-specific coverage ratios between the tumor and matched normal sample for somatic copy number alterations (CNAs). These quantities can be directly taken from the output of existing software. Canopy provides a general mathematical framework for pooling data across samples and sites to infer the underlying parameters. For SNAs that fall within CNA regions, Canopy infers their temporal ordering and resolves their phase. When there are multiple evolutionary configurations consistent with the data, Canopy outputs all configurations along with their confidence.
 
 Below is an example on reconstructing tumor phylogeny of a transplantable metastasis model system derived from a heterogeneous human breast cancer cell line MDA-MB-231. Cancer cells from the parental line MDA-MB-231 were engrafted into mouse hosts leading to organ-specific metastasis. Mixed cell populations (MCPs) were in vivo selected from either bone or lung metastasis and grew into phenotypically stable and metastatically competent cancer cell lines. The parental line as well as the MCP sublines were whole-exome sequencedwith somatic SNAs and CNAs profiled. Canopy is used to infer metastatic phylogeny. Code for analysis of this dataset is broken down below with explanations and is further available [here](https://github.com/yuchaojiang/Canopy/blob/master/demo_code/canopy_demo_MDA231.R).
@@ -923,7 +917,10 @@ Below is an example on reconstructing tumor phylogeny of a transplantable metast
 The input to Canopy are variant allele frequencies of somatic SNAs along with allele-specific coverage ratios between the tumor and matched normal sample for somatic CNAs. For SNAs, let the matrices $R$ and $X$ be, respectively, the number of reads containing the mutant allele and the total number of reads for each locus across all samples. The ratio $R/X$ is the proportion of reads
 supporting the mutant allele, known as the variant allele frequency. For CNAs, Canopy directly takes output from allele-specific copy number estimation softwares, such as [FALCON-X](https://CRAN.R-project.org/package=falconx) or [Sequenza](https://CRAN.R-project.org/package=sequenza). These outputs are in the form of estimated major and minor copy number ratios, respectively denoted by $W^M$ and $W^m$, with their corresponding standard errors $\epsilon^M$ and $\epsilon^m$. Matrix $Y$ specifies whether SNAs are affected by CNAs; matrix $C$ specifies whether CNA regions harbor specific CNAs (this input is only needed if overlapping CNA events are observed).
 
-How to generate CNA and SNA data input is futher discussed [here](https://github.com/yuchaojiang/Canopy/blob/master/instruction/SNA_CNA_input.md). How to select ****informative**** SNA and CNA input is discussed [here](https://github.com/yuchaojiang/Canopy/blob/master/instruction/SNA_CNA_choice.md).
+
+#### How to generate SNA input for Canopy
+
+ * We use UnifiedGenotyper by **[GATK](https://software.broadinstitute.org/gatk/)** to call somatic SNAs and follow its [Best Practices](https://software.broadinstitute.org/gatk/best-practices/). **[MuTect](http://archive.broadinstitute.org/cancer/cga/mutect)** and **[VarScan2](http://massgenomics.org/varscan)** can also be used when paired normal samples are available.
 
 ```{bash, eval = FALSE}
 
@@ -1010,15 +1007,90 @@ java -jar $PATH_GATK/GenomeAnalysisTK.jar
 ```
 
 
-readVCFforCanopy is a function which generates canopy input from a VCF file, This function takes as input a data frame representing the VCF file as read using read.table().  First 9 column names should be c("CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT").  Following column names should be sample names. see \href{http://www.internationalgenome.org/wiki/Analysis/vcf4.0/}{VCF format}.  The function outputs a list of R(alternate reads), X(total reads), and vcfTargets which contains gene target info from the VCF.
+ * *Stringent* QC procedures are strongly recommended. Just to list a few QCs that we have adopted:
+    * Pass variant recalibration (VQSR) from GATK;
+    * Have only one alternative allele (one locus being double hit by two different SNAs in one patient is very unlikely);
+    * Are highly deleterious (i.e., focuse on driver mutations) from functional annotations (**[ANNOVAR](http://annovar.openbioinformatics.org/en/latest/)**);
+    * Have low population variant frequency from the 1000 Genomes Project (if no normal samples are available);
+    * Don't reside in segmental duplication regions;
+    * Have high depth of coverage (total as well as mutated read depth);
+    * Reside in target baits (e.g., exonic regions for exome sequencing);
+    * ...
+    * ...
+      
+ * After mutation calling and QC procedures, the number of mutated reads will be stored in matrix R while the total number of reads will be stored in matrix X across all mutational loci in all samples. 
+ 
+ * A good way for sanity check is to plot the variant allele frequencies (VAFs) across samples.
+   * If there are only two samples, a 2-D scatterplot will suffice. In the figure below, the left panel contains the VAFs at two timepoints for the leukemia patient from [Ding et al. (Nature 2012)](http://www.nature.com/nature/journal/v481/n7382/full/nature10738.html). We see that there are clear clusters of mutations indicating they fall on the same branch of the tree, which serves as a nice sanity check of our mutation calling and filtering.
+   * If there are more than two samples, heatmap can be used for visualization. The right panel in the figure below is the heatmap of VAFs across 63 somatic mutations in 10 spatially separated tumor slices of a ovarian cancer patient from [Bashashati et al. (The Journal of pathology 2013)](http://onlinelibrary.wiley.com/doi/10.1002/path.4230/abstract). The heatmap below is plotted using the [pheatmap R package](https://CRAN.R-project.org/package=pheatmap).
+
+<p align="center">
+  <img src='https://github.com/yuchaojiang/MARATHON/blob/master/instruction/demo-page-001.jpg' width='500' height='500' >
+</p>
+
+
+#### Convert VCF file to input for Canopy
+readVCFforCanopy is a function which generates canopy input from a VCF file. This function takes as input a the path to the VCF file.  First 9 column names after the header should be c("#CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT").  Following column names should be sample names. see \href{http://www.internationalgenome.org/wiki/Analysis/variant-call-format/}{VCF format}.  The function outputs a list of R(alternate reads), X(total reads), and vcfTargets which contains gene target info from the VCF.  
+GenotypeMatrix is a snp by sample matrix representing alleles at that position (i.e. 0: homozygous ref, 1: heterozygous alt, 2: homozygous alt).  
+ReadsMatrix is a matrix where rows are positions and each sample has two columns, first the  reference allele count, and second the alternate allele count.
+
 
 ```{r}
-vcfFile = system.file("extdata", "sample.vcf", package="MARATHON")
-
-myVCF = read.table(vcfFile, sep = "\t", header = T)
-
-canopyInput = readVCFforCanopy( myVCF )
+vcfFile = system.file("extdata", "sample_w_header.vcf", package="MARATHON")
+canopyInput = readVCFforCanopy(vcfFile)
+lapply(canopyInput, head)
 ```
+
+
+#### How to generate CNA input for Canopy
+
+To generate allele-specific copy number calls, [Sequenza](https://CRAN.R-project.org/package=sequenza) or [FALCON](https://CRAN.R-project.org/package=falcon) can be used. Both methods require paired tumor normal samples as input.
+
+#### FALCON-X (recommended)
+
+FALCON-X is for ASCN profiling with WES of one or more tumor samples, multiple (>=20) normal controls, which don't have to be matched.  See section above in MARATHON pipeline.
+
+#### FALCON (recommended)
+
+FALCON is for ASCN profiling with WGS of paired tumor normal samples.  See section above in MARATHON pipeline.
+
+
+#### Sequenza
+Sequenza estimates allele-specific copy numbers as well as tumor purity and ploidy using B-allele frequencies and depth ratios from paired tumor-normal sequencing data. Here are Sequenza outputs from WES of normal, primary tumor and relapse genome of a neuroblastoma patient from [Eleveld et al. (Nature Genetics 2015)](http://www.nature.com/ng/journal/v47/n8/abs/ng.3333.html).
+
+   * [Primary tumor Sequenza segment output](https://github.com/yuchaojiang/Canopy/blob/master/instruction/primary.txt)
+   * [Relapse genome Sequenza segment output](https://github.com/yuchaojiang/Canopy/blob/master/instruction/relapse.txt)
+
+Data visualization and QC procedures on Sequenza's segmentation output are strongly recommended. Below is genome-wide view from Sequenza as a sanity check. The top panel is for the primary tumor and the bottom panel is for the relapse. The red and blue lines are for the major and minor copy numbers, respectively. We see that large chromosome-arm level deletions and duplications are fairly concordant between the primary tumor and the relapse genome (check!), while the relapse tumor gained additional CNAs at the second timepoint. The small CNA events, however, are most likely false positives and should be filtered out through QC procedures, which may include:
+   * Have at least 100 heterozygous loci within each segment;
+   * Are at least 5Mb long;
+   * Don't have extreme estimated copy numbers (e.g., total copy number >= 6);
+   * ...
+   * ...
+
+It is also worth noting that **additional steps are further neede to generate curated CNA segments**. For example, chr17q is split into three segments in the primary tumor, which should be just one large duplication instead (via comparison against the relapse). Furthermore, the breakpoints of the same CNA events between the primrary tumor and the relapse genome are sometimes different and they need to be merged. They should NOT be treated as separate events.
+
+<p align="center">
+Primary tumor Sequenza segmentation genome-wide view
+  <img src='https://github.com/yuchaojiang/MARATHON/blob/master/instruction/primary.jpg' >
+</p>
+<p align="center">
+Relapse genome Sequenza segementation genome-wide view
+  <img src='https://github.com/yuchaojiang/MARATHON/blob/master/instruction/relapse.jpg' >
+</p>
+
+Canopy does not require interger allele-specific copy number as input. While Sequenza infers tumor purity and ploidy and outputs interger-valued allle-specifc copy numbers, Canopy directly takes as input the fractional allele-specific copy numbers, which can be obtained from the segmentation output (see above). The B-allele frequency is Bf = Wm / (WM + Wm) and the depth ratio is depth.ratio = (WM + Wm)/2. From here the input matrix WM and Wm can be calculated. The standard errors of the estimated copy numbers, epsilonM and epsilonm, can be set as the default value by Canopy or be taken as the sd.ratio from Sequenza's output, assuming they are the same. NOTE: epsilonM and epsilonm should NOT be sd(WM) and sd(Wm). The former are both matrix of dimension number of CNA events x number of samples, unless if they are set all the same by default as a scalar; the latter are the standard deviations of the copy numbers across all events in all samples.
+
+
+
+
+#### Which CNAs and SNAs to use?
+
+How to generate a clean set of input to Canopy is important and non-trivial. While in our phylogeney reconstruction paper we were not trying to solve this tricky but separate problem of quality control of point mutation profiling and copy number estimation, an input with too many false positives will only lead to "garbage in garbage out" by Canopy. We are currently working on automating the pipeline for generating CNA and SNA input as well as offering guidance to select the informative SNAs and CNAs. By saying informative, we mean that the SNAs or CNAs show distinct patterns between different samples (from the same patient since we are looking at intratumor heterogeneity). For SNAs, this means that the observed VAFs are different (see Figure 4B in our paper) and in this case a heatmap is a good way for visualization. For CNAs, this means that the WM and Wm are different (see Supplementary Figure S13 in our paper) and we find IGV a good tool for visualization and recommend focusing on large CNA regions, which helps remove false calls and speed up computation.
+
+Just like SNAs, there will likely to be CNAs carried by small fractions of the cells, or that reside in hard-to-call regions of the genome, which are not detected. The former scenario, in particular, includes CNAs which may be informative about rare subclones. We do not assume that the CNAs (and SNAs) given to Canopy comprise all mutations that are carried by the sample, and similarly, do not attempt to claim that Canopy detects all subclones or resolves all branches of the evolutionary tree. Our goal is only to estimate all of the subclones that have representation among the set of input CNAs and SNAs, which are, inherently, limited in resolution by the experimental protocol (sequencing platform and coverage, number of tumor slices, etc.) We believe this is the best that can be achieved under current settings.
+
+#### Canopy Input
 
 Below is demo data input from project MDA231 (first case study in our paper).
 

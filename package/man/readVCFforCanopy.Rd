@@ -30,6 +30,8 @@ vcfTargets is the snp info from the vcf file.  This is useful for annotating X a
 
 GenotypeMatrix is a snp by sample matrix representing alleles at that position (i.e. 0: homozygous ref, 1: heterozygous alt, 2: homozygous alt)
 
+ReadsMatrix is a matrix where rows are positions and each sample has two columns, first the  reference allele count, and second the alternate allele count.
+
 }
 
 \author{
@@ -38,19 +40,9 @@ GenotypeMatrix is a snp by sample matrix representing alleles at that position (
 
 \examples{
 library(MARATHON)
-library(VariantAnnotation)
 
-#error file does not exist
-vcfFile = system.file("extdata", "sample_nonexistent.vcf", package="MARATHON")
-canopyInput = readVCF(vcfFile)
-
-#error file not in correct VCF format
-vcfFile = system.file("extdata", "sample.vcf", package="MARATHON")
-canopyInput = readVCF(vcfFile)
-
-#VCF file parsed correctly
 vcfFile = system.file("extdata", "sample_w_header.vcf", package="MARATHON")
-canopyInput = readVCF(vcfFile)
+canopyInput = readVCFforCanopy(vcfFile)
 lapply(canopyInput, head)
 
 }
