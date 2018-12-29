@@ -9,7 +9,7 @@ Urrutia E, Chen H, Zhou Z, Zhang NR, Jiang Y. Integrative pipeline for profiling
 
 ## Questions & Problems
 
-If you have any questions or problems when using MARATHON, you can: (i) open a new issue [here](https://github.com/yuchaojiang/MARATHON/issues); (ii) post in our Google user group https://groups.google.com/d/forum/marathon_genomics or email us at marathon_genomics@googlegroups.com; (iii) email the maintainers of the corresponding packages -- the contact information is shown under Developers & Maintainers. We will try our best to reply as soon as possible.
+If you have any questions or problems when using MARATHON, you can: (i) open a new issue [here](https://github.com/yuchaojiang/MARATHON/issues); (ii) post in our Google user group https://groups.google.com/d/forum/marathon_genomics or email us at marathon_genomics@googlegroups.com; (iii) email the maintainers of the corresponding packages -- the contact information is shown under Developers & Maintainers. The first two contact options are preferred and we will try our best to reply as soon as possible.
 
 
 ## Installation
@@ -67,7 +67,7 @@ Please cite MARATHON as well as all the dependent packages that you use.
   A Normalization and Copy Number Variation Detection Method for Whole Exome Sequencing
   ([Bioconductor](http://bioconductor.org/packages/CODEX/), [GitHub](https://github.com/yuchaojiang/CODEX))
 
-* **CODEX2**: [Jiang et al. 2018 bioRixv](https://www.biorxiv.org/content/early/2018/04/01/211698)
+* **CODEX2**: [Jiang et al. 2018 Genome Biology](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-018-1578-y)
   <br>
   Full-spectrum copy number variation detection by high-throughput DNA sequencing
   ([GitHub](https://github.com/yuchaojiang/CODEX2))
