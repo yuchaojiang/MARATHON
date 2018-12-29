@@ -9,7 +9,7 @@ Urrutia E, Chen H, Zhou Z, Zhang NR, Jiang Y. Integrative pipeline for profiling
 
 ## Questions & Problems
 
-If you have any questions or problems when using MARATHON, please feel free to open a new issue [here](https://github.com/yuchaojiang/MARATHON/issues). You can also email the maintainers of the corresponding packages -- the contact information is shown under Developers & Maintainers.
+If you have any questions or problems when using MARATHON, you can: (i) open a new issue [here](https://github.com/yuchaojiang/MARATHON/issues); (ii) post in our Google user group https://groups.google.com/d/forum/marathon_genomics or email us at marathon_genomics@googlegroups.com; (iii) email the maintainers of the corresponding packages -- the contact information is shown under Developers & Maintainers. We will try our best to reply as soon as possible.
 
 
 ## Installation
