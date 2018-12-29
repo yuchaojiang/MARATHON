@@ -26,8 +26,9 @@ docker pull lzeppelini/marathon
 Install all packages in the latest version of [R](https://www.r-project.org/).
 ```r
 install.packages(c("falcon", "falconx", "devtools"))
-source("https://bioconductor.org/biocLite.R")
-biocLite("WES.1KG.WUGSC")
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("WES.1KG.WUGSC", version = "3.8")
 devtools::install_github(c("yuchaojiang/CODEX/package", "yuchaojiang/CODEX2/package", "yuchaojiang/Canopy/package", "zhouzilu/iCNV", "yuchaojiang/MARATHON/package"))
 ```
 
