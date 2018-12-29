@@ -4,7 +4,7 @@ Copy number variation is an important and abundant source of variation in the hu
 
 ## Manuscript
 
-Urrutia E, Chen H, Zhou Z, Zhang NR, Jiang Y. Integrative pipeline for profiling DNA copy number and inferring tumor phylogeny. *Bioinformatics*, bty057, 2018. ([link](https://doi.org/10.1093/bioinformatics/bty057))
+Urrutia E, Chen H, Zhou Z, Zhang NR, Jiang Y. Integrative pipeline for profiling DNA copy number and inferring tumor phylogeny. *Bioinformatics*,  34 (12), 2126-2128, 2018. ([link](https://doi.org/10.1093/bioinformatics/bty057))
 
 
 ## Questions & Problems
