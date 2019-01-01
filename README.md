@@ -94,9 +94,9 @@ Please cite MARATHON as well as all the dependent packages that you use.
 
 ## Developers & Maintainers
 
-* Gene Urrutia (urrutia at email dot unc dot edu)
+* Gene Urrutia (gene dot urrutia at gmail dot com)
   <br>
-  Department of Biostatistics, UNC-Chapel Hill
+  Innovation, Hill-Rom Corp.
 
 * [Yuchao Jiang](http://sph.unc.edu/adv_profile/yuchao-jiang-phd/) (yuchaoj at email dot unc dot edu)
   <br>
