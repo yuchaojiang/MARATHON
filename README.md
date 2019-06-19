@@ -28,7 +28,7 @@ Install all packages in the latest version of [R](https://www.r-project.org/).
 install.packages(c("falcon", "falconx", "devtools"))
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
-BiocManager::install("WES.1KG.WUGSC")
+BiocManager::install(c("WES.1KG.WUGSC", "GenomeInfoDb"))
 devtools::install_github(c("yuchaojiang/CODEX/package", "yuchaojiang/CODEX2/package", "yuchaojiang/Canopy/package", "zhouzilu/iCNV", "yuchaojiang/MARATHON/package"))
 ```
 
