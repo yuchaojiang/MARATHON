@@ -1,3 +1,4 @@
-export(falcon.qc, falcon.output, falconx.qc, convertFalconForIGV, readVCFforCanopy, readVCFDataFrameforCanopy)
+export(falcon.qc, falcon.output, falconx.qc, convertFalconForIGV, 
+       readVCFforCanopy, readVCFDataFrameforCanopy, readVCFforFalcon)
 import(CODEX, CODEX2, Canopy, falcon, falconx, iCNV, VariantAnnotation)
 importFrom("stats", "median", "sd")

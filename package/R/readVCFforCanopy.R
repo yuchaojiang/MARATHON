@@ -1,4 +1,5 @@
 
+
 readVCFforCanopy = function(vcfFile){
   
   if( !file.exists(vcfFile) ){
@@ -124,4 +125,62 @@ readVCFDataFrameforCanopy = function( vcf ) {
   out 
 }
 
+
+readVCFforFalcon = function(vcfFile){
+  
+  # > library(MARATHON)
+  # > vcfFile = system.file("extdata", "sample_w_header.vcf", package="MARATHON")
+  # > coverageData = readVCFforFalcon(vcfFile)
+
+  # Compare to relapse.demo from falcon
+  # > relapse.demo[1,]
+  # Tumor_ReadCount_Alt Tumor_ReadCount_Ref Tumor_ReadCount_Total Normal_ReadCount_Alt
+  # 3360046                  10                   7                    17                    8
+  # Normal_ReadCount_Ref Normal_ReadCount_Total Reference_Allele TumorSeq_Allele1 TumorSeq_Allele2
+  # 3360046                    4                     12                G                G                C
+  # Match_Norm_Seq_Allele1 Match_Norm_Seq_Allele2 Chromosome Start_position End_position
+  # 3360046   G                      C         14       19017718     19017718
+
+  if( !file.exists(vcfFile) ){
+    print("The VCF file does not exist.  Please ensure the path is correct.")
+    return(NULL)
+  }
+  
+  vcfData = try ( VariantAnnotation::readVcf(vcfFile) )
+  if ( class(vcfData) == "try-error" ){
+    print ( "The VCF exists but could not be parsed.  Ensure the file is in proper VCF format.  See VariantAnnotation::readVcf for further information." )
+    return( NULL )
+  }
+  
+  AD = geno(vcfData)$AD
+  
+  # Convert to Reads Matrix
+  vcfSampleNames = colnames(AD)
+  readsMatrixList = lapply(vcfSampleNames, function(mySample) {
+    RefVector = unlist(lapply(AD[, mySample], function(x) x[[1]]))
+    AltVector = unlist(lapply(AD[, mySample], function(x) x[[2]]))
+    TotalVector =  geno(vcfData)$DP[, mySample] # RefVector + AltVector #
+    readsMatrixSub = cbind(RefVector, AltVector, TotalVector)
+    colnames(readsMatrixSub) = paste(mySample, "ReadCount", c("Alt", "Ref", "Total"), sep = "_")
+    return( readsMatrixSub ) 
+  } )
+  readsMatrix = do.call( cbind, readsMatrixList )
+  
+  GTNucleotides = geno(genotypeCodesToNucleotides(vcfData))$GT
+  genoMatrixList = lapply(vcfSampleNames, function(mySample) {
+    GTsingle = GTNucleotides[,mySample]
+    GTsingleCols = tstrsplit(GTsingle, '/')
+    genoMatrixSub = cbind(GTsingleCols[[1]], GTsingleCols[[2]]  )
+    colnames(genoMatrixSub) = paste(mySample, c("Allele1", "Allele2"), sep = "_")
+    return( genoMatrixSub ) 
+  } )
+  genoMatrix = do.call( cbind, genoMatrixList )
+  
+  Chromosome = as.vector( seqnames(vcfData) )
+  Start_position = as.numeric( start(vcfData) )
+  End_position = as.numeric( end(vcfData) )
+  
+  out = data.frame(readsMatrix, genoMatrix, Chromosome, Start_position, End_position)
+  return( out )
+}
 

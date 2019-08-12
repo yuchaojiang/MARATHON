@@ -672,15 +672,14 @@ samtools index UCF1014.merge.sorted.dedup.realigned.recal.bam
 java -jar GenomeAnalysisTK.jar -R ucsc.hg19.fasta -T HaplotypeCaller -I UCF1014.merge.sorted.dedup.realigned.recal.bam -o UCF1014.merge.sorted.dedup.realigned.recal.raw.snps.indels.g.vcf
 ```
 
-readVCFforCanopy is a function which generates canopy and falcon input from a VCF file. This function takes as input a the path to the VCF file.  First 9 column names after the header should be c("#CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT").  Following column names should be sample names. see \href{http://www.internationalgenome.org/wiki/Analysis/variant-call-format/}{VCF format}.  The function outputs a list of R(alternate reads), X(total reads), and vcfTargets which contains gene target info from the VCF.  
-GenotypeMatrix is a snp by sample matrix representing alleles at that position (i.e. 0: homozygous ref, 1: heterozygous alt, 2: homozygous alt)
-ReadsMatrix is a matrix where rows are positions and each sample has two columns, first the  reference allele count, and second the alternate allele count.
+readVCFforFalcon is a function which generates falcon input from a VCF file. This function takes as input a the path to the VCF file.  First 9 column names after the header should be c("#CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT").  Following column names should be sample names. see \href{http://www.internationalgenome.org/wiki/Analysis/variant-call-format/}{VCF format}.  
 
+The function outputs a data frame where each row contains location for each variant with read counts and allele info. It is comparable to relapse.demo from FALCON for ease of use with the QC procedures below.
 
 ```{r}
 vcfFile = system.file("extdata", "sample_w_header.vcf", package="MARATHON")
-canopyInput = readVCFforCanopy(vcfFile)
-lapply(canopyInput, head)
+coverageDataDemo = readVCFforFalcon(vcfFile)
+head(coverageDataDemo)
 ```
 
 ### 4.3.2. Running FALCON for allele-specific copy number profiling
