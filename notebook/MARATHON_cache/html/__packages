@@ -33,3 +33,4 @@ matrixStats
 DelayedArray
 SummarizedExperiment
 VariantAnnotation
+BiocParallel
