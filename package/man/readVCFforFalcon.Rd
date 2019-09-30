@@ -40,6 +40,8 @@ And for each sample:
 
 - ReadCount_Total: total depth from the DP section of the VCF file
 
+- Reference_Allele
+
 - Allele1: first allele (nucleotides) from the GT section of the VCF file
 
 - Allele2: second allele (nucleotides) from the GT section of the VCF file

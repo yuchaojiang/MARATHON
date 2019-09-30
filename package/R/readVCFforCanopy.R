@@ -165,7 +165,7 @@ readVCFforFalcon = function(vcfFile){
     return( readsMatrixSub ) 
   } )
   readsMatrix = do.call( cbind, readsMatrixList )
-  
+
   GTNucleotides = geno(genotypeCodesToNucleotides(vcfData))$GT
   genoMatrixList = lapply(vcfSampleNames, function(mySample) {
     GTsingle = GTNucleotides[,mySample]
@@ -180,7 +180,8 @@ readVCFforFalcon = function(vcfFile){
   Start_position = as.numeric( start(vcfData) )
   End_position = as.numeric( end(vcfData) )
   
-  out = data.frame(readsMatrix, genoMatrix, Chromosome, Start_position, End_position)
+  out = data.frame(readsMatrix, Reference_Allele = as.character(rowRanges(vcfData)$REF),
+                   genoMatrix, Chromosome, Start_position, End_position)
   return( out )
 }
 
