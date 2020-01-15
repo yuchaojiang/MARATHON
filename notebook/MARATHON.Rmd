@@ -270,19 +270,20 @@ finalcall.codex2.nr <- segmentCBS(Y_qc, Yhat.nr, optK = which.max(BIC.nr),
 iCNV [@zhou2018integrative] uses the normalized coverage from CODEX/CODEX2, and makes use of sequenced reads at inherited single nucleotide polymorphism (SNP) positions for CNV detection. These heterozygous loci are shown to be valuable in improving detection and genotyping accuracy. iCNV takes as input normalized coverage by CODEX/CODEX2, allelic frequency at inherited SNP positions from sequencing, and log-ratio and B-allele frequency from SNP array. Output is CNV calls with quality scores.
 
 #### 4.1.3.1. Bam file normalization using CODEX
-Researchers working on WGS need to generate your own BED file for CODEX normalization. We made a function [bed_generator](https://github.com/zhouzilu/iCNV/raw/master/iCNV_rdoc.pdf) to help with this. For WES and targeted sequencing, the BED file is from pull-down design. Follow code below to get normalized NGS PLR. Due to the file upload size restriction, raw demo BAM file isn't uploaded to Github. Please email zhouzilu@pennmedicine.upenn.edu to request BAM files.
+Researchers working on WGS need to generate your own BED file for CODEX normalization. We made a function [bed_generator](https://github.com/zhouzilu/iCNV/raw/master/iCNV_rdoc.pdf) to help with this. For WES and targeted sequencing, the BED file is from pull-down design. Follow code below to get normalized NGS PLR. For demonstration, we utilize toy data from the 1000 Genomes Project.
 
-```{r, eval=FALSE}
-library(MARATHON)
+```{r message=FALSE,results='hide',warning=FALSE}
+library(WES.1KG.WUGSC) # Load Toy data from the 1000 Genomes Project.
+library(iCNV)
 # Pre-process
-dirPath <- 'demo/ngs/bam'# 'PATH/TO/BAM'
-bamFile <- list.files(dirPath, pattern = '*.bam$')
-bamdir <- file.path(dirPath, bamFile)
-sampname <- as.matrix(read.table(file.path(dirPath, "sampname")))
-bedFile <- file.path(dirPath, "chr22_18000_to_38000.bed")
+dir <- system.file("extdata", package = "WES.1KG.WUGSC") # 'PATH/TO/BAM'
+bamFile <- list.files(dir, pattern = '*.bam$')
+bamdir <- file.path(dir, bamFile)
+sampname <- as.matrix(read.table(file.path(dir, "sampname")))
+bedFile <- file.path(dir, "chr22_400_to_500.bed")
 chr <- 22
 bambedObj <- CODEX::getbambed(bamdir = bamdir, bedFile = bedFile, 
-                   sampname = sampname, projectname = "icnv.demo", chr)
+                   sampname = sampname, projectname = "icnv.demo.", chr)
 bamdir <- bambedObj$bamdir; sampname <- bambedObj$sampname
 ref <- bambedObj$ref; projectname <- bambedObj$projectname; chr <- bambedObj$chr
 # Get coverage
@@ -304,7 +305,7 @@ choiceofK(AIC, BIC, RSS, K, filename = paste0(projectname, "_", chr, "_choiceofK
 save(qcObj,normObj,sampname,file=paste0(projectname,"_",chr,".rda") )
 ```
 CODEX reports all three statistical metrics (AIC, BIC, variance reduction) and uses BIC as the default method to determine the number of Poisson factors. Since false positives can be screened out through a closer examination of the post-segmentation data, whereas CNV signals removed in the normalization step cannot be recovered, CODEX opts for a more conservative normalization that, when in doubt, uses a smaller value of K.
-```{r, eval=FALSE}
+```{r message=FALSE}
 load(paste0(projectname,"_",chr,".rda"))
 optK = K[which.max(BIC)] # by default or customize given curves
 # Log-transformed z-score based on CODEX's normalization results
@@ -330,13 +331,14 @@ cd PATH/TO/BAM
 for i in *bam; do PATH/TO/SAMTOOLS/samtools mpileup -ugI -t DP -t DV -f PATH/TO/REF/human_hg37.fasta $i | ~/bcftools-1.3.1/bcftools call -cv -O z -o PATH/TO/OUTPUT/$i.vcf.gz; done
 ```
 
-We could further extract variants BAF info from vcf file by function [bambaf_from_vcf](https://github.com/zhouzilu/iCNV/raw/master/iCNV_rdoc.pdf). 
-```{r, eval=FALSE}
+We could further extract variants BAF info from vcf file by function [bambaf_from_vcf](https://github.com/zhouzilu/iCNV/blob/master/R/bambaf_from_vcf.R). 
+```{r message=FALSE,results='hide',warning=FALSE}
 library(MARATHON)
-projectname = "icnv.demo"
-dir='ngs/baf' # PATH/TO/FOLDER
-bambaf_from_vcf(dir,'vcf.sample.list',chr=22,projectname) # ignore chr argement if want to convert all chromosome 1-22
-load(file.path(dir,'bambaf_22.rda'))
+projectname <- "icnv.demo."
+dir <- system.file("extdata", package="iCNV")
+bambaf_from_vcf(dir,'bam_vcf.list',chr=22,projectname) 
+# ignore chr argement if you want to convert all chromosome 1-22
+load(paste0(projectname,'bambaf_22.rda'))
 str(ngs_baf)
 str(ngs_baf.pos)
 ```
@@ -352,33 +354,27 @@ rs4,22,15863717,-0.21270519495,0.957377910614
 rs5,22,16532045,-0.0330782271922,0.0300635993481
 ```
 The first row is rsid (Name), followed by chromosome (Chr), position (POS), log R ratio (sample1.Log R Ratio), and BAF (sample1.B Allele Freq). Function [get_array_input](https://github.com/zhouzilu/iCNV/blob/master/iCNV_rdoc.pdf) can be used to convert the data input to iCNV's format. For example, in the demo dataset:
-```{r, eval=FALSE}
+```{r results='hide'}
 # iCNV_array_input
-dir='array' # PATH/TO/FOLDER
-projectname = "icnv.demo"
-pattern=paste0('*.csv.arrayicnv$')
-get_array_intput(dir,pattern,chr=22,projectname=projectname)
-load(file.path(dir,paste0(projectname,'array_lrrbaf_22.rda')))
+dir <- system.file("extdata", package="iCNV")#PATH/TO/FOLDER where you stored the array data
+chr <- 22
+projectname <- "icnv.demo."
+pattern <- paste0('*.csv.arrayicnv$')
+get_array_input(dir,pattern,chr,projectname)
+load(paste0(projectname,'array_lrrbaf_',chr,'.rda'))
 str(snp_lrr)
 str(snp_lrr.pos)
 str(snp_baf)
 str(snp_baf.pos)
 ```
 
-For some of the SNP array LRR data, we need to apply singular value decomposition (SVD) to remove high-dimensional noise and preserve low-dimension signal. Noisy data has the feature of local strip across samples (use the `plot_intensity` function). Conventional way for identifying the elbow point to determine the number of PCs can be applied here. More details can be found [here](https://github.com/zhouzilu/iCNV/blob/master/package/vignettes/iCNV-vignette.Rmd).
+For some of the SNP array LRR data, we need to apply singular value decomposition (SVD) to remove high-dimensional noise and preserve low-dimension signal. Noisy data has the feature of local strip across samples (use the `plot_intensity` function). Conventional way for identifying the elbow point to determine the number of PCs can be applied here. More details can be found [here](http://raw.githack.com/zhouzilu/iCNV/master/vignettes/iCNV-vignette.html).
 
-#### 4.1.3.4. Mutiple platform CNV detection
+#### 4.1.3.4. Mutiple platform CNV detection using **iCNV**
 
-At this step, we should alreday have PLR and variants BAF from sequencing, normalized LRR and BAF from SNP array. Please make sure all the input are of type list. This is mainly to accomadate the fact that the lengths for `ngs_baf` and `ngs_baf.pos` are sample specific. Try out with demo code and sample dataset availabe [here](https://github.com/zhouzilu/iCNV/tree/master/demo.zip).
+At this step, we should alreday have PLR and variants BAF from sequencing, normalized LRR and BAF from SNP array. Please make sure all the input are of type list. This is mainly to accomadate the fact that the lengths for `ngs_baf` and `ngs_baf.pos` are sample specific. In addition, CNV detection should perform per chromosome basis.
 
-```{r, eval=FALSE}
-dir='array' # PATH/TO/ARRAYDATA
-load(file.path(dir,paste0(projectname,'array_lrrbaf_22.rda'))) # load array data
-load(file.path('ngs',paste0(projectname,'plrObj_22_2.rda'))) # load NGS PLR
-
-dir='ngs/baf' # PATH/TO/NGSBAF
-load(file.path(dir,paste0(projectname,'bambaf_22.rda'))) # load NGS BAF
-
+```{r results='hide',message=FALSE}
 str(ngs_plr) # List of n vector, each one is the PLR for an exon
 str(ngs_plr.pos) # List of n matrix (p x 2), each one is the start and end location for an exon
 str(ngs_baf) # List of n vector, each one is the variants BAF from .bam
@@ -387,42 +383,56 @@ str(snp_lrr) # List of n vector, each one is the normalized LRR for a SNP
 str(snp_lrr.pos) # List of n vector, each one is a SNP position
 str(snp_baf) # List of n vector, each one is the BAF for a SNP
 str(snp_baf.pos) # List of n vector, each one is the SNP BAF position
-projname='icnv.demo'
-icnv_res0=iCNV_detection(ngs_plr,snp_lrr,
+projectname <- 'icnv.demo.'
+icnv_res0 <- iCNV_detection(ngs_plr,snp_lrr,
                          ngs_baf,snp_baf,
                          ngs_plr.pos,snp_lrr.pos,
                          ngs_baf.pos,snp_baf.pos,
-                         projname=projname,CN=0,mu=c(-3,0,2),cap=T,visual = 1)
-icnv.output = output_list(icnv_res0,sampname_qc,CN=0)
+                         projname=projectname,CN=1,mu=c(-3,0,2),cap=TRUE,visual = 1)
+icnv.output <- output_list(icnv_res0,sampname_qc,CN=1,min_size=0,min_gap=0) 
+# You can alter min size of the CNV you want to keep and merge CNV with gap 
+# smaller than min gap.
 head(icnv.output)
 ```
 
+ The results plot looks are follow. Each row is a sample and each column is a hidden state. The color indicates hidden state Z-score (large positive number prefers amplification, low negative number prefers deletion). Black dots represent amplification detected, while white dots show deletion detected.
+
+```{r fig.width=8, fig.height=4,echo=FALSE, out.width = "150%", dpi=200}
+plotHMMscore(icnv_res0,title=projectname)
+```
+
+ Additional functionality of iCNV see [iCNV notebook](http://raw.githack.com/zhouzilu/iCNV/master/vignettes/iCNV-vignette.html).
+ 
+ 
 #### 4.1.3.5. Single platform CNV detection
 
-At this step, we should already have PLR and variants BAF from sequencing OR normalized LRR and BAF from SNP array. Please make sure all the input are in list form. 
-Try out with demo code and sample dataset available [here](https://github.com/zhouzilu/iCNV/tree/master/demo).
+ At this step, we should already have PLR and variants BAF from sequencing OR normalized LRR and BAF from SNP array. Please make sure all the input are in list form.
 
-NGS only CNV detection using iCNV
+ NGS only CNV detection using **iCNV**. As we showed in the paper, we highly recommend using iCNV for WGS CNV detection.
 ```{r, eval=FALSE}
 str(ngs_plr) # List of n vector, each one is the PLR for an exon
 str(ngs_plr.pos) # List of n matrix (p x 2), each one is the start and end location for an exon
 str(ngs_baf) # List of n vector, each one is the variants BAF from .bam
 str(ngs_baf.pos) # List of n vector, each one is the variants BAF position
-projname='icnv.demo.ngs'
-icnv_res0_ngs=iCNV_detection(ngs_plr=ngs_plr, ngs_baf = ngs_baf, ngs_plr.pos = ngs_plr.pos,ngs_baf.pos = ngs_baf.pos, projname=projname,CN=0,mu=c(-3,0,2),cap=T,visual = 2)
-icnv.output = output_list(icnv_res0,sampname_qc,CN=0)
+projectname <- 'icnv.demo.ngs.'
+icnv_res0_ngs <- iCNV_detection(ngs_plr=ngs_plr, ngs_baf = ngs_baf, 
+                             ngs_plr.pos = ngs_plr.pos,ngs_baf.pos = ngs_baf.pos,
+                             projname=projectname,CN=0,mu=c(-3,0,2),cap=TRUE,visual = 2)
+icnv.output <- output_list(icnv_res0_ngs,sampname_qc,CN=0)
 head(icnv.output)
 ```
 
-SNP array only CNV detection using iCNV
+SNP array only CNV detection using **iCNV**
 ```{r, eval=FALSE}
 str(snp_lrr) # List of n vector, each one is the normalized LRR for a SNP
 str(snp_lrr.pos) # List of n vector, each one is a SNP position
 str(snp_baf) # List of n vector, each one is the BAF for a SNP
 str(snp_baf.pos) # List of n vector, each one is the SNP BAF position
-projname='icnv.demo.snp'
-icnv_res0_snp=iCNV_detection(snp_lrr=snp_lrr, snp_baf = snp_baf, snp_lrr.pos = snp_lrr.pos,snp_baf.pos = snp_baf.pos, projname=projname,CN=0,mu=c(-3,0,2),cap=T,visual = 2)
-icnv.output = output_list(icnv_res0,sampname_qc,CN=0)
+projectname <- 'icnv.demo.snp'
+icnv_res0_snp <- iCNV_detection(snp_lrr=snp_lrr, snp_baf = snp_baf, 
+                             snp_lrr.pos = snp_lrr.pos,snp_baf.pos = snp_baf.pos,
+                             projname=projectname,CN=1,mu=c(-3,0,2),cap=TRUE,visual = 2)
+icnv.output <- output_list(icnv_res0_snp,sampname_qc,CN=1)
 head(icnv.output)
 ```
 
@@ -613,7 +623,7 @@ finalcall <- segment(Y_qc, Yhat, optK = K[which.max(BIC)],
 #If necessary, combine (rbind) individual chromosome data frames 
 #  to single data frame
 
-convertForIGV( finalcall, outPath = NULL, filterFraction = TRUE )
+convertForIGV(finalcall, outPath = NULL, filterFraction = TRUE )
 ```
 
 
